@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.android.tripin.R;
 
-public class SignupActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
