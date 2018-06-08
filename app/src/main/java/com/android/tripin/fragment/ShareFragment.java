@@ -1,30 +1,30 @@
 package com.android.tripin.fragment;
 
-
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.android.tripin.R;
+import com.android.tripin.base.BaseFragment;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Created by Felix on 6/8/2018.
+ * Description:
  */
-public class ShareFragment extends Fragment {
 
+public class ShareFragment extends BaseFragment {
 
-    public static ShareFragment newInstance(){
-        ShareFragment shareFragment = new ShareFragment();
-        return shareFragment;
+    private final static String TAG = ShareFragment.class.getSimpleName();
+
+    private final static String TITLE = "Share";
+
+    public static String getTitle() {
+        return TITLE;
     }
 
-
+    /**
+     * onCreateView
+     */
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState){
-        View view = inflater.inflate(R.layout.fragment_share, container, false);
-        return view;
+    protected View onCreateView() {
+        return null;
     }
 
 }
