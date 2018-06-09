@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.android.tripin.MainActivity;
+import com.android.tripin.view.LoginActivity;
 
 /**
  * @author cginechen
@@ -20,7 +21,7 @@ public class LauncherActivity extends Activity {
             finish();
             return;
         }
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
     }
