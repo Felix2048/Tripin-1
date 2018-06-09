@@ -2,7 +2,7 @@ package com.android.tripin.presenter;
 
 import com.android.tripin.callback.LoginCallback;
 import com.android.tripin.model.LoginModel;
-import com.android.tripin.view.LoginActivity;
+import com.android.tripin.activity.LoginActivity;
 
 public class LoginPresenter implements ILoginPresenter{
 

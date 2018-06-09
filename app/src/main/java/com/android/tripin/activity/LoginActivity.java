@@ -1,4 +1,4 @@
-package com.android.tripin.view;
+package com.android.tripin.activity;
 
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +13,7 @@ import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.model.LoginModel;
 import com.android.tripin.presenter.LoginPresenter;
+import com.android.tripin.view.ILoginView;
 
 public class LoginActivity extends BaseActivity implements ILoginView, View.OnClickListener{
 

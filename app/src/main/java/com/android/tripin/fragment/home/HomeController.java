@@ -1,6 +1,7 @@
 package com.android.tripin.fragment.home;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.android.tripin.R;
+import com.android.tripin.activity.LoginActivity;
 import com.android.tripin.base.BaseFragment;
 import com.qmuiteam.qmui.util.QMUIViewHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
@@ -51,9 +53,9 @@ public abstract class HomeController extends FrameLayout {
         mTopBar.addLeftImageButton(R.mipmap.icon_topbar_about, R.id.topbar_right_about_button).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-//                UserFragment fragment = new UserFragment();
-//                startFragment(fragment);
-                Toast.makeText(getContext(), "User", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), LoginActivity.class);
+                getContext().startActivity(intent);
+//                Toast.makeText(getContext(), "User", Toast.LENGTH_SHORT).show();
             }
         });
     }

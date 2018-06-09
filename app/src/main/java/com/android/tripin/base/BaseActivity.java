@@ -1,6 +1,7 @@
 package com.android.tripin.base;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -26,5 +27,10 @@ public abstract class BaseActivity extends QMUIFragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
         ActivityCollector.removeActivity(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
     }
 }

@@ -1,7 +1,7 @@
 package com.android.tripin.model;
 
 import com.android.tripin.callback.LoginCallback;
-import com.android.tripin.util.OkHttp3;
+import com.android.tripin.util.OkHttp3Util;
 
 import java.io.IOException;
 
@@ -18,7 +18,7 @@ public class LoginModel implements ILoginModel {
     /**
      * 获取OkHttp实例
      */
-    public OkHttpClient client = OkHttp3.getClient();
+    public OkHttpClient client = OkHttp3Util.getClient();
 
     /**
      * 发送HTTP登陆请求，通过回调接口处理返回结果

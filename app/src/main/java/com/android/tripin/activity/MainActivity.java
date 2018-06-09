@@ -1,7 +1,8 @@
-package com.android.tripin;
+package com.android.tripin.activity;
 
 import android.os.Bundle;
 
+import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.base.BaseFragment;
 import com.android.tripin.fragment.home.HomeFragment;
