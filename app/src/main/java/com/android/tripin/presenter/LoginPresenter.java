@@ -1,8 +1,12 @@
 package com.android.tripin.presenter;
 
+import android.content.Intent;
+
+import com.android.tripin.activity.SignUpActivity;
 import com.android.tripin.callback.LoginCallback;
 import com.android.tripin.model.LoginModel;
 import com.android.tripin.activity.LoginActivity;
+import com.android.tripin.util.ChangeDataToJsonUtil;
 
 public class LoginPresenter implements ILoginPresenter{
 
@@ -14,10 +18,18 @@ public class LoginPresenter implements ILoginPresenter{
         this.loginActivity = loginActivity;
     }
 
+    /**
+     * 获取用户名，密码，将数据转化成loginJson
+     */
+    String loginJson = ChangeDataToJsonUtil.GetLoginRequestJson(loginActivity.getUserName(),loginActivity.getPassword());
+
     @Override
     public void login() {
         loginActivity.showLoding("登陆中...");
-        loginModel.login(loginActivity.getUserName(), loginActivity.getPassword(), new LoginCallback() {
+        /**
+         * 传入loginJson,处理返回结果
+         */
+        loginModel.login(loginJson, new LoginCallback() {
             @Override
             public void onSuccess() {
                 loginActivity.hideLoding();
@@ -47,10 +59,12 @@ public class LoginPresenter implements ILoginPresenter{
         });
     }
 
+    /**
+     * 创建一个Intent，跳转到注册界面
+     */
     @Override
     public void createAccount() {
-        /**
-         * 创建一个Intent，跳转到注册界面
-         */
+        Intent intent = new Intent(loginActivity, SignUpActivity.class);
+        loginActivity.startActivity(intent);
     }
 }
