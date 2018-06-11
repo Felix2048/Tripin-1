@@ -10,11 +10,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="免密码登陆"
+        android:text="@+no_password_login/免密码登陆"
         android:layout_gravity="right"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
+<<<<<<< HEAD
         android:id="@+id/login_without_password"/>
+=======
+        android:id="@+id/login_with_phone" />
+>>>>>>> e13add7e62ad12cb3965d27113c02e6f88362abd
 
     <EditText
         android:id="@+id/login_user_name"
@@ -23,7 +27,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="120dp"
         android:paddingLeft="8dp"
-        android:hint="账号"/>
+        android:hint="@+account_login/账号" />
     <EditText
         android:id="@+id/login_password"
         android:layout_width="320dp"
@@ -31,8 +35,9 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:paddingLeft="8dp"
-        android:hint="密码"
-        android:password="true"/>
+        android:hint="@+password_login/密码"
+        android:inputType="textPassword"
+        />
 
     <Button
         android:id="@+id/btn_login_button"
@@ -40,7 +45,7 @@
         android:layout_height="60dp"
         android:layout_gravity="center"
         android:background="@drawable/shape"
-        android:text="登录"
+        android:text="@+login/登录"
         android:textSize="20dp"
         android:textColor="#FFFFFF"
         android:layout_marginTop="20dp"/>
@@ -50,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="没有账号？注册一个"
+        android:text="@+register/没有账号？注册一个"
         android:layout_marginTop="40dp"/>
 
     <LinearLayout
@@ -61,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/imageView_login_by_qq"
-            android:src=""/>
+            android:src="@+id/imageView_login_by_wechat"/>
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
