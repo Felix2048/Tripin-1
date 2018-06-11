@@ -1,7 +1,10 @@
 package com.android.tripin.activity;
 
+<<<<<<< HEAD
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
+=======
+>>>>>>> 644eebe3424926a0fc84f5d3a6184ffeba6fdb1c
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,6 +12,7 @@ import android.widget.Toast;
 
 import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
+<<<<<<< HEAD
 import com.android.tripin.view.ISignUpView;
 
 public class SignUpActivity extends BaseActivity implements ISignUpView{
@@ -40,6 +44,14 @@ public class SignUpActivity extends BaseActivity implements ISignUpView{
     @Override
     protected int getContextViewId() {
         return 0;
+=======
+
+public class SignUpActivity extends BaseActivity {
+
+    @Override
+    protected int getContextViewId() {
+        return R.layout.activity_sign_up;
+>>>>>>> 644eebe3424926a0fc84f5d3a6184ffeba6fdb1c
     }
 
     @Override

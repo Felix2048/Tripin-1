@@ -9,11 +9,11 @@ import com.android.tripin.base.BaseFragment;
  * Description:
  */
 
-public class MapFragment extends BaseFragment {
+public class InvitationFragment extends BaseFragment {
 
-    private final static String TAG = MapFragment.class.getSimpleName();
+    private final static String TAG = InvitationFragment.class.getSimpleName();
 
-    private final static String TITLE = "Map";
+    private final static String TITLE = "Share";
 
     public static String getTitle() {
         return TITLE;
@@ -23,7 +23,7 @@ public class MapFragment extends BaseFragment {
      * onCreateView
      */
     @Override
-    protected View onCreateView() {
+    public View onCreateView() {
         return null;
     }
 

@@ -1,5 +1,7 @@
 package com.android.tripin.base;
 
+import android.view.View;
+
 import com.android.tripin.base.arch.QMUIFragment;
 import com.qmuiteam.qmui.util.QMUIDisplayHelper;
 
@@ -17,5 +19,8 @@ public abstract class BaseFragment extends QMUIFragment {
     protected int backViewInitOffset() {
         return QMUIDisplayHelper.dp2px(getContext(), 100);
     }
+
+    @Override
+    public View onCreateView() { return null; }
 
 }

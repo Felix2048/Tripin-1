@@ -1,11 +1,17 @@
-package com.android.tripin.activity;
+package com.android.tripin;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
-import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.base.BaseFragment;
-import com.android.tripin.fragment.home.HomeFragment;
+import com.android.tripin.fragment.map.MapFragment;
+import com.baidu.mapapi.SDKInitializer;
 
 /**
  * Created by Felix on 6/8/2018.
@@ -15,6 +21,8 @@ import com.android.tripin.fragment.home.HomeFragment;
 
 public class MainActivity extends BaseActivity {
 
+    private final static String TAG = MainActivity.class.getSimpleName();
+
     @Override
     protected int getContextViewId() {
         return R.id.tripin;
@@ -23,8 +31,9 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (savedInstanceState == null) {
-            BaseFragment fragment = new HomeFragment();
+            BaseFragment fragment = new MapFragment();
 
             getSupportFragmentManager()
                     .beginTransaction()
@@ -33,4 +42,5 @@ public class MainActivity extends BaseActivity {
                     .commit();
         }
     }
+
 }

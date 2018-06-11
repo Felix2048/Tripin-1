@@ -555,7 +555,7 @@ public abstract class QMUIFragment extends Fragment {
      * onCreateView
      */
     protected abstract View onCreateView();
-
+    
     /**
      * Will be performed in onStart
      *
