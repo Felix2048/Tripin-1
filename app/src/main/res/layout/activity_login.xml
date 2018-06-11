@@ -14,11 +14,7 @@
         android:layout_gravity="right"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-<<<<<<< HEAD
         android:id="@+id/login_without_password"/>
-=======
-        android:id="@+id/login_with_phone" />
->>>>>>> e13add7e62ad12cb3965d27113c02e6f88362abd
 
     <EditText
         android:id="@+id/login_user_name"

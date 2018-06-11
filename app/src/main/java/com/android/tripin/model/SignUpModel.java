@@ -13,6 +13,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.android.tripin.model.LoginModel.JSON;
+import static com.android.tripin.util.ParserJsonToDataUtil.getLoginResponseMessage;
 
 
 public class SignUpModel implements ISignUpModel {
@@ -51,4 +52,5 @@ public class SignUpModel implements ISignUpModel {
             }
         });
     }
+    
 }
