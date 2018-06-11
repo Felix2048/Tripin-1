@@ -6,8 +6,14 @@ package com.android.tripin.manager;
  */
 public class DataManager {
 
+    private static String PlanName;
+
+    public static void setPlanName(String planName) {
+        PlanName = planName;
+    }
+
     public static String getPlanName() {
-        return "Plan Name";
+        return PlanName;
     }
 
 }

@@ -1,14 +1,13 @@
 package com.android.tripin.model;
 
 import com.android.tripin.callback.LoginCallback;
+import com.android.tripin.model.interfaces.ILoginModel;
 import com.android.tripin.util.OkHttp3Util;
-import com.android.tripin.util.ParserJsonToDataUtil;
 
 import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -27,8 +26,7 @@ public class LoginModel implements ILoginModel {
 
     /**
      * 发送HTTP登陆请求，通过回调接口处理返回结果
-     * @param account
-     * @param password
+     * @param loginJson
      * @param loginCallback
      */
     @Override

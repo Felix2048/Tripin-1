@@ -1,4 +1,4 @@
-package com.android.tripin.model;
+package com.android.tripin.model.interfaces;
 
 import com.android.tripin.callback.LoginCallback;
 

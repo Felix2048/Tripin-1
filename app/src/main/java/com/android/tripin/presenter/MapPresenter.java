@@ -1,7 +1,6 @@
-package com.android.tripin.fragment.map;
+package com.android.tripin.presenter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -12,9 +11,7 @@ import com.android.tripin.R;
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.model.LatLng;
 
 import java.util.Objects;
 
@@ -23,8 +20,8 @@ import java.util.Objects;
  * Created by Felix on 6/11/2018.
  * Description: MapFragment的Controller
  */
-public class MapController {
-    private final static String TAG = MapController.class.getSimpleName();
+public class MapPresenter {
+    private final static String TAG = MapPresenter.class.getSimpleName();
 
     private MapView mMapView;
     private BaiduMap mBaiduMap;
@@ -42,8 +39,8 @@ public class MapController {
      * @param container
      * @param savedInstanceState
      */
-    MapController(@NonNull LayoutInflater inflater, ViewGroup container,
-                  Bundle savedInstanceState, Activity activity) {
+    public MapPresenter(@NonNull LayoutInflater inflater, ViewGroup container,
+                 Bundle savedInstanceState, Activity activity) {
         mActivity = activity;
         // 在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
         SDKInitializer.initialize(Objects.requireNonNull(mActivity).getApplicationContext());

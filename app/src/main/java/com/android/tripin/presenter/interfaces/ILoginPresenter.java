@@ -1,4 +1,4 @@
-package com.android.tripin.presenter;
+package com.android.tripin.presenter.interfaces;
 
 public interface ILoginPresenter {
 

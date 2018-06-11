@@ -6,9 +6,10 @@ import com.android.tripin.activity.SignUpActivity;
 import com.android.tripin.callback.LoginCallback;
 import com.android.tripin.model.LoginModel;
 import com.android.tripin.activity.LoginActivity;
+import com.android.tripin.presenter.interfaces.ILoginPresenter;
 import com.android.tripin.util.ChangeDataToJsonUtil;
 
-public class LoginPresenter implements ILoginPresenter{
+public class LoginPresenter implements ILoginPresenter {
 
     private LoginModel loginModel;
     private LoginActivity loginActivity;
