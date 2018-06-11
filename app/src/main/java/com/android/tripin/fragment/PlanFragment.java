@@ -23,7 +23,7 @@ public class PlanFragment extends BaseFragment {
      * onCreateView
      */
     @Override
-    protected View onCreateView() {
+    public View onCreateView() {
         return null;
     }
 

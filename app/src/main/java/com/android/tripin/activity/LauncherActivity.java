@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.android.tripin.MainActivity;
+
 /**
  * @author cginechen
  * @date 2016-12-08

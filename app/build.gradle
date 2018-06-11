@@ -11,8 +11,44 @@ configurations.all {
     }
 }
 
+repositories {
+    flatDir {
+        dir 'libs'
+    }
+}
+
 android {
     compileSdkVersion 27
+    buildToolsVersion '27.0.3'
+
+    signingConfigs {
+        // your debug keystore
+        debug {
+            storeFile file('tripin.jks')
+            keyAlias 'tripin'
+            keyPassword 'tripin'
+            storePassword 'tripin'
+        }
+        config {
+            keyAlias 'tripin'
+            keyPassword 'tripin'
+            storeFile file('tripin.jks')
+            storePassword 'tripin'
+        }
+        release {
+            keyAlias 'tripin'
+            keyPassword 'tripin'
+            storeFile file('tripin.jks')
+            storePassword 'tripin'
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDir 'libs'
+        }
+    }
+
     defaultConfig {
         applicationId "com.android.tripin"
         minSdkVersion 14
@@ -27,7 +63,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    buildToolsVersion '27.0.3'
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

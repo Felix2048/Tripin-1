@@ -26,7 +26,7 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
 
     @Override
     protected int getContextViewId() {
-        return 0;
+        return R.layout.activity_login;
     }
 
     @Override
