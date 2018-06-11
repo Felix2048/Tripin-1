@@ -41,7 +41,7 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
      * 初始化登陆界面布局
      */
     private void initView() {
-        loginButton = (Button) findViewById(R.id.login_button);
+        loginButton = (Button) findViewById(R.id.btn_login_button);
         loginUserNameEditText = (EditText) findViewById(R.id.login_user_name);
         loginPasswordEditText = (EditText)findViewById(R.id.login_password);
         createAccountTextView = (TextView) findViewById(R.id.create_account);
@@ -65,7 +65,7 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.login_button:
+            case R.id.btn_login_button:
                 loginPresenter.login();
                 break;
             case R.id.create_account:
