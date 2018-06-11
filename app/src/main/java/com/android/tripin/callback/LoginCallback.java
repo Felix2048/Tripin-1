@@ -4,6 +4,7 @@ public interface LoginCallback {
     /**
      * 用户登陆成功时调用
      */
+
     void onSuccess();
     /**
      * 用户登陆失败时调用

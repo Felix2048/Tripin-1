@@ -5,6 +5,7 @@ public class User {
     private String password;
     private String phone;
     private String email;
+    private int userID;
 
     /**
      * 此构造方法用于登陆时可能用到的用户名，手机号，密码，提供给ChangeDataToJsonUtil，创建登陆时的json
