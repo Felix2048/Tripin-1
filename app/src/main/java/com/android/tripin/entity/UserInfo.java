@@ -1,6 +1,11 @@
 package com.android.tripin.entity;
 
-public class User {
+import java.io.Serializable;
+
+public class UserInfo implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private String userName;
     private String password;
     private String phone;
@@ -13,7 +18,7 @@ public class User {
      * @param password
      * @param phone
      */
-    public User(String userName, String password, String phone) {
+    public UserInfo(String userName, String password, String phone) {
         this.userName = userName;
         this.password = password;
         this.phone = phone;
@@ -21,7 +26,7 @@ public class User {
 
 
 
-    public User(String userName, String password, String email, String phone) {
+    public UserInfo(String userName, String password, String email, String phone) {
         this.userName = userName;
         this.password = password;
         this.email = email;

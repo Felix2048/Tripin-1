@@ -5,8 +5,7 @@ import com.google.gson.Gson;
 
 public class ParserJsonToDataUtil {
 
-    static Gson gson = new Gson();
-
+    private static Gson gson = new Gson();
 
     public static String getLoginResponseMessage(String loginResponse){
         ResponseMessage responseMessage = gson.fromJson(loginResponse,ResponseMessage.class);
