@@ -43,5 +43,13 @@ public interface ISignUpView {
      * 获取用户输入的验证码信息
      */
     String getVerificationCode();
+    /**
+     * 判断用户输入的验证码是否正确
+     */
+    int onJudgeVerificationCode();
+    /**
+     * 判断用户两次输入密码是否一致
+     */
+    int onJudgePasswordEqual();
 
 }

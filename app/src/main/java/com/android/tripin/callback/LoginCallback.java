@@ -1,6 +1,7 @@
 package com.android.tripin.callback;
 
 public interface LoginCallback {
+    public final static String TAG = LoginCallback.class.getSimpleName();
     /**
      * 用户登陆成功时调用
      */

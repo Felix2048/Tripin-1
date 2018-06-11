@@ -1,6 +1,7 @@
 package com.android.tripin.callback;
 
 public interface SignUpCallback  {
+    public final static String TAG = SignUpCallback.class.getSimpleName();
     /**
      * 用户注册成功时调用
      */

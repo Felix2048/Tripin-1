@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient;
  */
 
 public class OkHttp3Util {
+    private final static String TAG = OkHttp3Util.class.getSimpleName();
     private static OkHttpClient client = new OkHttpClient();
     public static OkHttpClient getClient() {
         return client;

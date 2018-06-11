@@ -17,6 +17,8 @@ import com.android.tripin.view.ILoginView;
 
 public class LoginActivity extends BaseActivity implements ILoginView, View.OnClickListener{
 
+    private final static String TAG = LoginActivity.class.getSimpleName();
+
     private Button loginButton ;
     private EditText loginUserNameEditText;
     private EditText loginPasswordEditText;

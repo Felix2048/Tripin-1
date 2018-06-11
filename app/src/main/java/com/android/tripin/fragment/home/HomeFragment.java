@@ -7,4 +7,5 @@ import com.android.tripin.base.BaseFragment;
  * Description:
  */
 public class HomeFragment extends BaseFragment {
+    private final static String TAG = HomeFragment.class.getSimpleName();
 }

@@ -13,8 +13,8 @@ import com.baidu.mapapi.map.MapView;
  * Description:
  */
 public class MapTestActivity extends BaseActivity {
+    private final static String TAG = MapTestActivity.class.getSimpleName();
     private MapView mMapView;
-
     private BaiduMap bdMap;
 
     @Override

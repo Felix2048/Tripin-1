@@ -12,6 +12,7 @@ import com.android.tripin.MainActivity;
  */
 
 public class LauncherActivity extends Activity {
+    private final static String TAG = LauncherActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

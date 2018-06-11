@@ -12,6 +12,7 @@ import com.squareup.leakcanary.LeakCanary;
  */
 
 public class TripinApplication extends Application {
+    private final static String TAG = TripinApplication.class.getSimpleName();
 
     @SuppressLint("StaticFieldLeak") private static Context context;
 

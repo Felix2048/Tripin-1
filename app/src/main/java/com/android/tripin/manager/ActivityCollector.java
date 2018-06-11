@@ -11,6 +11,7 @@ import java.util.List;
  */
 
 public class ActivityCollector {
+    private final static String TAG = ActivityCollector.class.getSimpleName();
 
     private static List<AppCompatActivity> activities = new ArrayList<>();
 

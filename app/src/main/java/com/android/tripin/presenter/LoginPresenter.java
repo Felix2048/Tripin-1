@@ -10,6 +10,7 @@ import com.android.tripin.presenter.interfaces.ILoginPresenter;
 import com.android.tripin.util.ChangeDataToJsonUtil;
 
 public class LoginPresenter implements ILoginPresenter {
+    private final static String TAG = LoginPresenter.class.getSimpleName();
 
     private LoginModel loginModel;
     private LoginActivity loginActivity;

@@ -21,6 +21,8 @@ public class LoginModel implements ILoginModel {
     /**
      * 获取OkHttp实例
      */
+    private final static String TAG = LoginModel.class.getSimpleName();
+
     public static final MediaType JSON= MediaType.parse("application/json; charset=utf-8");
     public OkHttpClient client = OkHttp3Util.getClient();
 

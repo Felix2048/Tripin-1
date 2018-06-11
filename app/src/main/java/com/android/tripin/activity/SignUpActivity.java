@@ -11,6 +11,7 @@ import com.android.tripin.base.BaseActivity;
 import com.android.tripin.view.ISignUpView;
 
 public class SignUpActivity extends BaseActivity implements ISignUpView{
+    private final static String TAG = SignUpActivity.class.getSimpleName();
 
     private EditText signUpUserName;
     private EditText signUpPassword;
@@ -90,6 +91,25 @@ public class SignUpActivity extends BaseActivity implements ISignUpView{
     @Override
     public String getVerificationCode() {
         return signUpVerificationCode.getText().toString().trim();
+    }
+
+    @Override
+    public int onJudgeVerificationCode() {
+        if(this.getVerificationCode().equals("yanzhengma")) {
+            return 1;
+        }else {
+            return 0;
+        }
+
+    }
+
+    @Override
+    public int onJudgePasswordEqual() {
+        if(this.getVerificationCode().equals("yanzhengma")) {
+            return 1;
+        }else {
+            return 0;
+        }
     }
 
     public String getConfirmPassword() {

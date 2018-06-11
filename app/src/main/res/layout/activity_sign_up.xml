@@ -15,7 +15,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="100dp"
         android:paddingLeft="8dp"
-        android:hint="用户名（不可更改）"/>
+        android:hint="@string/sign_up_user_name"/>
 
     <EditText
         android:id="@+id/sign_up_user_password"
@@ -24,7 +24,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:paddingLeft="8dp"
-        android:hint="密码"
+        android:hint="@string/sign_up_password"
         android:password="true"/>
 
     <EditText
@@ -33,7 +33,7 @@
         android:layout_height="48dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:hint="确认密码"
+        android:hint="@string/sign_up_confirm_password"
         android:paddingLeft="8dp"
         android:password="true"/>
     <EditText
@@ -42,7 +42,7 @@
         android:layout_height="48dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-        android:hint="手机号码"
+        android:hint="@string/sign_up_phone"
         android:paddingLeft="8dp"
         android:password="true"/>
 
@@ -66,7 +66,7 @@
             android:layout_height="38dp"
             android:background="@drawable/shape"
             android:id="@+id/btn_send_verification_code"
-            android:text="发送验证码"
+            android:text="@string/sign_up_hint_send_verification_code"
             android:textColor="@color/white" />
 
     </LinearLayout>
@@ -75,10 +75,10 @@
     <Button
         android:id="@+id/btn_sign_up_button"
         android:layout_width="180dp"
-        android:layout_height="60dp"
+        android:layout_height="48dp"
         android:layout_gravity="center"
         android:background="@drawable/shape"
-        android:text="注册"
+        android:text="@string/sign_up_button"
         android:textColor="@color/white"
         android:textSize="20dp"
         android:layout_marginTop="20dp"/>
