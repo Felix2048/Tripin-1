@@ -33,6 +33,7 @@
     <string name="sign_up_wrong_verification_code">其他方式登陆</string>
     <string name="sign_up_password_mispatch">其他方式登陆</string>
     <string name="return_to_current_location">返回当前位置</string>
+    <string name="return_to_pin_in_plan">返回到当前计划下的第一个Pin</string>
 
 
 </resources>

@@ -26,6 +26,16 @@
         android:contentDescription="@string/return_to_current_location"
         tools:ignore="RtlHardcoded" />
 
+    <ImageButton
+        android:id="@+id/ib_get_back_to_pin_in_plan"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_above="@id/ib_location"
+        android:layout_alignStart="@id/ib_location"
+        android:background="@drawable/ic_plane"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="@string/return_to_pin_in_plan" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
