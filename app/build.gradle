@@ -87,4 +87,6 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     api 'com.squareup.okhttp3:okhttp:3.10.0'
     api 'com.google.code.gson:gson:2.8.0'
+    compile 'org.litepal.android:core:2.0.0'
+
 }

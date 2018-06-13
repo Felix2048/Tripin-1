@@ -83,8 +83,8 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
      * @param msg
      */
     @Override
-    public void showLoding(String msg) {
-        progressDialog.setMessage(msg);
+    public void showLoding(int msg) {
+        progressDialog.setMessage(getString(msg));
         if (!progressDialog.isShowing()){
             progressDialog.show();
         }
@@ -105,7 +105,7 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
      * @param result
      */
     @Override
-    public void showResult(String result) {
+    public void showResult(int result) {
         Toast.makeText(this,result,Toast.LENGTH_SHORT).show();
     }
 
@@ -114,7 +114,7 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
      * @param err
      */
     @Override
-    public void showError(String err) {
+    public void showError(int err) {
         Toast.makeText(this,err,Toast.LENGTH_SHORT).show();
     }
 

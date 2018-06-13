@@ -1,6 +1,7 @@
 package com.android.tripin.util;
 
 import com.android.tripin.activity.LoginActivity;
+import com.android.tripin.activity.SignUpActivity;
 import com.android.tripin.entity.UserInfo;
 import com.google.gson.Gson;
 
@@ -9,13 +10,32 @@ public  class ChangeDataToJsonUtil {
 
     private static Gson gson = new Gson();
     LoginActivity loginActivity= new LoginActivity();
+    SignUpActivity signUpActivity = new SignUpActivity();
 
-    public static String GetLoginRequestJson(String userName,String password) {
+    /**
+     * 将用户输入的用户名密码，转化成JSON数据，其中userName使用两次，第一次用于匹配userName，第二次用于匹配手机号
+     * @param userName
+     * @param password
+     * @return
+     */
+    public static String getLoginRequestJson(String userName, String password) {
         UserInfo userInfo = new UserInfo(userName,password,userName);
         String jsonLogin = gson.toJson(userInfo);
         return jsonLogin;
     }
 
+    /**
+     * 将用户输入的用户名，密码，手机号转化成JSON数据，供注册使用
+     * @param userName
+     * @param password
+     * @param phone
+     * @return
+     */
+    public static String getSignUpRequestJson(String userName,String password,String phone) {
+        UserInfo userInfo = new UserInfo(userName,password,phone);
+        String jsonSignUp = gson.toJson(userInfo);
+        return  jsonSignUp;
+    }
 
 
 }

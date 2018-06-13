@@ -26,4 +26,12 @@ public interface SignUpCallback  {
      * 网络请求失败时调用
      */
     void onConnectFailed();
+    /**
+     * 获取验证码成功时调用
+     */
+    void getVerificationCodeSuccess(String verificationResponse);
+    /**
+     * 获取验证码失败时调用
+     */
+    void getVerificationCodeFailed();
 }

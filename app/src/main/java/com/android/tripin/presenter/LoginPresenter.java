@@ -2,6 +2,7 @@ package com.android.tripin.presenter;
 
 import android.content.Intent;
 
+import com.android.tripin.R;
 import com.android.tripin.activity.SignUpActivity;
 import com.android.tripin.callback.LoginCallback;
 import com.android.tripin.model.LoginModel;
@@ -23,11 +24,15 @@ public class LoginPresenter implements ILoginPresenter {
     /**
      * 获取用户名，密码，将数据转化成loginJson
      */
-    String loginJson = ChangeDataToJsonUtil.GetLoginRequestJson(loginActivity.getUserName(),loginActivity.getPassword());
+    String loginJson = ChangeDataToJsonUtil.getLoginRequestJson(loginActivity.getUserName(),loginActivity.getPassword());
 
+
+    /**
+     * 登陆
+     */
     @Override
     public void login() {
-        loginActivity.showLoding("登陆中...");
+        loginActivity.showLoding(R.string.login_ing);
         /**
          * 传入loginJson,处理返回结果
          */
@@ -35,7 +40,7 @@ public class LoginPresenter implements ILoginPresenter {
             @Override
             public void onSuccess() {
                 loginActivity.hideLoding();
-                loginActivity.showResult("登陆成功");
+                loginActivity.showResult(R.string.login_success);
                 /**
                  * 登陆成功还应该创建一个Intent，跳转至个人资料界面或者是主界面
                  */
@@ -44,19 +49,19 @@ public class LoginPresenter implements ILoginPresenter {
             @Override
             public void onFailure() {
                 loginActivity.hideLoding();
-                loginActivity.showError("登陆失败");
+                loginActivity.showError(R.string.login_failed);
             }
 
             @Override
             public void onAccountBanned() {
                 loginActivity.hideLoding();
-                loginActivity.showError("账户被禁用");
+                loginActivity.showError(R.string.login_account_banned);
             }
 
             @Override
             public void onConnectFailed() {
                 loginActivity.hideLoding();
-                loginActivity.showError("登陆失败，网络连接错误");
+                loginActivity.showError(R.string.login_network_error);
             }
         });
     }

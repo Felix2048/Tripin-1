@@ -9,5 +9,5 @@ public interface ISignUpModel {
      * 点击注册
      */
     public void signUp(String signUpJson,SignUpCallback signUpCallback);
-    public void sendVerificationCode(String sendVerificationCodeJson,SignUpCallback signUpCallback);
+    public void sendVerificationCode(SignUpCallback signUpCallback);
 }

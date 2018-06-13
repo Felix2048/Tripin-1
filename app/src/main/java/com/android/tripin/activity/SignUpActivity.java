@@ -2,15 +2,18 @@ package com.android.tripin.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
+import com.android.tripin.model.SignUpModel;
+import com.android.tripin.presenter.SignUpPresenter;
 import com.android.tripin.view.ISignUpView;
 
-public class SignUpActivity extends BaseActivity implements ISignUpView{
+public class SignUpActivity extends BaseActivity implements ISignUpView, View.OnClickListener{
     private final static String TAG = SignUpActivity.class.getSimpleName();
 
     private EditText signUpUserName;
@@ -21,6 +24,7 @@ public class SignUpActivity extends BaseActivity implements ISignUpView{
     private Button btnSendVerificationCode;
     private Button btnSignUp;
     private ProgressDialog progressDialog;
+    private SignUpPresenter signUpPresenter;
 
     /**
      * 初始化注册界面布局
@@ -35,6 +39,35 @@ public class SignUpActivity extends BaseActivity implements ISignUpView{
         btnSendVerificationCode = (Button) findViewById(R.id.btn_send_verification_code);
         btnSignUp = (Button) findViewById(R.id.btn_sign_up_button);
         progressDialog = new ProgressDialog(this);
+        btnSignUp.setOnClickListener(this);
+        btnSendVerificationCode.setOnClickListener(this);
+
+    }
+
+    /**
+     * 获取signUpPresenter实例
+     * @return
+     */
+    public SignUpPresenter getSignUpPresenter() {
+        return new SignUpPresenter(this,new SignUpModel());
+    }
+
+    /**
+     * 实现注册界面点击事件
+     * @param v
+     */
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_sign_up_button :
+                signUpPresenter.signUp();
+                break;
+            case R.id.btn_send_verification_code:
+                signUpPresenter.sendVerificationCode();
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -46,11 +79,13 @@ public class SignUpActivity extends BaseActivity implements ISignUpView{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        init();
+        signUpPresenter = getSignUpPresenter();
     }
 
     @Override
-    public void showLoding(String msg) {
-        progressDialog.setMessage(msg);
+    public void showLoding(int msg) {
+        progressDialog.setMessage(getString(msg));
         if (!progressDialog.isShowing()){
             progressDialog.show();
         }
@@ -64,12 +99,12 @@ public class SignUpActivity extends BaseActivity implements ISignUpView{
     }
 
     @Override
-    public void showResult(String result) {
+    public void showResult(int result) {
         Toast.makeText(this,result,Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void showError(String err) {
+    public void showError(int err) {
         Toast.makeText(this,err,Toast.LENGTH_SHORT).show();
     }
 
@@ -93,6 +128,10 @@ public class SignUpActivity extends BaseActivity implements ISignUpView{
         return signUpVerificationCode.getText().toString().trim();
     }
 
+    /**
+     * 以下两个判断尚未确定逻辑
+     * @return
+     */
     @Override
     public int onJudgeVerificationCode() {
         if(this.getVerificationCode().equals("yanzhengma")) {
@@ -115,4 +154,13 @@ public class SignUpActivity extends BaseActivity implements ISignUpView{
     public String getConfirmPassword() {
         return signUpConfirmPassword.getText().toString().trim();
     }
+
+    @Override
+    protected void onDestroy() {
+        if (signUpPresenter!= null) {
+            signUpPresenter = null;
+        }
+        super.onDestroy();
+    }
+
 }

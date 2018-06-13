@@ -10,6 +10,7 @@ import java.util.Date;
  * Description:
  */
 public class Pin implements Serializable {
+    public final static String TAG = Pin.class.getSimpleName();
 
     private static final long serialVersionUID = 1L;
 

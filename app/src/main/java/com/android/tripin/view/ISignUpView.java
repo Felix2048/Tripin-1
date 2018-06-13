@@ -4,7 +4,7 @@ public interface ISignUpView {
     /**
      * 显示注册进度条
      */
-    void showLoding(String msg);
+    void showLoding(int msg);
 
     /**
      * 隐藏注册进度条
@@ -15,13 +15,13 @@ public interface ISignUpView {
      * 显示注册结果
      * @param result
      */
-    void showResult(String result);
+    void showResult(int result);
 
     /**
      * 显示错误内容
      * @param err
      */
-    void showError(String err);
+    void showError(int err);
 
     /**
      * 获取登陆界面用户名
