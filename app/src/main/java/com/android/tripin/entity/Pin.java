@@ -34,9 +34,11 @@ public class Pin implements Serializable {
     private String pinNotes;
 
     public Pin() {
+        this.pinID = -1;
     }
 
     public Pin(int planID, double pinLatitude, double pinLongitude, String pinTitle, Date pinArrival, Date pinDeparture, PinStatus pinStatus, String pinNotes) {
+        this.pinID = -1;
         this.planID = planID;
         this.pinLatitude = pinLatitude;
         this.pinLongitude = pinLongitude;

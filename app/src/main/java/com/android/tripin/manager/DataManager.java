@@ -11,8 +11,17 @@ public class DataManager implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-
     private static String PlanName;
+
+    public static int getPlanID() {
+        return planID;
+    }
+
+    public static void setPlanID(int planID) {
+        DataManager.planID = planID;
+    }
+
+    private static int planID = 1;
 
     public static void setPlanName(String planName) {
         PlanName = planName;
