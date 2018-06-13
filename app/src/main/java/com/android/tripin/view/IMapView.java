@@ -1,5 +1,7 @@
 package com.android.tripin.view;
 
+import com.android.tripin.entity.Pin;
+
 /**
  * Created by Felix on 6/11/2018.
  * Description:
@@ -12,9 +14,15 @@ public interface IMapView {
     void showTrip();
 
     /**
-     * 向地图中添加一个Pin
+     *  返回单前计划中的第一个Pin
      */
-    void addPin();
+    void getBackToPinInPlan();
+
+    /**
+     * 向地图中添加一个Pin
+     * @param pin 需要添加的Pin
+     */
+    void addPin(Pin pin);
 
     /**
      * 将地图中的Pin移除
