@@ -38,7 +38,7 @@
 
 
     <string name="return_to_current_location">返回当前位置</string>
-    <string name="return_to_pin_in_plan">返回到当前计划下的第一个Pin</string>
+    <string name="return_to_pin_in_plan">返回到当前的Pin</string>
 
 
 </resources>

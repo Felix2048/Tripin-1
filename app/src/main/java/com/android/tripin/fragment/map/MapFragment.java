@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
@@ -49,7 +50,9 @@ import com.baidu.mapapi.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -69,19 +72,25 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     private double zoomLevel;
     //  按钮
     private ImageButton ib_location;
-    private ImageButton ib_get_back_to_pin_in_plan;
+    private ImageButton ib_get_back_to_current_pin;
+    private ImageButton ib_previous_pin;
+    private ImageButton ib_next_pin;
+    private ImageButton ib_add_pin;
     //  定位相关
     private LocationClient mLocationClient;
     private MyLocationListener mLocationListener;
-    private boolean isFirstLocation = true; //  是否第一次定位，如果是第一次定位的话要将自己的位置显示在地图 中间
+    private boolean isFirstLocation = false; //  是否第一次定位，如果是第一次定位的话要将自己的位置显示在地图 中间
     //  构建Marker图标
     BitmapDescriptor bitmapDescriptor;
+    
+    private int currentPinIndex;    //  当前pin的order
 
     private View mView;
     private RelativeLayout pin_info;    //  显示Pin的信息
     private MapPresenter mapPresenter;
 
-    List<Pin> pinList = new ArrayList<Pin>();
+    List<Pin> pinList = new ArrayList<>();
+    Map<Pin, Marker> pinMarkerMap = new HashMap<>();
 
 
     /**
@@ -92,8 +101,10 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         public void onReceiveLocation(BDLocation location) {
             if (null != location && null != mMapView) {
                 int errorCode = location.getLocType();
-                showInfo(String.valueOf(errorCode));
-                showInfo(location.getLocTypeDescription());
+
+//                showInfo(String.valueOf(errorCode));
+//                showInfo(location.getLocTypeDescription());
+
                 //将获取的location信息给百度map
                 MyLocationData data = new MyLocationData.Builder()
                         .accuracy(location.getRadius())
@@ -134,19 +145,21 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         //  包括BD09LL和GCJ02两种坐标，默认是BD09LL坐标。
         SDKInitializer.setCoordType(CoordType.BD09LL);
         mView = inflater.inflate(R.layout.fragment_map, container, false);
-        //初始化控件
+        //  初始化控件
         initView();
-        //初始化地图
+        //  初始化地图
         initMapView();
-        //定位
+        //  定位
         initLocation();
 
+        //  加载pinList
         pinList.add(new Pin(0, 39.914935, 116.403119, "天安门",
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第1个pin"));
         pinList.add(new Pin(1, 31.24166, 121.48612,  "外滩",
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第2个pin"));
 
-//        showTrip();
+        //  将PinList显示在地图上
+        showTrip();
 
         return mView;
     }
@@ -154,10 +167,17 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     private void initView() {
         pin_info = (RelativeLayout) mView.findViewById(R.id.pin_info);
         ib_location = (ImageButton) mView.findViewById(R.id.ib_location);
-        ib_get_back_to_pin_in_plan = (ImageButton) mView.findViewById(R.id.ib_get_back_to_pin_in_plan);
+        ib_get_back_to_current_pin = (ImageButton) mView.findViewById(R.id.ib_get_back_to_current_pin);
+        ib_previous_pin = (ImageButton) mView.findViewById(R.id.ib_previous_pin);
+        ib_next_pin = (ImageButton) mView.findViewById(R.id.ib_next_pin);
+        ib_add_pin = (ImageButton) mView.findViewById(R.id.ib_add_pin);
+
 
         ib_location.setOnClickListener(this);
-        ib_get_back_to_pin_in_plan.setOnClickListener(this);
+        ib_get_back_to_current_pin.setOnClickListener(this);
+        ib_previous_pin.setOnClickListener(this);
+        ib_next_pin.setOnClickListener(this);
+        ib_add_pin.setOnClickListener(this);
 
         bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.ic_pin);
 
@@ -224,35 +244,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                //  从marker中获取info信息
-                Bundle bundle = marker.getExtraInfo();
-                Pin pin = (Pin) bundle.getSerializable("pin");
-                //  将信息显示在界面上
-                TextView pin_title = (TextView)pin_info.findViewById(R.id.pin_title);
-                pin_title.setText(pin.getPinTitle());
-                TextView pin_notes = (TextView)pin_info.findViewById(R.id.pin_notes);
-                pin_notes.setText(pin.getPinNotes());
-
-
-                //  infowindow中的布局
-                TextView tv = new TextView(getContext());
-                tv.setBackgroundResource(R.drawable.common_bg_with_radius_and_border);
-                tv.setPadding(20, 10, 20, 20);
-                tv.setTextColor(android.graphics.Color.WHITE);
-                tv.setText(pin.getPinTitle());
-                tv.setGravity(Gravity.CENTER);
-                bitmapDescriptor = BitmapDescriptorFactory.fromView(tv);
-               //  infowindow点击事件
-                InfoWindow.OnInfoWindowClickListener listener = new InfoWindow.OnInfoWindowClickListener() {
-                    @Override
-                    public void onInfoWindowClick() {
-                        //  将布局显示出来
-                        pin_info.setVisibility(View.VISIBLE);
-                    }
-                };
-                //显示infowindow
-                InfoWindow infoWindow = new InfoWindow(bitmapDescriptor, new LatLng(pin.getPinLatitude(), pin.getPinLongitude()), -47, listener);
-                mBaiduMap.showInfoWindow(infoWindow);
+                selectPin(marker);
                 return true;
             }
         });
@@ -263,8 +255,6 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             public void onMapClick(LatLng latLng) {
                 //  点击地图时隐藏pin的信
                 pin_info.setVisibility(View.GONE);
-                //  隐藏infowindow
-                mBaiduMap.hideInfoWindow();
             }
 
             @Override
@@ -303,12 +293,15 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         switch (v.getId()) {
             case R.id.ib_location:
                 isFirstLocation = true;
-                showInfo("返回自己位置");
                 break;
-            case R.id.ib_get_back_to_pin_in_plan:
-                showTrip();
-                getBackToPinInPlan();
-                showInfo("返回计划的位置");
+            case R.id.ib_get_back_to_current_pin:
+                getBackToCurrentPin();
+                break;
+            case R.id.ib_next_pin:
+                getToNextPin();
+                break;
+            case R.id.ib_previous_pin:
+                getToPreviousPin();
                 break;
             default:
                 break;
@@ -359,7 +352,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
      * 将当前地图移动到latLng的位置
      * @param latLng 要移动的点位置
      */
-    void moveToLocationInMap(LatLng latLng) {
+    private void moveToLocationInMap(LatLng latLng) {
         MapStatusUpdate status = MapStatusUpdateFactory.newLatLng(latLng);
         //mBaiduMap.setMapStatus(status);//直接到中间
         mBaiduMap.animateMapStatus(status);//动画的方式到中间
@@ -367,25 +360,100 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     }
 
     /**
+     * 选中标记Pin覆盖物，显示infoWindow，点击infoWindow显示PinInfoView
+     * @param pin 被选中的Pin
+     */
+    private void selectPin(Pin pin) {
+        selectPin(pinMarkerMap.get(pin));
+    }
+
+    /**
+     * 选中标记Pin覆盖物，显示infoWindow，点击infoWindow显示PinInfoView
+     * @param marker 被选中的标记覆盖物
+     */
+    private void selectPin(Marker marker) {
+        //  隐藏infowindow
+        mBaiduMap.hideInfoWindow();
+        //  从marker中获取info信息
+        Bundle bundle = marker.getExtraInfo();
+        Pin pin = (Pin) bundle.getSerializable("pin");
+        //  将信息显示在界面上
+        TextView pin_title = (TextView)pin_info.findViewById(R.id.pin_title);
+        pin_title.setText(pin.getPinTitle());
+        TextView pin_notes = (TextView)pin_info.findViewById(R.id.pin_notes);
+        pin_notes.setText(pin.getPinNotes());
+        //  加载infowindow中的布局
+        TextView textView = new TextView(getContext());
+        textView.setBackgroundResource(R.drawable.common_bg_with_radius_and_border);
+        textView.setPadding(20, 10, 20, 20);
+        textView.setTextColor(Color.BLACK);
+        textView.setText(pin.getPinTitle());
+        textView.setGravity(Gravity.CENTER);
+        BitmapDescriptor infoWindowView = BitmapDescriptorFactory.fromView(textView);
+        //  infowindow点击事件
+        InfoWindow.OnInfoWindowClickListener listener = new InfoWindow.OnInfoWindowClickListener() {
+            @Override
+            public void onInfoWindowClick() {
+                //  将布局显示出来
+                pin_info.setVisibility(View.VISIBLE);
+            }
+        };
+        //  显示infowindow
+        InfoWindow infoWindow = new InfoWindow(infoWindowView, new LatLng(pin.getPinLatitude(), pin.getPinLongitude()), -100, listener);
+        mBaiduMap.showInfoWindow(infoWindow);
+    }
+
+
+    /**
+     * 返回当前的Pin的位置
+     */
+    public void getBackToCurrentPin() {
+        if(null != pinList && !pinList.isEmpty() && currentPinIndex >= 0 && currentPinIndex < pinList.size()) {
+            Pin pin = pinList.get(currentPinIndex);
+            moveToLocationInMap(new LatLng(pin.getPinLatitude(), pin.getPinLongitude()));
+            selectPin(pin);
+        }
+    }
+
+    /**
+     * 返回当前的Pin的位置
+     */
+    public void getToNextPin() {
+        if(currentPinIndex == pinList.size() - 1) {
+            currentPinIndex = 0;
+        }
+        else {
+            currentPinIndex++;
+        }
+        getBackToCurrentPin();
+    }
+
+
+    /**
+     * 返回当前的Pin的位置
+     */
+    public void getToPreviousPin() {
+        if (currentPinIndex == 0) {
+            currentPinIndex = pinList.size() - 1;
+        }
+        else {
+            currentPinIndex--;
+        }
+        getBackToCurrentPin();
+    }
+    /**
      * 显示当前Plan下的所有pin和route
      */
     @Override
     public void showTrip() {
+        //  清空地图
+        mBaiduMap.clear();
         for (Pin pin : pinList) {
             addPin(pin);
         }
-//        getBackToPinInPlan();
-    }
-
-    /**
-     * 返回单前计划中的第一个Pin
-     */
-    @Override
-    public void getBackToPinInPlan() {
-        if(null != pinList && !pinList.isEmpty()) {
-            Pin pin = pinList.get(0);
-            moveToLocationInMap(new LatLng(pin.getPinLatitude(), pin.getPinLongitude()));
-        }
+        //  初始化currentPinIndex为0
+        currentPinIndex = 0;
+        getBackToCurrentPin();
     }
 
     /**
@@ -407,6 +475,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         //info必须实现序列化接口
         bundle.putSerializable("pin", pin);
         marker.setExtraInfo(bundle);
+        pinMarkerMap.put(pin, marker);
     }
 
     /**

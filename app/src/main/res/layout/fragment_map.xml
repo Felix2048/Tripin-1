@@ -27,7 +27,7 @@
         tools:ignore="RtlHardcoded" />
 
     <ImageButton
-        android:id="@+id/ib_get_back_to_pin_in_plan"
+        android:id="@+id/ib_get_back_to_current_pin"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_above="@id/ib_location"

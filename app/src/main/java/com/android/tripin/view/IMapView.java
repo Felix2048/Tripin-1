@@ -14,11 +14,6 @@ public interface IMapView {
     void showTrip();
 
     /**
-     *  返回单前计划中的第一个Pin
-     */
-    void getBackToPinInPlan();
-
-    /**
      * 向地图中添加一个Pin
      * @param pin 需要添加的Pin
      */
