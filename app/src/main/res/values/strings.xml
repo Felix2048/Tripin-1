@@ -39,6 +39,8 @@
 
     <string name="return_to_current_location">返回当前位置</string>
     <string name="return_to_pin_in_plan">返回到当前的Pin</string>
+    <string name="add_pin_to_plan">在地图上为当前计划添加一个Pin</string>
+    <string name="confirm_add_pin_to_plan">确认添加Pin</string>
 
 
 </resources>

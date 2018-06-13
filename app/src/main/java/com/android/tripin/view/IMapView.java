@@ -15,9 +15,13 @@ public interface IMapView {
 
     /**
      * 向地图中添加一个Pin
-     * @param pin 需要添加的Pin
      */
-    void addPin(Pin pin);
+    void addPin();
+
+    /**
+     * 确认向地图中添加一个Pin
+     */
+    void confirmPin();
 
     /**
      * 将地图中的Pin移除

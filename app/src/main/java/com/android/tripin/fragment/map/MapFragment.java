@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.tripin.MainActivity;
 import com.android.tripin.R;
 import com.android.tripin.base.BaseFragment;
 import com.android.tripin.entity.Pin;
@@ -47,6 +48,11 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,14 +82,17 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     private ImageButton ib_previous_pin;
     private ImageButton ib_next_pin;
     private ImageButton ib_add_pin;
+    private ImageButton ib_add_pin_confirm;
     //  定位相关
     private LocationClient mLocationClient;
     private MyLocationListener mLocationListener;
     private boolean isFirstLocation = false; //  是否第一次定位，如果是第一次定位的话要将自己的位置显示在地图 中间
     //  构建Marker图标
     BitmapDescriptor bitmapDescriptor;
-    
-    private int currentPinIndex;    //  当前pin的order
+    //  地址编码与逆地址编码
+    GeoCoder geoCoder;
+
+    private int currentPinIndex;    //  当前pin的index
 
     private View mView;
     private RelativeLayout pin_info;    //  显示Pin的信息
@@ -126,6 +135,34 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     }
 
     /**
+     *  自定义的GeoCoderResult监听
+     */
+    private class MyOnGetGeoCoderResultListener implements OnGetGeoCoderResultListener {
+        // 反地理编码查询结果回调函数
+        @Override
+        public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
+            if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+                // 没有检测到结果
+                showInfo("抱歉，未能找到结果");
+            }
+            else {
+                showInfo("位置：" + result.getAddress());
+            }
+        }
+        // 地理编码查询结果回调函数
+        @Override
+        public void onGetGeoCodeResult(GeoCodeResult result) {
+            if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
+                // 没有检测到结果
+                showInfo("抱歉，未能找到结果");
+            }
+            else {
+                showInfo("位置：" + result.getLocation().toString());
+            }
+        }
+    };
+
+    /**
      * 显示消息
      * @param str 需要显示的Toast的字符串
      */
@@ -165,19 +202,24 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     }
 
     private void initView() {
+        //  载入控件
         pin_info = (RelativeLayout) mView.findViewById(R.id.pin_info);
         ib_location = (ImageButton) mView.findViewById(R.id.ib_location);
         ib_get_back_to_current_pin = (ImageButton) mView.findViewById(R.id.ib_get_back_to_current_pin);
         ib_previous_pin = (ImageButton) mView.findViewById(R.id.ib_previous_pin);
         ib_next_pin = (ImageButton) mView.findViewById(R.id.ib_next_pin);
         ib_add_pin = (ImageButton) mView.findViewById(R.id.ib_add_pin);
-
-
+        ib_add_pin_confirm = (ImageButton) mView.findViewById(R.id.ib_add_pin_confirm);
+        //  添加点击事件Listener
         ib_location.setOnClickListener(this);
         ib_get_back_to_current_pin.setOnClickListener(this);
         ib_previous_pin.setOnClickListener(this);
         ib_next_pin.setOnClickListener(this);
         ib_add_pin.setOnClickListener(this);
+        ib_add_pin_confirm.setOnClickListener(this);
+        //   设置可见性
+        ib_add_pin.setVisibility(View.VISIBLE);
+        ib_add_pin_confirm.setVisibility(View.INVISIBLE);
 
         bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.ic_pin);
 
@@ -186,7 +228,10 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     public void initMapView() {
         mMapView = mView.findViewById(R.id.bmapView);
         mBaiduMap = mMapView.getMap();
+        geoCoder = GeoCoder.newInstance();
 
+        //  为GeoCoder添加Listener
+        geoCoder.setOnGetGeoCodeResultListener(new MyOnGetGeoCoderResultListener());
         //  显示交通状况
         mBaiduMap.setTrafficEnabled(true);
         //  实例化UiSettings类对象
@@ -303,6 +348,15 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             case R.id.ib_previous_pin:
                 getToPreviousPin();
                 break;
+            case R.id.ib_add_pin:
+                ib_add_pin.setVisibility(View.INVISIBLE);
+                ib_add_pin_confirm.setVisibility(View.VISIBLE);
+                addPin();
+                break;
+            case R.id.ib_add_pin_confirm:
+                ib_add_pin.setVisibility(View.VISIBLE);
+                ib_add_pin_confirm.setVisibility(View.INVISIBLE);
+                confirmPin();
             default:
                 break;
         }
@@ -346,6 +400,8 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         super.onDestroy();
         //在Fragment执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
         mMapView.onDestroy();
+        // 释放地理编码检索实例
+         geoCoder.destroy();
     }
 
     /**
@@ -389,6 +445,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         textView.setTextColor(Color.BLACK);
         textView.setText(pin.getPinTitle());
         textView.setGravity(Gravity.CENTER);
+        textView.setElevation(4);
         BitmapDescriptor infoWindowView = BitmapDescriptorFactory.fromView(textView);
         //  infowindow点击事件
         InfoWindow.OnInfoWindowClickListener listener = new InfoWindow.OnInfoWindowClickListener() {
@@ -458,6 +515,23 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
 
     /**
      * 向地图中添加一个Pin
+     */
+    @Override
+    public void addPin() {
+        
+    }
+
+    /**
+     * 确认向地图中添加一个Pin
+     * pre-condition: addPin()已经执行
+     */
+    @Override
+    public void confirmPin() {
+
+    }
+
+    /**
+     * 通过已有的Pin，向地图中添加一个Pin
      * @param pin 要添加的Pin
      */
     public void addPin(Pin pin) {
