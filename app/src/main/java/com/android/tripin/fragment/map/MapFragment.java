@@ -51,6 +51,7 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.model.LatLngBounds;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.geocode.GeoCoder;
@@ -260,7 +261,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         mMapView.removeViewAt(1);
 
         //  设置缩放级别
-        MapStatusUpdate status = MapStatusUpdateFactory.zoomTo(15);
+        MapStatusUpdate status = MapStatusUpdateFactory.zoomTo(17);
         mBaiduMap.animateMapStatus(status);//动画的方式到中间
 
         //  设置地图状态改变监听器
@@ -358,13 +359,9 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
                 getToPreviousPin();
                 break;
             case R.id.ib_add_pin:
-                ib_add_pin.setVisibility(View.INVISIBLE);
-                ib_add_pin_confirm.setVisibility(View.VISIBLE);
                 addPin();
                 break;
             case R.id.ib_add_pin_confirm:
-                ib_add_pin.setVisibility(View.VISIBLE);
-                ib_add_pin_confirm.setVisibility(View.INVISIBLE);
                 confirmPin();
                 break;
             default:
@@ -383,8 +380,6 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     public boolean onLongClick(View v) {
         switch (v.getId()) {
             case R.id.pin_adding:   //  长按Pin_Adding的icon进行确认
-                ib_add_pin.setVisibility(View.VISIBLE);
-                ib_add_pin_confirm.setVisibility(View.INVISIBLE);
                 confirmPin();
                 break;
 
@@ -564,6 +559,8 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         isAddingPin = true;
         //  显示Pin的icon
         pin_adding.setVisibility(View.VISIBLE);
+        ib_add_pin.setVisibility(View.INVISIBLE);
+        ib_add_pin_confirm.setVisibility(View.VISIBLE);
         requestMapCenterReverseGeoCode();
     }
 
@@ -580,37 +577,81 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
      */
     @Override
     public void confirmPin() {
-        isAddingPin = false;
-        //  隐藏Pin的icon
         pin_adding.setVisibility(View.GONE);
         //  以当前位置构造一个Pin
         Pin pin = new Pin(DataManager.getPlanID(), mapCenter.latitude, mapCenter.longitude, mapCenterAddress, new Date(), new Date(), PinStatus.WANTED, "");
-        pinList.add(pin);
-        addPin(pin);
-        selectPin(pin);
+        if(addPin(pin)) {   //  判断是否成功添加Pin
+            isAddingPin = false;
+            ib_add_pin.setVisibility(View.VISIBLE);
+            ib_add_pin_confirm.setVisibility(View.INVISIBLE);
+            //  隐藏Pin的icon
+            pinList.add(pin);
+            selectPin(pin);
+        }
+        else{
+            pin_adding.setVisibility(View.VISIBLE);
+        }
     }
 
     /**
      * 通过已有的Pin，向地图中添加一个Pin
      * @param pin 要添加的Pin
+     * @return added 是否成功添加
      */
-    public void addPin(Pin pin) {
-        //  构建Maker坐标点
+    public boolean addPin(Pin pin) {
         LatLng latLng = new LatLng(pin.getPinLatitude(), pin.getPinLongitude());
-        MarkerOptions markerOptions = new MarkerOptions()
-                .position(latLng) //    设置位置
-                .zIndex(9) //   设置marker所在层级
-                .icon(bitmapDescriptor) //  设置图标样式
-                .draggable(false) // 设置手势拖拽
-                .animateType(MarkerOptions.MarkerAnimateType.grow);
-        //  在地图上添加Marker，并显示
-        Marker marker = (Marker) mBaiduMap.addOverlay(markerOptions);
-        //使用marker携带info信息，当点击事件的时候可以通过marker获得info信息
-        Bundle bundle = new Bundle();
-        //info必须实现序列化接口
-        bundle.putSerializable("pin", pin);
-        marker.setExtraInfo(bundle);
-        pinMarkerMap.put(pin, marker);
+        if (!pinAlreadyAdded(latLng)) {
+            //  构建Maker坐标点
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(latLng) //    设置位置
+                    .zIndex(9) //   设置marker所在层级
+                    .icon(bitmapDescriptor) //  设置图标样式
+                    .draggable(false) // 设置手势拖拽
+                    .animateType(MarkerOptions.MarkerAnimateType.grow);
+            //  在地图上添加Marker，并显示
+            Marker marker = (Marker) mBaiduMap.addOverlay(markerOptions);
+            //使用marker携带info信息，当点击事件的时候可以通过marker获得info信息
+            Bundle bundle = new Bundle();
+            //info必须实现序列化接口
+            bundle.putSerializable("pin", pin);
+            marker.setExtraInfo(bundle);
+            pinMarkerMap.put(pin, marker);
+            return true;
+        }
+        else {
+            showInfo("此处已经添加过Pin,,,");
+            return false;
+        }
+    }
+
+    /**
+     *
+     * 检测附近50m范围内是否已有添加的pin
+     *
+     * 地球半径：6371000M
+     * 地球周长：2 * 6371000M  * π = 40030173
+     * 纬度38°地球周长：40030173 * cos38 = 31544206M
+     * 任意地球经度周长：40030173M
+     * 经度（东西方向）1M实际度：360°/31544206M=1.141255544679108e-5=0.00001141
+     * 纬度（南北方向）1M实际度：360°/40030173M=8.993216192195822e-6=0.00000899
+     * @param latLng 要添加的点的pin的位置
+     * @return pinFound
+     */
+    public boolean pinAlreadyAdded(LatLng latLng) {
+        //  检测附近50m是否已有Pin
+        boolean pinFound = false;
+        //  构建LatLngBounds
+        LatLng northeast = new LatLng(latLng.latitude + 0.00001141 * 50, latLng.longitude + 0.00000899 * 50);
+        LatLng southwest = new LatLng(latLng.latitude - 0.00001141 * 50, latLng.longitude - 0.00000899 * 50);
+        LatLngBounds latLngBounds = new LatLngBounds.Builder().include(northeast).include(southwest).build();
+        for (Pin pin : pinMarkerMap.keySet()) {
+            LatLng temp = new LatLng(pin.getPinLatitude(), pin.getPinLongitude());
+            if (latLngBounds.contains(temp)) {
+                pinFound = true;
+                break;
+            }
+        }
+        return pinFound;
     }
 
     /**
