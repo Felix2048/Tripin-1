@@ -649,7 +649,8 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             LatLngBounds mapBounds = getMapBounds();
             for(PoiInfo poiInfo : poiInfoList) {
                 LatLng latLng = new LatLng(poiInfo.location.latitude, poiInfo.location.longitude);
-                if (!pinAlreadyAdded(latLng) && mapBounds.contains(latLng)) {
+                //  若该poiInfo包含在map的显示范围内，且50m内无pin、10m内无poiMarker，则添加
+                if (!pinAlreadyAdded(latLng) && mapBounds.contains(latLng) && !markerAlreadyAdded(latLng)) {
                     //  加载布局文件
                     View poiInfoView= inflater.inflate(R.layout.poi_marker, null);
                     TextView poiInfoTextView = (TextView) poiInfoView.findViewById(R.id.poi_name);
@@ -884,7 +885,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
 
     /**
      *
-     * 检测附近50m范围内是否已有添加的pin
+     * 检测附近50m范围内是否已有添加的
      *
      * 地球半径：6371000M
      * 地球周长：2 * 6371000M  * π = 40030173
@@ -892,7 +893,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
      * 任意地球经度周长：40030173M
      * 经度（东西方向）1M实际度：360°/31544206M=1.141255544679108e-5=0.00001141
      * 纬度（南北方向）1M实际度：360°/40030173M=8.993216192195822e-6=0.00000899
-     * @param latLng 要添加的点的pin的位置
+     * @param latLng 要添加的pin的位置
      * @return pinFound
      */
     public boolean pinAlreadyAdded(LatLng latLng) {
@@ -910,6 +911,29 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             }
         }
         return pinFound;
+    }
+
+    /**
+     *
+     * 检测附近10m范围内是否已有添加的marker
+     * @param latLng 要添加的marker的位置
+     * @return markerFound
+     */
+    public boolean markerAlreadyAdded(LatLng latLng) {
+        //  检测附近10m是否已有Pin
+        boolean markerFound = false;
+        //  构建LatLngBounds
+        LatLng northeast = new LatLng(latLng.latitude + 0.00001141 * 10, latLng.longitude + 0.00000899 * 10);
+        LatLng southwest = new LatLng(latLng.latitude - 0.00001141 * 10, latLng.longitude - 0.00000899 * 10);
+        LatLngBounds latLngBounds = new LatLngBounds.Builder().include(northeast).include(southwest).build();
+        for (Marker marker : poiMarkerList) {
+            LatLng temp = marker.getPosition();
+            if (latLngBounds.contains(temp)) {
+                markerFound = true;
+                break;
+            }
+        }
+        return markerFound;
     }
 
     /**
