@@ -25,4 +25,10 @@ public class LauncherActivity extends Activity {
         startActivity(intent);
         finish();
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
 }
