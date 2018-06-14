@@ -14,14 +14,9 @@ public interface IMapView {
     void showTrip();
 
     /**
-     * 向地图中添加一个Pin
-     */
-    void addPin();
-
-    /**
      * 确认向地图中添加一个Pin
      */
-    void confirmPin();
+    void addPinConfirm();
 
     /**
      * 将地图中的Pin移除

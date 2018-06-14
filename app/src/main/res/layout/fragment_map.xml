@@ -11,6 +11,13 @@
         android:screenOrientation="portrait"
         android:clickable="true"
         android:focusable="true" />
+    
+    <AutoCompleteTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/search_location"
+        android:completionThreshold="1" />
+
 
     <ImageButton
         android:id="@+id/ib_location"
@@ -33,7 +40,7 @@
         android:layout_above="@id/ib_location"
         android:layout_alignStart="@id/ib_location"
         android:background="@drawable/ic_plane"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="15dp"
         android:contentDescription="@string/return_to_pin_in_plan" />
 
     <LinearLayout
