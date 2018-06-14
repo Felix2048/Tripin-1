@@ -99,6 +99,20 @@
         android:visibility="gone"
         tools:ignore="RtlHardcoded" />
 
+    <ImageButton
+        android:id="@+id/ib_add_pin_cancel"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignTop="@id/ib_get_back_to_current_pin"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="75dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/ic_cancel"
+        android:contentDescription="@string/cancel_add_pin_to_plan"
+        tools:ignore="RtlHardcoded" />
+
+
     <!--用于显示Pin的内容-->
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

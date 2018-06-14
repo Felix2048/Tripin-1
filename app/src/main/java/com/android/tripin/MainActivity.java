@@ -43,4 +43,10 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //  处理因按后退键导致的内存泄漏
+        finish();
+    }
 }
