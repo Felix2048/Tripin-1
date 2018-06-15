@@ -12,7 +12,7 @@ import com.baidu.mapapi.model.LatLng;
  */
 public class MyOnMapClickListener implements BaiduMap.OnMapClickListener {
 
-    MapFragment mapFragment;
+    private MapFragment mapFragment;
 
     public MyOnMapClickListener(MapFragment mapFragment) {
         this.mapFragment = mapFragment;

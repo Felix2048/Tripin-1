@@ -12,7 +12,7 @@ import com.baidu.mapapi.search.poi.PoiResult;
  */
 public class MyOnGetPoiSearchResultListener implements OnGetPoiSearchResultListener {
 
-    MapFragment mapFragment;
+    private MapFragment mapFragment;
 
     public MyOnGetPoiSearchResultListener(MapFragment mapFragment) {
         this.mapFragment = mapFragment;

@@ -14,7 +14,7 @@ import com.baidu.mapapi.search.route.WalkingRouteResult;
  */
 public class MyOnGetRoutePlanResultListener implements OnGetRoutePlanResultListener {
 
-    MapFragment mapFragment;
+    private MapFragment mapFragment;
 
     public MyOnGetRoutePlanResultListener(MapFragment mapFragment) {
         this.mapFragment = mapFragment;

@@ -25,9 +25,9 @@ public class MyOnGetGeoCoderResultListener implements OnGetGeoCoderResultListene
             mapFragment.mapFragmentAuxiliary.showToast("抱歉，未能找到结果");
         }
         else {
-            mapFragment.mapFragmentAuxiliary.showToast("位置：" + result.getAddress());
+//            mapFragment.mapFragmentAuxiliary.showToast("位置：" + result.getAddress());
             mapFragment.mapCenterAddress = result.getAddress();
-            mapFragment.cityInMap = result.getAddressDetail().city;
+            mapFragment.mapFragmentAuxiliary.setAddressComponent(result.getAddressDetail());
         }
     }
     // 地理编码查询结果回调函数
@@ -38,7 +38,7 @@ public class MyOnGetGeoCoderResultListener implements OnGetGeoCoderResultListene
             mapFragment. mapFragmentAuxiliary.showToast("抱歉，未能找到结果");
         }
         else {
-            mapFragment.mapFragmentAuxiliary.showToast("位置：" + result.getLocation().toString());
+//            mapFragment.mapFragmentAuxiliary.showToast("位置：" + result.getLocation().toString());
         }
     }
 };

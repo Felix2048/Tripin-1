@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import com.android.tripin.R;
 import com.android.tripin.base.BaseFragment;
 import com.android.tripin.entity.Pin;
+import com.android.tripin.entity.Route;
 import com.android.tripin.enums.PinStatus;
 import com.android.tripin.manager.DataManager;
 import com.android.tripin.presenter.MapPresenter;
@@ -98,6 +99,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     RelativeLayout pin_info;    //  显示Pin的信息
 
     List<Pin> pinList = new ArrayList<>();
+    List<Route> routeList = new ArrayList<>();
     List<Marker> poiMarkerList = new ArrayList<>();
     Map<Pin, Marker> pinMarkerMap = new HashMap<>();
     List<PoiInfo> poiInfoList;
@@ -129,11 +131,20 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         //  定位
         initLocation();
 
+        Pin pin1 = new Pin(1, 31.24166, 121.48612,  "上海1",
+                new Date(), new Date(), PinStatus.WANTED, "这是我的第1个pin");
+        Pin pin2 = new Pin(1, 31.24296, 121.48602,  "上海2",
+                new Date(), new Date(), PinStatus.WANTED, "这是我的第2个pin");
+        Pin pin3 = new Pin(1, 31.24168, 121.49812,  "上海3",
+                new Date(), new Date(), PinStatus.WANTED, "这是我的第3个pin");
+        Pin pin4 = new Pin(1, 31.24178, 121.49809,  "上海4",
+                new Date(), new Date(), PinStatus.WANTED, "这是我的第4个pin");
+
         //  加载pinList
-        pinList.add(new Pin(0, 39.914935, 116.403119, "天安门",
-                new Date(), new Date(), PinStatus.WANTED, "这是我的第1个pin"));
-        pinList.add(new Pin(1, 31.24166, 121.48612,  "外滩",
-                new Date(), new Date(), PinStatus.WANTED, "这是我的第2个pin"));
+        pinList.add(pin1);
+        pinList.add(pin2);
+        pinList.add(pin3);
+        pinList.add(pin4);
 
         //  将PinList显示在地图上
         mapFragmentAuxiliary.showTrip();
@@ -188,6 +199,8 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         mPoiSearch = PoiSearch.newInstance();
         mRoutePlanSearch = RoutePlanSearch.newInstance();
 
+        //  为mRoutePlanSearch添加Listener
+        mRoutePlanSearch.setOnGetRoutePlanResultListener(new MyOnGetRoutePlanResultListener(this));
         //  为PoiSearch添加Listener
         mPoiSearch.setOnGetPoiSearchResultListener(new MyOnGetPoiSearchResultListener(this));
         //  为GeoCoder添加Listener

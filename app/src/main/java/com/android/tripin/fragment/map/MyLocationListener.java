@@ -11,7 +11,7 @@ import com.baidu.mapapi.model.LatLng;
  */
 public class MyLocationListener implements BDLocationListener {
 
-    MapFragment mapFragment;
+    private MapFragment mapFragment;
 
     public MyLocationListener(MapFragment mapFragment) {
         this.mapFragment = mapFragment;

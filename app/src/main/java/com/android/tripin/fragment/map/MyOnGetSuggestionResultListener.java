@@ -10,7 +10,7 @@ import com.baidu.mapapi.search.sug.SuggestionResult;
  */
 public class MyOnGetSuggestionResultListener implements OnGetSuggestionResultListener {
 
-    MapFragment mapFragment;
+    private MapFragment mapFragment;
 
     public MyOnGetSuggestionResultListener(MapFragment mapFragment) {
         this.mapFragment = mapFragment;
