@@ -29,7 +29,6 @@ import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
-import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.PoiInfo;
@@ -396,7 +395,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         pin_adding.setVisibility(View.GONE);
         //  以当前位置构造一个Pin
         Pin pin = new Pin(DataManager.getPlanID(), mapCenter.latitude, mapCenter.longitude, mapCenterAddress, new Date(), new Date(), PinStatus.WANTED, "");
-        if(addPin(pin)) {   //  判断是否成功添加Pin
+        if(mapFragmentAuxiliary.addPin(pin)) {   //  判断是否成功添加Pin
             isAddingPin = false;
             ib_add_pin.setVisibility(View.VISIBLE);
             ib_add_pin_confirm.setVisibility(View.GONE);
@@ -414,6 +413,9 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         }
     }
 
+    /**
+     * 取消当前向地图添加pin的操作
+     */
     public void addPinCancel() {
         isAddingPin = false;
         ib_add_pin.setVisibility(View.VISIBLE);
@@ -423,37 +425,6 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         //  隐藏Pin的icon
         pin_adding.setVisibility(View.GONE);
         mapFragmentAuxiliary.clearPoiInfo();
-    }
-
-    /**
-     * 通过已有的Pin，向地图中添加一个Pin
-     * @param pin 要添加的Pin
-     * @return added 是否成功添加
-     */
-    public boolean addPin(Pin pin) {
-        LatLng latLng = new LatLng(pin.getPinLatitude(), pin.getPinLongitude());
-        if (!mapFragmentAuxiliary.pinAlreadyAdded(latLng)) {
-            //  构建Maker坐标点
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .position(latLng) //    设置位置
-                    .zIndex(9) //   设置marker所在层级
-                    .icon(pinIcon) //  设置图标样式
-                    .draggable(false) // 设置手势拖拽
-                    .animateType(MarkerOptions.MarkerAnimateType.grow);
-            //  在地图上添加Marker，并显示
-            Marker marker = (Marker) mBaiduMap.addOverlay(markerOptions);
-            //使用marker携带info信息，当点击事件的时候可以通过marker获得info信息
-            Bundle bundle = new Bundle();
-            //info必须实现序列化接口
-            bundle.putSerializable("pin", pin);
-            marker.setExtraInfo(bundle);
-            pinMarkerMap.put(pin, marker);
-            return true;
-        }
-        else {
-            mapFragmentAuxiliary.showToast("此处已经添加过Pin...");
-            return false;
-        }
     }
 
     private void deletePinsStart() {

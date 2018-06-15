@@ -89,7 +89,7 @@ public class MapFragmentAuxiliary {
     }
 
     /**
-     * 返回给定的的PinIndex的位置
+     * 返回给定的的PinIndex的pin的位置
      * @param pinIndex 要移动到的pin的index
      */
     public void getBackToPin(int pinIndex) {
@@ -101,14 +101,14 @@ public class MapFragmentAuxiliary {
     }
 
     /**
-     * 返回当前的Pin的位置
+     * 返回当前pinIndex的Pin的位置
      */
     public void getBackToCurrentPin() {
         getBackToPin(mapFragment.currentPinIndex);
     }
 
     /**
-     * 返回当前的Pin的位置
+     * （循环）返回的前一个pinIndex的Pin的位置
      */
     public void getToNextPin() {
         if(mapFragment.currentPinIndex == mapFragment.pinList.size() - 1) {
@@ -121,7 +121,7 @@ public class MapFragmentAuxiliary {
     }
 
     /**
-     * 返回当前的Pin的位置
+     * （循环）返回的后一个pinIndex的Pin的位置
      */
     public void getToPreviousPin() {
         if (mapFragment.currentPinIndex == 0) {
@@ -186,7 +186,7 @@ public class MapFragmentAuxiliary {
         //  清空地图
         mapFragment.mBaiduMap.clear();
         for (Pin pin : mapFragment.pinList) {
-            mapFragment.addPin(pin);
+            addPin(pin);
         }
         //  初始化currentPinIndex为0
         mapFragment.currentPinIndex = 0;
@@ -215,11 +215,17 @@ public class MapFragmentAuxiliary {
         return latLngBounds;
     }
 
+    /**
+     * 向GeoCoder请求当前MapCenter的逆地址编码，在监听中获取回调
+     */
     public void requestMapCenterReverseGeoCode() {
         //  请求逆地址编码
         mapFragment.mGeoCoder.reverseGeoCode(new ReverseGeoCodeOption().location(mapFragment.mapCenter));
     }
 
+    /**
+     * 向poiSearch请求当前mapCenter的附近（地图可视范围内）的poiInfo，在监听中获取回调
+     */
     public void requestMapCenterPoi() {
         LatLngBounds mapBounds = getMapBounds();
         //  检索15条可视范围内的POI信息，用于辅助用户添加Pin
@@ -241,6 +247,10 @@ public class MapFragmentAuxiliary {
     }
 
 
+    /**
+     * 将回调获取到的poiInfo在地图上显示
+     * @param poiResult 回调获取到的poiInfo
+     */
     public void showPoiInfo(PoiResult poiResult) {
         //  获取新的poiInfoList
         mapFragment.poiInfoList = poiResult.getAllPoi();
@@ -268,6 +278,38 @@ public class MapFragmentAuxiliary {
                     mapFragment.poiMarkerList.add(marker);
                 }
             }
+        }
+    }
+
+
+    /**
+     * 通过已有的Pin，向地图中添加一个Pin
+     * @param pin 要添加的Pin
+     * @return added 是否成功添加
+     */
+    public boolean addPin(Pin pin) {
+        LatLng latLng = new LatLng(pin.getPinLatitude(), pin.getPinLongitude());
+        if (!pinAlreadyAdded(latLng)) {
+            //  构建Maker坐标点
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(latLng) //    设置位置
+                    .zIndex(9) //   设置marker所在层级
+                    .icon(mapFragment.pinIcon) //  设置图标样式
+                    .draggable(false) // 设置手势拖拽
+                    .animateType(MarkerOptions.MarkerAnimateType.grow);
+            //  在地图上添加Marker，并显示
+            Marker marker = (Marker) mapFragment.mBaiduMap.addOverlay(markerOptions);
+            //使用marker携带info信息，当点击事件的时候可以通过marker获得info信息
+            Bundle bundle = new Bundle();
+            //info必须实现序列化接口
+            bundle.putSerializable("pin", pin);
+            marker.setExtraInfo(bundle);
+            mapFragment.pinMarkerMap.put(pin, marker);
+            return true;
+        }
+        else {
+            mapFragment.mapFragmentAuxiliary.showToast("此处已经添加过Pin...");
+            return false;
         }
     }
 
@@ -303,6 +345,9 @@ public class MapFragmentAuxiliary {
         }
     }
 
+    /**
+     * 清空地图上的poiInfo
+     */
     public void clearPoiInfo() {
         if (null != mapFragment.poiInfoList) {
             mapFragment.poiInfoList.clear();

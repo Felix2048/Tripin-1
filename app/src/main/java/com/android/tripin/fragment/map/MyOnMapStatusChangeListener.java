@@ -26,7 +26,7 @@ public class MyOnMapStatusChangeListener implements BaiduMap.OnMapStatusChangeLi
     @Override
     public void onMapStatusChangeFinish(MapStatus arg0) {
         if (mapFragment.isAddingPin && !mapFragment.mapStatusChangeIgnored) {  //  正在添加pin且mapStatusChange未被忽略
-            if (!mapFragment.matchPinToPoi()) {     //  如果要添加的pin匹配未到poiMarker，则进行更新
+            if (!mapFragment.mapFragmentAuxiliary.matchPinToPoi()) {     //  如果要添加的pin匹配未到poiMarker，则进行更新
                 mapFragment.addPinUpdate();
             }
         }
