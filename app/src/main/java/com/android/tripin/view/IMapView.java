@@ -20,8 +20,9 @@ public interface IMapView {
 
     /**
      * 将地图中的Pin移除
+     * @param pin 要删除的Pin
      */
-    void removePin();
+    void deletePin(Pin pin);
 
     /**
      * 将当前地图中的所有点移除

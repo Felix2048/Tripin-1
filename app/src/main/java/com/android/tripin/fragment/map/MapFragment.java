@@ -94,12 +94,16 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     private ImageButton ib_add_pin;
     private ImageButton ib_add_pin_confirm;
     private ImageButton ib_add_pin_cancel;
+    private ImageButton ib_delete_pin;
+    private ImageButton ib_delete_pin_cancel;
+    private ImageButton ib_delete_pin_confirm;
     //  定位相关
     private LocationClient mLocationClient;
     private MyLocationListener mLocationListener;
     private boolean isFirstLocation = false; //  是否第一次定位，如果是第一次定位的话要将自己的位置显示在地图 中间
     //  构建Marker图标
-    private BitmapDescriptor bitmapDescriptor;
+    private BitmapDescriptor pinIcon;
+    private BitmapDescriptor pinSelectedIcon;
     //  地址编码与逆地址编码
     private GeoCoder mGeoCoder;
     //  搜索相关
@@ -122,7 +126,9 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     private List<Marker> poiMarkerList = new ArrayList<>();
     private Map<Pin, Marker> pinMarkerMap = new HashMap<>();
     private List<PoiInfo> poiInfoList;
+    private List<Pin> pinDeleteList = new ArrayList<>();    //  将要被删除的Pin
     private boolean isAddingPin = false;    //  是否向地图正在添加Pin
+    private boolean isDeletingPins = false;  //  是否从地图中删除Pin
     private int currentPinIndex;    //  当前pin的index
 
     //  添加Pin时匹配poi用到的flag
@@ -231,6 +237,39 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         }
     };
 
+    private class MyOnMarkerClickListener implements BaiduMap.OnMarkerClickListener {
+        @Override
+        public boolean onMarkerClick(Marker marker) {
+            if (!isAddingPin && !isDeletingPins) {
+                selectPin(marker);
+                getBackToCurrentPin();
+            }
+            else if(isDeletingPins) {
+                //  获取Pin
+                Pin pin = null;
+                for (Pin temp : pinMarkerMap.keySet()) {
+                    if (marker.equals(pinMarkerMap.get(temp))) {
+                        pin = temp;
+                        break;
+                    }
+                }
+                if(null != pin) {
+                    if (marker.getIcon().equals(pinSelectedIcon))    //  若pin已经被选中
+                    {
+                        //  取消被选中
+                        marker.setIcon(pinIcon);
+                        pinDeleteList.remove(pin);
+                    }
+                    else {
+                        marker.setIcon(pinSelectedIcon);
+                        pinDeleteList.add(pin);
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
     private class MyOnMapStatusChangeListener implements BaiduMap.OnMapStatusChangeListener {
         @Override
         public void onMapStatusChangeStart(MapStatus arg0) {
@@ -275,18 +314,6 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             return false;
         }
     }
-
-    private class MyOnMarkerClickListener implements BaiduMap.OnMarkerClickListener {
-        @Override
-        public boolean onMarkerClick(Marker marker) {
-            if (!isAddingPin) {
-                selectPin(marker);
-                getBackToCurrentPin();
-            }
-            return true;
-        }
-    }
-
 
     /**
      * 显示消息
@@ -345,6 +372,9 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         ib_add_pin_confirm = (ImageButton) mView.findViewById(R.id.ib_add_pin_confirm);
         pin_adding = (LinearLayout) mView.findViewById(R.id.pin_adding);
         ib_add_pin_cancel = (ImageButton) mView.findViewById(R.id.ib_add_pin_cancel);
+        ib_delete_pin = (ImageButton) mView.findViewById(R.id.ib_delete_pin);
+        ib_delete_pin_cancel = (ImageButton) mView.findViewById(R.id.ib_delete_pin_cancel);
+        ib_delete_pin_confirm = (ImageButton) mView.findViewById(R.id.ib_delete_pin_confirm);
         //  添加点击事件Listener
         ib_location.setOnClickListener(this);
         ib_get_back_to_current_pin.setOnClickListener(this);
@@ -354,13 +384,20 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         ib_add_pin_confirm.setOnClickListener(this);
         pin_adding.setOnLongClickListener(this);
         ib_add_pin_cancel.setOnClickListener(this);
+        ib_delete_pin.setOnClickListener(this);
+        ib_delete_pin_cancel.setOnClickListener(this);
+        ib_delete_pin_confirm.setOnClickListener(this);
         //   设置可见性
         ib_add_pin.setVisibility(View.VISIBLE);
-        ib_add_pin_confirm.setVisibility(View.INVISIBLE);
+        ib_add_pin_confirm.setVisibility(View.GONE);
         pin_adding.setVisibility(View.GONE);
         ib_add_pin_cancel.setVisibility(View.GONE);
+        ib_delete_pin.setVisibility(View.VISIBLE);
+        ib_delete_pin_cancel.setVisibility(View.GONE);
+        ib_delete_pin_confirm.setVisibility(View.GONE);
 
-        bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.ic_pin);
+        pinIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_pin);
+        pinSelectedIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_pin_selected);
     }
 
     public void initMapView() {
@@ -453,6 +490,16 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
                 break;
             case R.id.ib_add_pin_cancel:
                 addPinCancel();
+                break;
+            case R.id.ib_delete_pin:
+                deletePinsStart();
+                break;
+            case R.id.ib_delete_pin_confirm:
+                deletePinsConfirm();
+                break;
+            case R.id.ib_delete_pin_cancel:
+                deletePinsCancel();
+                break;
             default:
                 break;
         }
@@ -703,7 +750,8 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         isAddingPin = true;
         //  显示Pin的icon
         pin_adding.setVisibility(View.VISIBLE);
-        ib_add_pin.setVisibility(View.INVISIBLE);
+        ib_add_pin.setVisibility(View.GONE);
+        ib_delete_pin.setVisibility(View.GONE);
         ib_add_pin_confirm.setVisibility(View.VISIBLE);
         ib_add_pin_cancel.setVisibility(View.VISIBLE);
         addPinUpdate();
@@ -753,16 +801,16 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
                 .keyword("景点")
                 .pageNum(0)
                 .pageCapacity(15));
-//        mPoiSearch.searchInBound(new PoiBoundSearchOption()
-//                .bound(mapBounds)
-//                .keyword("酒店")
-//                .pageNum(0)
-//                .pageCapacity(15));
-//        mPoiSearch.searchInBound(new PoiBoundSearchOption()
-//                .bound(mapBounds)
-//                .keyword("美食")
-//                .pageNum(0)
-//                .pageCapacity(15));
+        mPoiSearch.searchInBound(new PoiBoundSearchOption()
+                .bound(mapBounds)
+                .keyword("酒店")
+                .pageNum(0)
+                .pageCapacity(5));
+        mPoiSearch.searchInBound(new PoiBoundSearchOption()
+                .bound(mapBounds)
+                .keyword("美食")
+                .pageNum(0)
+                .pageCapacity(5));
     }
 
     private void addPinRequestUpdate() {
@@ -818,6 +866,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             ib_add_pin.setVisibility(View.VISIBLE);
             ib_add_pin_confirm.setVisibility(View.GONE);
             ib_add_pin_cancel.setVisibility(View.GONE);
+            ib_delete_pin.setVisibility(View.VISIBLE);
             //  隐藏Pin的icon
             pin_adding.setVisibility(View.GONE);
             pinList.add(pin);
@@ -835,6 +884,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         ib_add_pin.setVisibility(View.VISIBLE);
         ib_add_pin_confirm.setVisibility(View.GONE);
         ib_add_pin_cancel.setVisibility(View.GONE);
+        ib_delete_pin.setVisibility(View.VISIBLE);
         //  隐藏Pin的icon
         pin_adding.setVisibility(View.GONE);
         clearPoiInfo();
@@ -852,7 +902,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(latLng) //    设置位置
                     .zIndex(9) //   设置marker所在层级
-                    .icon(bitmapDescriptor) //  设置图标样式
+                    .icon(pinIcon) //  设置图标样式
                     .draggable(false) // 设置手势拖拽
                     .animateType(MarkerOptions.MarkerAnimateType.grow);
             //  在地图上添加Marker，并显示
@@ -938,10 +988,58 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
 
     /**
      * 将地图中的Pin移除
+     * @param pin 要删除的Pin
      */
     @Override
-    public void removePin() {
+    public void deletePin(Pin pin) {
+        Marker marker = pinMarkerMap.get(pin);
+        if (null != marker) {
+            marker.remove();
+        }
+        pinMarkerMap.remove(pin);
+        pinList.remove(pin);
+        //  调用presenter删除Pin
+    }
 
+    private void deletePinsStart() {
+        //  隐藏infowindow
+        mBaiduMap.hideInfoWindow();
+        ib_add_pin.setVisibility(View.GONE);
+        ib_delete_pin.setVisibility(View.GONE);
+        ib_delete_pin_cancel.setVisibility(View.VISIBLE);
+        ib_delete_pin_confirm.setVisibility(View.VISIBLE);
+        isDeletingPins = true;
+    }
+
+    private void deletePinsConfirm() {
+        if (!pinDeleteList.isEmpty()) {
+            ib_add_pin.setVisibility(View.VISIBLE);
+            ib_delete_pin.setVisibility(View.VISIBLE);
+            ib_delete_pin_cancel.setVisibility(View.GONE);
+            ib_delete_pin_confirm.setVisibility(View.GONE);
+            for (Pin pin : pinDeleteList) {
+                deletePin(pin);
+            }
+            pinDeleteList.clear();
+            isDeletingPins = false;
+        }
+        else {
+            showToast("未选择要删除的Pin");
+        }
+    }
+
+    private void deletePinsCancel() {
+        ib_add_pin.setVisibility(View.VISIBLE);
+        ib_delete_pin.setVisibility(View.VISIBLE);
+        ib_delete_pin_cancel.setVisibility(View.GONE);
+        ib_delete_pin_confirm.setVisibility(View.GONE);
+        if (!pinDeleteList.isEmpty()) {
+            for (Pin pin : pinDeleteList) {
+                pinMarkerMap.get(pin).setIcon(pinIcon); //  取消被选中
+            }
+            pinDeleteList.clear();
+        }
+        isDeletingPins = false;
     }
 
     /**
