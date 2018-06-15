@@ -89,6 +89,17 @@ public class MapFragmentAuxiliary {
     }
 
     /**
+     * 调整地图zoom等级
+     * @param zoom 要移动的点位置
+     */
+    public void setZoomLevelInMap(float zoom) {
+        MapStatusUpdate status = MapStatusUpdateFactory.zoomTo(zoom);
+        //mBaiduMap.setMapStatus(status);//直接到中间
+        mapFragment.mBaiduMap.animateMapStatus(status);//动画的方式到中间
+        mapFragment.isFirstLocation = false;
+    }
+
+    /**
      * 返回给定的的PinIndex的pin的位置
      * @param pinIndex 要移动到的pin的index
      */
@@ -105,6 +116,8 @@ public class MapFragmentAuxiliary {
      */
     public void getBackToCurrentPin() {
         getBackToPin(mapFragment.currentPinIndex);
+        setZoomLevelInMap(18);
+        mapFragment.zoomLevel = 18;
     }
 
     /**

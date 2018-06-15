@@ -210,9 +210,8 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         mMapView.removeViewAt(1);
 
         //  设置缩放级别
-        MapStatusUpdate status = MapStatusUpdateFactory.zoomTo(18);
+        mapFragmentAuxiliary.setZoomLevelInMap(18);
         zoomLevel = 18;
-        mBaiduMap.animateMapStatus(status);//动画的方式到中间
 
         //  设置地图状态改变监听器
         mBaiduMap.setOnMapStatusChangeListener(new MyOnMapStatusChangeListener(this));
