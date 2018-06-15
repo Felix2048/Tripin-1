@@ -1,12 +1,7 @@
 package com.android.tripin.fragment.map;
 
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.tripin.R;
 import com.android.tripin.base.BaseFragment;
@@ -25,8 +18,6 @@ import com.android.tripin.enums.PinStatus;
 import com.android.tripin.manager.DataManager;
 import com.android.tripin.presenter.MapPresenter;
 import com.android.tripin.view.IMapView;
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.CoordType;
@@ -34,35 +25,18 @@ import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.InfoWindow;
-import com.baidu.mapapi.map.MapPoi;
-import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.model.LatLngBounds;
 import com.baidu.mapapi.search.core.PoiInfo;
-import com.baidu.mapapi.search.core.SearchResult;
-import com.baidu.mapapi.search.geocode.GeoCodeResult;
 import com.baidu.mapapi.search.geocode.GeoCoder;
-import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
-import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
-import com.baidu.mapapi.search.poi.OnGetPoiSearchResultListener;
-import com.baidu.mapapi.search.poi.PoiBoundSearchOption;
-import com.baidu.mapapi.search.poi.PoiDetailResult;
-import com.baidu.mapapi.search.poi.PoiIndoorResult;
-import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.poi.PoiSearch;
-import com.baidu.mapapi.search.sug.OnGetSuggestionResultListener;
-import com.baidu.mapapi.search.sug.SuggestionResult;
+import com.baidu.mapapi.search.route.RoutePlanSearch;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
-import com.baidu.mapapi.utils.DistanceUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,253 +55,60 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     private final static String TAG = MapFragment.class.getSimpleName();
 
     //  Map
-    private MapView mMapView;
-    private BaiduMap mBaiduMap;
+    MapView mMapView;
+    BaiduMap mBaiduMap;
     UiSettings mUiSettings;
     //  当前地图缩放级别
-    private double zoomLevel;
+    double zoomLevel;
     //  按钮
-    private ImageButton ib_location;
-    private ImageButton ib_get_back_to_current_pin;
-    private ImageButton ib_previous_pin;
-    private ImageButton ib_next_pin;
-    private ImageButton ib_add_pin;
-    private ImageButton ib_add_pin_confirm;
-    private ImageButton ib_add_pin_cancel;
-    private ImageButton ib_delete_pin;
-    private ImageButton ib_delete_pin_cancel;
-    private ImageButton ib_delete_pin_confirm;
+    ImageButton ib_location;
+    ImageButton ib_get_back_to_current_pin;
+    ImageButton ib_previous_pin;
+    ImageButton ib_next_pin;
+    ImageButton ib_add_pin;
+    ImageButton ib_add_pin_confirm;
+    ImageButton ib_add_pin_cancel;
+    ImageButton ib_delete_pin;
+    ImageButton ib_delete_pin_cancel;
+    ImageButton ib_delete_pin_confirm;
     //  定位相关
-    private LocationClient mLocationClient;
-    private MyLocationListener mLocationListener;
-    private boolean isFirstLocation = false; //  是否第一次定位，如果是第一次定位的话要将自己的位置显示在地图 中间
+    LocationClient mLocationClient;
+    MyLocationListener mLocationListener;
+    boolean isFirstLocation = false; //  是否第一次定位，如果是第一次定位的话要将自己的位置显示在地图 中间
     //  构建Marker图标
-    private BitmapDescriptor pinIcon;
-    private BitmapDescriptor pinSelectedIcon;
+    BitmapDescriptor pinIcon;
+    BitmapDescriptor pinSelectedIcon;
     //  地址编码与逆地址编码
-    private GeoCoder mGeoCoder;
+    GeoCoder mGeoCoder;
     //  搜索相关
-    private SuggestionSearch mSuggestionSearch;
-    private PoiSearch mPoiSearch;
-
+    SuggestionSearch mSuggestionSearch;
+    PoiSearch mPoiSearch;
+    //  路线相关
+    RoutePlanSearch mRoutePlanSearch;
     //  MapInfo
-    private LatLng mapCenter;
-    private String mapCenterAddress;
-    private String cityInMap;   //  地图中心点所在城市
+    LatLng mapCenter;
+    String mapCenterAddress;
+    String cityInMap;   //  地图中心点所在城市
 
-    private Toast mToast = null;
     private View mView;
-    private LayoutInflater inflater;
-    private LinearLayout pin_adding;    //  显示正在添加的Pin的icon
-    private RelativeLayout pin_info;    //  显示Pin的信息
     private MapPresenter mapPresenter;
 
-    private List<Pin> pinList = new ArrayList<>();
-    private List<Marker> poiMarkerList = new ArrayList<>();
-    private Map<Pin, Marker> pinMarkerMap = new HashMap<>();
-    private List<PoiInfo> poiInfoList;
-    private List<Pin> pinDeleteList = new ArrayList<>();    //  将要被删除的Pin
-    private boolean isAddingPin = false;    //  是否向地图正在添加Pin
-    private boolean isDeletingPins = false;  //  是否从地图中删除Pin
-    private int currentPinIndex;    //  当前pin的index
+    MapFragmentAuxiliary mapFragmentAuxiliary = new MapFragmentAuxiliary(this);
+    LayoutInflater inflater;
+    LinearLayout pin_adding;    //  显示正在添加的Pin的icon
+    RelativeLayout pin_info;    //  显示Pin的信息
 
-    //  添加Pin时匹配poi用到的flag
-    private double matchedPoiHash = Double.POSITIVE_INFINITY;   //  用户将当前pin_adding的icon拖动到poi点的附近，匹配到的poi的hash
-    private boolean mapStatusChangeIgnored = false; //  若为true，则此次mapStatusChange将会被忽略
+    List<Pin> pinList = new ArrayList<>();
+    List<Marker> poiMarkerList = new ArrayList<>();
+    Map<Pin, Marker> pinMarkerMap = new HashMap<>();
+    List<PoiInfo> poiInfoList;
+    List<Pin> pinDeleteList = new ArrayList<>();    //  将要被删除的Pin
 
-    /**
-     *  自定义的poi搜索结果监听
-     */
-    private class MyOnGetPoiSearchResultListener implements OnGetPoiSearchResultListener {
-        @Override
-        public void onGetPoiResult(PoiResult poiResult) {
-            if (poiResult == null || poiResult.error != SearchResult.ERRORNO.NO_ERROR) {
-                //  未找到相关结果
-            }
-            else {
-                //  获取在线建议检索结果
-                if (isAddingPin) {  //  如果正在添加Pin，在地图上显示附近的poi搜索的result
-                    showPoiInfo(poiResult);
-                }
-            }
-        }
-
-        @Override
-        public void onGetPoiDetailResult(PoiDetailResult poiDetailResult) {
-
-        }
-
-        @Override
-        public void onGetPoiIndoorResult(PoiIndoorResult poiIndoorResult) {
-
-        }
-    }
-
-    /**
-     *  自定义的搜索建议监听
-     */
-    private class MyOnGetSuggestionResultListener implements OnGetSuggestionResultListener {
-
-        @Override
-        public void onGetSuggestionResult(SuggestionResult suggestionResult) {
-            if (suggestionResult == null || suggestionResult.error != SearchResult.ERRORNO.NO_ERROR) {
-                //  未找到相关结果
-            }
-            else {
-                //  获取在线建议检索结果
-            }
-        }
-    }
-
-    /**
-     *  自定义的定位监听
-     */
-    private class MyLocationListener implements BDLocationListener {
-        @Override
-        public void onReceiveLocation(BDLocation location) {
-            if (null != location && null != mMapView) {
-//                int errorCode = location.getLocType();
-                //将获取的location信息给百度map
-                MyLocationData data = new MyLocationData.Builder()
-                        .accuracy(location.getRadius())
-                        // 此处设置开发者获取到的方向信息，顺时针0-360
-                        .direction(100)
-                        .latitude(location.getLatitude())
-                        .longitude(location.getLongitude())
-                        .build();
-                mBaiduMap.setMyLocationData(data);
-                if (isFirstLocation) {
-                    //获取经纬度
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    moveToLocationInMap(latLng);
-                    isFirstLocation = false;
-                    showToast("位置：" + location.getAddrStr());
-                }
-            }
-        }
-    }
-
-    /**
-     *  自定义的GeoCoderResult监听
-     */
-    private class MyOnGetGeoCoderResultListener implements OnGetGeoCoderResultListener {
-        // 反地理编码查询结果回调函数
-        @Override
-        public void onGetReverseGeoCodeResult(ReverseGeoCodeResult result) {
-            if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-                // 没有检测到结果
-                showToast("抱歉，未能找到结果");
-            }
-            else {
-                showToast("位置：" + result.getAddress());
-                mapCenterAddress = result.getAddress();
-                cityInMap = result.getAddressDetail().city;
-            }
-        }
-        // 地理编码查询结果回调函数
-        @Override
-        public void onGetGeoCodeResult(GeoCodeResult result) {
-            if (result == null || result.error != SearchResult.ERRORNO.NO_ERROR) {
-                // 没有检测到结果
-                showToast("抱歉，未能找到结果");
-            }
-            else {
-                showToast("位置：" + result.getLocation().toString());
-            }
-        }
-    };
-
-    private class MyOnMarkerClickListener implements BaiduMap.OnMarkerClickListener {
-        @Override
-        public boolean onMarkerClick(Marker marker) {
-            if (!isAddingPin && !isDeletingPins) {
-                selectPin(marker);
-                getBackToCurrentPin();
-            }
-            else if(isDeletingPins) {
-                //  获取Pin
-                Pin pin = null;
-                for (Pin temp : pinMarkerMap.keySet()) {
-                    if (marker.equals(pinMarkerMap.get(temp))) {
-                        pin = temp;
-                        break;
-                    }
-                }
-                if(null != pin) {
-                    if (marker.getIcon().equals(pinSelectedIcon))    //  若pin已经被选中
-                    {
-                        //  取消被选中
-                        marker.setIcon(pinIcon);
-                        pinDeleteList.remove(pin);
-                    }
-                    else {
-                        marker.setIcon(pinSelectedIcon);
-                        pinDeleteList.add(pin);
-                    }
-                }
-            }
-            return true;
-        }
-    }
-
-    private class MyOnMapStatusChangeListener implements BaiduMap.OnMapStatusChangeListener {
-        @Override
-        public void onMapStatusChangeStart(MapStatus arg0) {
-        }
-
-        @Override
-        public void onMapStatusChangeStart(MapStatus mapStatus, int i) {
-        }
-
-        @Override
-        public void onMapStatusChangeFinish(MapStatus arg0) {
-            if (isAddingPin && !mapStatusChangeIgnored) {  //  正在添加pin且mapStatusChange未被忽略
-                if (!matchPinToPoi()) {     //  如果要添加的pin匹配未到poiMarker，则进行更新
-                    addPinUpdate();
-                }
-            }
-            else {
-                //  初始化mapStatusChange，不忽略
-                mapStatusChangeIgnored = false;
-            }
-        }
-
-        @Override
-        public void onMapStatusChange(MapStatus arg0) {
-            //  当地图状态改变的时候，获取放大级别
-            zoomLevel = arg0.zoom;
-            if (isAddingPin && !mapStatusChangeIgnored) {  //  正在添加的pin如果成功匹配到poiMarker，则忽略此次mapStatusChange
-                showToast("正在获取位置...");
-            }
-        }
-    }
-
-    private class MyOnMapClickListener implements BaiduMap.OnMapClickListener {
-        @Override
-        public void onMapClick(LatLng latLng) {
-            //  点击地图时隐藏pin的信
-            pin_info.setVisibility(View.GONE);
-        }
-
-        @Override
-        public boolean onMapPoiClick(MapPoi mapPoi) {
-            return false;
-        }
-    }
-
-    /**
-     * 显示消息
-     * @param msg 需要显示的Toast的字符串
-     */
-    private void showToast(String msg){
-        //判断队列中是否包含已经显示的Toast
-        if (mToast == null) {
-            mToast = Toast.makeText(getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT);
-        }else{
-            mToast.setText(msg);
-        }
-        mToast.show();
-    }
+    boolean isAddingPin = false;    //  是否向地图正在添加Pin
+    boolean isDeletingPins = false;  //  是否从地图中删除Pin
+    int currentPinIndex;    //  当前pin的index
+    double matchedPoiHash = Double.POSITIVE_INFINITY;   //  用户将当前pin_adding的icon拖动到poi点的附近，匹配到的poi的hash
+    boolean mapStatusChangeIgnored = false; //  若为true，则此次mapStatusChange将会被忽略
 
     /**
      * onCreateView
@@ -356,7 +137,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第2个pin"));
 
         //  将PinList显示在地图上
-        showTrip();
+        mapFragmentAuxiliary.showTrip();
 
         return mView;
     }
@@ -406,13 +187,14 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         mGeoCoder = GeoCoder.newInstance();
         mSuggestionSearch = SuggestionSearch.newInstance();
         mPoiSearch = PoiSearch.newInstance();
+        mRoutePlanSearch = RoutePlanSearch.newInstance();
 
         //  为PoiSearch添加Listener
-        mPoiSearch.setOnGetPoiSearchResultListener(new MyOnGetPoiSearchResultListener());
+        mPoiSearch.setOnGetPoiSearchResultListener(new MyOnGetPoiSearchResultListener(this));
         //  为GeoCoder添加Listener
-        mGeoCoder.setOnGetGeoCodeResultListener(new MyOnGetGeoCoderResultListener());
+        mGeoCoder.setOnGetGeoCodeResultListener(new MyOnGetGeoCoderResultListener(this));
         //  为SuggestionSearch添加Listener
-        mSuggestionSearch.setOnGetSuggestionResultListener(new MyOnGetSuggestionResultListener());
+        mSuggestionSearch.setOnGetSuggestionResultListener(new MyOnGetSuggestionResultListener(this));
         //  显示交通状况
         mBaiduMap.setTrafficEnabled(true);
         //  实例化UiSettings类对象
@@ -434,19 +216,19 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         mBaiduMap.animateMapStatus(status);//动画的方式到中间
 
         //  设置地图状态改变监听器
-        mBaiduMap.setOnMapStatusChangeListener(new MyOnMapStatusChangeListener());
+        mBaiduMap.setOnMapStatusChangeListener(new MyOnMapStatusChangeListener(this));
 
         //添加marker点击事件的监听
-        mBaiduMap.setOnMarkerClickListener(new MyOnMarkerClickListener());
+        mBaiduMap.setOnMarkerClickListener(new MyOnMarkerClickListener(this));
 
         //  添加地图点击的Listener
-        mBaiduMap.setOnMapClickListener(new MyOnMapClickListener());
+        mBaiduMap.setOnMapClickListener(new MyOnMapClickListener(this));
     }
 
     private void initLocation() {
         //  定位客户端的设置
         mLocationClient = new LocationClient(getActivity().getApplicationContext());
-        mLocationListener = new MyLocationListener();
+        mLocationListener = new MyLocationListener(this);
         //  注册监听
         mLocationClient.registerLocationListener(mLocationListener);
         //  配置定位
@@ -474,13 +256,13 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
                 isFirstLocation = true;
                 break;
             case R.id.ib_get_back_to_current_pin:
-                getBackToCurrentPin();
+                mapFragmentAuxiliary.getBackToCurrentPin();
                 break;
             case R.id.ib_next_pin:
-                getToNextPin();
+                mapFragmentAuxiliary.getToNextPin();
                 break;
             case R.id.ib_previous_pin:
-                getToPreviousPin();
+                mapFragmentAuxiliary.getToPreviousPin();
                 break;
             case R.id.ib_add_pin:
                 addPinStart();
@@ -533,6 +315,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             mLocationClient.start();
         }
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -570,181 +353,14 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         mSuggestionSearch.destroy();
         // 释放poi检索实例
         mPoiSearch.destroy();
-    }
-
-    /**
-     * 将当前地图移动到latLng的位置
-     * @param latLng 要移动的点位置
-     */
-    private void moveToLocationInMap(LatLng latLng) {
-        MapStatusUpdate status = MapStatusUpdateFactory.newLatLng(latLng);
-        //mBaiduMap.setMapStatus(status);//直接到中间
-        mBaiduMap.animateMapStatus(status);//动画的方式到中间
-        isFirstLocation = false;
-    }
-
-    /**
-     * 选中标记Pin覆盖物，显示infoWindow，点击infoWindow显示PinInfoView
-     * @param pin 被选中的Pin
-     */
-    private void selectPin(Pin pin) {
-        selectPin(pinMarkerMap.get(pin));
-    }
-
-    /**
-     * 选中标记Pin覆盖物，显示infoWindow，点击infoWindow显示PinInfoView
-     * @param marker 被选中的标记覆盖物
-     */
-    private void selectPin(Marker marker) {
-        //  隐藏infowindow
-        mBaiduMap.hideInfoWindow();
-        //  从marker中获取info信息
-        Bundle bundle = marker.getExtraInfo();
-        Pin pin = (Pin) bundle.getSerializable("pin");
-        //  修改currentPinIndex
-        currentPinIndex = pinList.indexOf(pin);
-        //  将信息显示在界面上
-        TextView pin_title = (TextView)pin_info.findViewById(R.id.pin_title);
-        pin_title.setText(pin.getPinTitle());
-        TextView pin_notes = (TextView)pin_info.findViewById(R.id.pin_notes);
-        pin_notes.setText(pin.getPinNotes());
-        //  加载infoWindow中的布局
-        TextView textView = new TextView(getContext());
-        textView.setBackgroundResource(R.drawable.common_bg_with_radius_and_border);
-        textView.setPadding(20, 10, 20, 20);
-        textView.setTextColor(Color.BLACK);
-        textView.setText(pin.getPinTitle());
-        textView.setGravity(Gravity.CENTER);
-        BitmapDescriptor infoWindowView = BitmapDescriptorFactory.fromView(textView);
-        //  infoWindow点击事件
-        InfoWindow.OnInfoWindowClickListener listener = new InfoWindow.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick() {
-                //  将布局显示出来
-                pin_info.setVisibility(View.VISIBLE);
-            }
-        };
-        //  显示infoWindow
-        InfoWindow infoWindow = new InfoWindow(infoWindowView, new LatLng(pin.getPinLatitude(), pin.getPinLongitude()), -100, listener);
-        mBaiduMap.showInfoWindow(infoWindow);
-    }
-
-    /**
-     * 返回给定的的PinIndex的位置
-     * @param pinIndex 要移动到的pin的index
-     */
-    public void getBackToPin(int pinIndex) {
-        if(null != pinList && !pinList.isEmpty() && pinIndex >= 0 && pinIndex < pinList.size()) {
-            Pin pin = pinList.get(pinIndex);
-            moveToLocationInMap(new LatLng(pin.getPinLatitude(), pin.getPinLongitude()));
-            selectPin(pin);
-        }
-    }
-
-    /**
-     * 返回当前的Pin的位置
-     */
-    public void getBackToCurrentPin() {
-        getBackToPin(currentPinIndex);
-    }
-
-    /**
-     * 返回当前的Pin的位置
-     */
-    public void getToNextPin() {
-        if(currentPinIndex == pinList.size() - 1) {
-            currentPinIndex = 0;
-        }
-        else {
-            currentPinIndex++;
-        }
-        getBackToCurrentPin();
-    }
-
-    /**
-     * 返回当前的Pin的位置
-     */
-    public void getToPreviousPin() {
-        if (currentPinIndex == 0) {
-            currentPinIndex = pinList.size() - 1;
-        }
-        else {
-            currentPinIndex--;
-        }
-        getBackToCurrentPin();
-    }
-    /**
-     * 显示当前Plan下的所有pin和route
-     */
-    @Override
-    public void showTrip() {
-        //  清空地图
-        mBaiduMap.clear();
-        for (Pin pin : pinList) {
-            addPin(pin);
-        }
-        //  初始化currentPinIndex为0
-        currentPinIndex = 0;
-        getBackToCurrentPin();
-    }
-
-
-    private void showPoiInfo(PoiResult poiResult) {
-        //  获取新的poiInfoList
-        poiInfoList = poiResult.getAllPoi();
-        if (null != poiInfoList) {
-            LatLngBounds mapBounds = getMapBounds();
-            for(PoiInfo poiInfo : poiInfoList) {
-                LatLng latLng = new LatLng(poiInfo.location.latitude, poiInfo.location.longitude);
-                //  若该poiInfo包含在map的显示范围内，且50m内无pin、10m内无poiMarker，则添加
-                if (!pinAlreadyAdded(latLng) && mapBounds.contains(latLng) && !markerAlreadyAdded(latLng)) {
-                    //  加载布局文件
-                    View poiInfoView= inflater.inflate(R.layout.poi_marker, null);
-                    TextView poiInfoTextView = (TextView) poiInfoView.findViewById(R.id.poi_name);
-                    poiInfoTextView.setText(poiInfo.name);
-                    Bitmap poiInfoBitMap = getViewBitMap(poiInfoView);
-                    BitmapDescriptor candidateBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(poiInfoBitMap);
-                    //  构建Maker坐标点
-                    MarkerOptions markerOptions = new MarkerOptions()
-                            .position(latLng) //    设置位置
-                            .zIndex(8) //   设置marker所在层级
-                            .icon(candidateBitmapDescriptor) //  设置图标样式
-                            .title(poiInfo.name)
-                            .draggable(false); // 设置手势拖拽
-                    //  在地图上添加Marker，并显示
-                    Marker marker = (Marker) mBaiduMap.addOverlay(markerOptions);
-                    poiMarkerList.add(marker);
-                }
-            }
-        }
-    }
-
-    /**
-     *  marker默认只能加载bitmap图片，将view转换成Bitmap,进行添加
-     * @param addViewContent 要添加的View
-     * @return bitmap
-     */
-    private Bitmap getViewBitMap(View addViewContent) {
-
-        addViewContent.setDrawingCacheEnabled(true);
-        addViewContent.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        addViewContent.layout(0, 0,
-                addViewContent.getMeasuredWidth(),
-                addViewContent.getMeasuredHeight());
-        addViewContent.buildDrawingCache();
-
-        Bitmap cacheBitmap = addViewContent.getDrawingCache();
-        Bitmap bitmap = Bitmap.createBitmap(cacheBitmap);
-
-        return bitmap;
+        // 释放路线搜索实例
+        mRoutePlanSearch.destroy();
     }
 
     /**
      * 向地图中添加一个Pin，并将这个Pin加入到当前Plan
      * 在地图中心显示一个Pin的icon，用户通过拖动地图来选择要把Pin添加到什么位置
-     * 拖动地图的同时请求mapCenter的位置的逆地址编码
+     * 拖动地图的同时请求更新要添加的Pin的位置的信息
      */
     public void addPinStart() {
         isAddingPin = true;
@@ -757,98 +373,18 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         addPinUpdate();
     }
 
+    /**
+     * 更新要添加的Pin的位置的信息,获取mapCenter的经纬度、逆地址编码和周边poi信息
+     */
     public void addPinUpdate() {
         //  隐藏现有的infowindow
         mBaiduMap.hideInfoWindow();
         //  获取mapCenter的经纬度
         mapCenter = mBaiduMap.getMapStatus().target;
-        requestMapCenterReverseGeoCode();
-        addPinRequestUpdate();
-    }
-
-    public void requestMapCenterReverseGeoCode() {
-        //  请求逆地址编码
-        mGeoCoder.reverseGeoCode(new ReverseGeoCodeOption().location(mapCenter));
-    }
-
-    /**
-     * 获取当前地图的可视区域的bounds
-     * @return latLngBounds
-     */
-    private LatLngBounds getMapBounds() {
-
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-
-        Point bottomLeft = new Point();
-        bottomLeft.x = 0;
-        bottomLeft.y = display.getHeight();
-        Point topRight = new Point();
-        topRight.x = display.getWidth();
-        topRight.y = 0;
-
-        LatLng southwest = mBaiduMap.getProjection().fromScreenLocation(bottomLeft);
-
-        LatLng northeast = mBaiduMap.getProjection().fromScreenLocation(topRight);
-        LatLngBounds latLngBounds = new LatLngBounds.Builder().include(southwest).include(northeast).build();
-        return latLngBounds;
-    }
-
-    public void requestMapCenterPoi() {
-        LatLngBounds mapBounds = getMapBounds();
-        //  检索15条可视范围内的POI信息，用于辅助用户添加Pin
-        mPoiSearch.searchInBound(new PoiBoundSearchOption()
-                .bound(mapBounds)
-                .keyword("景点")
-                .pageNum(0)
-                .pageCapacity(15));
-        mPoiSearch.searchInBound(new PoiBoundSearchOption()
-                .bound(mapBounds)
-                .keyword("酒店")
-                .pageNum(0)
-                .pageCapacity(5));
-        mPoiSearch.searchInBound(new PoiBoundSearchOption()
-                .bound(mapBounds)
-                .keyword("美食")
-                .pageNum(0)
-                .pageCapacity(5));
-    }
-
-    private void addPinRequestUpdate() {
-        clearPoiInfo();
+        mapFragmentAuxiliary.requestMapCenterReverseGeoCode();
+        mapFragmentAuxiliary.clearPoiInfo();
         if (zoomLevel >= 14) {   //  若地图缩放太小，则不进行poi搜索
-            requestMapCenterPoi();
-        }
-    }
-
-    /**
-     * 检查用户是否将当前pin_adding的icon拖动到poi点的附近（30m）
-     * 若存在在这样的poi点，则将pin的title设置为poi点的name，并移动至poi点的位置
-     * @return 用户是否将Pin将当前pin_adding的icon拖动到poi点的附近（30m）
-     */
-    private boolean matchPinToPoi() {
-        //  获取现在的mapCenter
-        mapCenter = mBaiduMap.getMapStatus().target;
-        //  求出最近的poi点
-        Marker closestPoiInfoMarker = null;
-        double minDistance = Double.POSITIVE_INFINITY;
-        for (Marker marker : poiMarkerList) {
-            double distance = DistanceUtil.getDistance(mapCenter, marker.getPosition());
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestPoiInfoMarker = marker;
-            }
-        }
-        if (minDistance < 30 && null != closestPoiInfoMarker && matchedPoiHash != (double) closestPoiInfoMarker.hashCode()) {     //  距离小于50m，且未重复匹配
-            mapCenterAddress = closestPoiInfoMarker.getTitle();
-            matchedPoiHash = closestPoiInfoMarker.hashCode();
-            mapStatusChangeIgnored = true;  //  忽略下一次移动到该poiMarker的mapStatusChange
-            mapCenter = closestPoiInfoMarker.getPosition();
-            moveToLocationInMap(closestPoiInfoMarker.getPosition());
-            return true;
-        }
-        else {
-            matchedPoiHash = Double.POSITIVE_INFINITY;
-            return false;
+            mapFragmentAuxiliary.requestMapCenterPoi();
         }
     }
 
@@ -856,7 +392,6 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
      * 确认向地图中添加一个Pin
      * pre-condition: addPin()已经执行
      */
-    @Override
     public void addPinConfirm() {
         pin_adding.setVisibility(View.GONE);
         //  以当前位置构造一个Pin
@@ -870,8 +405,8 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             //  隐藏Pin的icon
             pin_adding.setVisibility(View.GONE);
             pinList.add(pin);
-            clearPoiInfo();
-            selectPin(pin);
+            mapFragmentAuxiliary.clearPoiInfo();
+            mapFragmentAuxiliary.selectPin(pin);
             matchedPoiHash = Double.POSITIVE_INFINITY;
         }
         else{
@@ -879,7 +414,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         }
     }
 
-    private void addPinCancel() {
+    public void addPinCancel() {
         isAddingPin = false;
         ib_add_pin.setVisibility(View.VISIBLE);
         ib_add_pin_confirm.setVisibility(View.GONE);
@@ -887,7 +422,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         ib_delete_pin.setVisibility(View.VISIBLE);
         //  隐藏Pin的icon
         pin_adding.setVisibility(View.GONE);
-        clearPoiInfo();
+        mapFragmentAuxiliary.clearPoiInfo();
     }
 
     /**
@@ -897,7 +432,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
      */
     public boolean addPin(Pin pin) {
         LatLng latLng = new LatLng(pin.getPinLatitude(), pin.getPinLongitude());
-        if (!pinAlreadyAdded(latLng)) {
+        if (!mapFragmentAuxiliary.pinAlreadyAdded(latLng)) {
             //  构建Maker坐标点
             MarkerOptions markerOptions = new MarkerOptions()
                     .position(latLng) //    设置位置
@@ -916,89 +451,9 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             return true;
         }
         else {
-            showToast("此处已经添加过Pin...");
+            mapFragmentAuxiliary.showToast("此处已经添加过Pin...");
             return false;
         }
-    }
-
-    private void clearPoiInfo() {
-        if (null != poiInfoList) {
-            poiInfoList.clear();
-        }
-        if (null != poiMarkerList) {
-            for (Marker poiMarker : poiMarkerList) {
-                poiMarker.remove();
-            }
-            poiMarkerList.clear();
-        }
-    }
-
-    /**
-     *
-     * 检测附近50m范围内是否已有添加的
-     *
-     * 地球半径：6371000M
-     * 地球周长：2 * 6371000M  * π = 40030173
-     * 纬度38°地球周长：40030173 * cos38 = 31544206M
-     * 任意地球经度周长：40030173M
-     * 经度（东西方向）1M实际度：360°/31544206M=1.141255544679108e-5=0.00001141
-     * 纬度（南北方向）1M实际度：360°/40030173M=8.993216192195822e-6=0.00000899
-     * @param latLng 要添加的pin的位置
-     * @return pinFound
-     */
-    public boolean pinAlreadyAdded(LatLng latLng) {
-        //  检测附近50m是否已有Pin
-        boolean pinFound = false;
-        //  构建LatLngBounds
-        LatLng northeast = new LatLng(latLng.latitude + 0.00001141 * 50, latLng.longitude + 0.00000899 * 50);
-        LatLng southwest = new LatLng(latLng.latitude - 0.00001141 * 50, latLng.longitude - 0.00000899 * 50);
-        LatLngBounds latLngBounds = new LatLngBounds.Builder().include(northeast).include(southwest).build();
-        for (Pin pin : pinMarkerMap.keySet()) {
-            LatLng temp = new LatLng(pin.getPinLatitude(), pin.getPinLongitude());
-            if (latLngBounds.contains(temp)) {
-                pinFound = true;
-                break;
-            }
-        }
-        return pinFound;
-    }
-
-    /**
-     *
-     * 检测附近10m范围内是否已有添加的marker
-     * @param latLng 要添加的marker的位置
-     * @return markerFound
-     */
-    public boolean markerAlreadyAdded(LatLng latLng) {
-        //  检测附近10m是否已有Pin
-        boolean markerFound = false;
-        //  构建LatLngBounds
-        LatLng northeast = new LatLng(latLng.latitude + 0.00001141 * 10, latLng.longitude + 0.00000899 * 10);
-        LatLng southwest = new LatLng(latLng.latitude - 0.00001141 * 10, latLng.longitude - 0.00000899 * 10);
-        LatLngBounds latLngBounds = new LatLngBounds.Builder().include(northeast).include(southwest).build();
-        for (Marker marker : poiMarkerList) {
-            LatLng temp = marker.getPosition();
-            if (latLngBounds.contains(temp)) {
-                markerFound = true;
-                break;
-            }
-        }
-        return markerFound;
-    }
-
-    /**
-     * 将地图中的Pin移除
-     * @param pin 要删除的Pin
-     */
-    @Override
-    public void deletePin(Pin pin) {
-        Marker marker = pinMarkerMap.get(pin);
-        if (null != marker) {
-            marker.remove();
-        }
-        pinMarkerMap.remove(pin);
-        pinList.remove(pin);
-        //  调用presenter删除Pin
     }
 
     private void deletePinsStart() {
@@ -1018,13 +473,13 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             ib_delete_pin_cancel.setVisibility(View.GONE);
             ib_delete_pin_confirm.setVisibility(View.GONE);
             for (Pin pin : pinDeleteList) {
-                deletePin(pin);
+                mapFragmentAuxiliary.deletePin(pin);
             }
             pinDeleteList.clear();
             isDeletingPins = false;
         }
         else {
-            showToast("未选择要删除的Pin");
+            mapFragmentAuxiliary.showToast("未选择要删除的Pin");
         }
     }
 
@@ -1040,30 +495,6 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             pinDeleteList.clear();
         }
         isDeletingPins = false;
-    }
-
-    /**
-     * 将当前地图中的所有点移除
-     */
-    @Override
-    public void removeAllPins() {
-        mBaiduMap.clear();
-    }
-
-    /**
-     * 编辑地图中的pin
-     */
-    @Override
-    public void editPin() {
-
-    }
-
-    /**
-     * 返回到当前位置
-     */
-    @Override
-    public void getMyLocation() {
-
     }
 
 }
