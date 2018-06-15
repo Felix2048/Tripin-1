@@ -41,6 +41,11 @@
     <string name="return_to_pin_in_plan">返回到当前的Pin</string>
     <string name="add_pin_to_plan">在地图上为当前计划添加一个Pin</string>
     <string name="confirm_add_pin_to_plan">确认添加Pin</string>
+    <string name="search_location">查找地点</string>
+    <string name="cancel_add_pin_to_plan">取消添加Pin</string>
+    <string name="delete_pin">删除已有的Pin</string>
+    <string name="delete_pin_cancle">取消删除Pin</string>
+    <string name="delete_pin_confirm">确认删除已选的多个Pin</string>
 
 
 </resources>

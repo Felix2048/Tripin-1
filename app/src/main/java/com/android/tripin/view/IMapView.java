@@ -8,38 +8,5 @@ import com.android.tripin.entity.Pin;
  */
 public interface IMapView {
 
-    /**
-     * 显示当前Plan下的所有pin和route
-     */
-    void showTrip();
 
-    /**
-     * 向地图中添加一个Pin
-     */
-    void addPin();
-
-    /**
-     * 确认向地图中添加一个Pin
-     */
-    void confirmPin();
-
-    /**
-     * 将地图中的Pin移除
-     */
-    void removePin();
-
-    /**
-     * 将当前地图中的所有点移除
-     */
-    void removeAllPins();
-
-    /**
-     * 编辑地图中的pin
-     */
-    void editPin();
-
-    /**
-     * 返回到当前位置
-     */
-    void getMyLocation();
 }
