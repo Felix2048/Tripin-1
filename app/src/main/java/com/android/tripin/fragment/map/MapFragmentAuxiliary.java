@@ -196,10 +196,11 @@ public class MapFragmentAuxiliary {
         //  修改currentPinIndex
         mapFragment.currentPinIndex = mapFragment.pinList.indexOf(pin);
         //  将信息显示在界面上
-        TextView pin_title = (TextView) mapFragment.pin_info.findViewById(R.id.pin_title);
-        pin_title.setText(pin.getPinTitle());
-        TextView pin_notes = (TextView) mapFragment.pin_info.findViewById(R.id.pin_notes);
-        pin_notes.setText(pin.getPinNotes());
+        //  TODO: 使用intent将pinInfo传给pinDetailActivity
+//        TextView pin_title = (TextView) mapFragment.pin_info.findViewById(R.id.pin_title);
+//        pin_title.setText(pin.getPinTitle());
+//        TextView pin_notes = (TextView) mapFragment.pin_info.findViewById(R.id.pin_notes);
+//        pin_notes.setText(pin.getPinNotes());
         //  加载infoWindow中的布局
         TextView textView = new TextView(mapFragment.getContext());
         textView.setBackgroundResource(R.drawable.common_bg_with_radius_and_border);
@@ -213,7 +214,8 @@ public class MapFragmentAuxiliary {
             @Override
             public void onInfoWindowClick() {
                 //  将布局显示出来
-                mapFragment.pin_info.setVisibility(View.VISIBLE);
+                //  TODO:跳转到PinDetailActivity
+//                mapFragment.pin_info.setVisibility(View.VISIBLE);
             }
         };
         //  显示infoWindow
@@ -230,9 +232,9 @@ public class MapFragmentAuxiliary {
         for (Pin pin : mapFragment.pinList) {
             addPin(pin);
         }
-        for (Route route : mapFragment.routeList) {
-            addRoute(route);
-        }
+//        for (Route route : mapFragment.routeList) {
+//            addRoute(route);
+//        }
         //  初始化currentPinIndex为0
         mapFragment.currentPinIndex = 0;
         mapFragment.mapFragmentAuxiliary.getBackToCurrentPin();
@@ -585,9 +587,9 @@ public class MapFragmentAuxiliary {
     }
 
     public void showWalkingRoute(WalkingRouteLine walkingRouteLine) {
-        if (null != walkingRouteLine) {
-            WalkingRouteOverlay overlay = new MyWalkingRouteOverlay(mBaidumap);
-        }
+//        if (null != walkingRouteLine) {
+//            WalkingRouteOverlay overlay = new MyWalkingRouteOverlay(mBaidumap);
+//        }
     }
 
 }

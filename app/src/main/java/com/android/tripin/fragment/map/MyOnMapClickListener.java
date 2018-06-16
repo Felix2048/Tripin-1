@@ -21,7 +21,7 @@ public class MyOnMapClickListener implements BaiduMap.OnMapClickListener {
     @Override
     public void onMapClick(LatLng latLng) {
         //  点击地图时隐藏pin的信息
-        mapFragment.pin_info.setVisibility(View.GONE);
+//        mapFragment.pin_info.setVisibility(View.GONE);
     }
 
     @Override

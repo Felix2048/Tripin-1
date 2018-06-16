@@ -100,7 +100,6 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     MapFragmentAuxiliary mapFragmentAuxiliary = new MapFragmentAuxiliary(this);
     LayoutInflater inflater;
     LinearLayout pin_adding;    //  显示正在添加的Pin的icon
-    RelativeLayout pin_info;    //  显示Pin的信息
 
     List<Pin> pinList = new ArrayList<>();
     List<Route> routeList = new ArrayList<>();
