@@ -27,7 +27,8 @@ public class MyOnGetGeoCoderResultListener implements OnGetGeoCoderResultListene
         else {
 //            mapFragment.mapFragmentAuxiliary.showToast("位置：" + result.getAddress());
             mapFragment.mapCenterAddress = result.getAddress();
-            mapFragment.mapFragmentAuxiliary.setAddressComponent(result.getAddressDetail());
+            mapFragment.cityInMap = result.getAddressDetail().city;
+            mapFragment.mapFragmentAuxiliary.addressComponent = result.getAddressDetail();
         }
     }
     // 地理编码查询结果回调函数

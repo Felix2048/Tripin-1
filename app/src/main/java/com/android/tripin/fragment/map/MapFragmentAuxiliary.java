@@ -1,5 +1,6 @@
 package com.android.tripin.fragment.map;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -25,6 +26,7 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.model.LatLngBounds;
 import com.baidu.mapapi.search.core.PoiInfo;
+import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.search.poi.PoiBoundSearchOption;
@@ -34,8 +36,12 @@ import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
 import com.baidu.mapapi.search.route.MassTransitRoutePlanOption;
 import com.baidu.mapapi.search.route.PlanNode;
 import com.baidu.mapapi.search.route.TransitRoutePlanOption;
+import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
+import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.baidu.mapapi.utils.DistanceUtil;
+
+import java.util.List;
 
 /**
  * Created by Felix on 6/15/2018.
@@ -43,25 +49,22 @@ import com.baidu.mapapi.utils.DistanceUtil;
  */
 public class MapFragmentAuxiliary {
 
-    private Toast mToast = null;
-
     /**
      * 逆地址编码回调获取到的AddressComponent
      */
-    private ReverseGeoCodeResult.AddressComponent addressComponent;
+    ReverseGeoCodeResult.AddressComponent addressComponent;
 
-    public ReverseGeoCodeResult.AddressComponent getAddressComponent() {
-        return addressComponent;
-    }
+    /**
+     * Toast对象
+     */
+    Toast mToast = null;
 
-    public void setAddressComponent(ReverseGeoCodeResult.AddressComponent addressComponent) {
-        this.addressComponent = addressComponent;
-    }
+    /**
+     * 是否显示对话框
+     */
+    boolean hasShownDialogue;
 
-
-
-
-    private MapFragment mapFragment;
+    MapFragment mapFragment;
 
     public MapFragmentAuxiliary(MapFragment mapFragment) {
         this.mapFragment = mapFragment;
@@ -227,6 +230,9 @@ public class MapFragmentAuxiliary {
         for (Pin pin : mapFragment.pinList) {
             addPin(pin);
         }
+        for (Route route : mapFragment.routeList) {
+            addRoute(route);
+        }
         //  初始化currentPinIndex为0
         mapFragment.currentPinIndex = 0;
         mapFragment.mapFragmentAuxiliary.getBackToCurrentPin();
@@ -260,7 +266,6 @@ public class MapFragmentAuxiliary {
     public void requestMapCenterReverseGeoCode() {
         //  请求逆地址编码
         requestReverseGeoCode(mapFragment.mapCenter);
-        mapFragment.cityInMap = addressComponent.city;
     }
 
     /**
@@ -349,6 +354,8 @@ public class MapFragmentAuxiliary {
         }
         else {
             mapFragment.mapFragmentAuxiliary.showToast("此处已经添加过Pin...");
+            //  从pinList中移除，以避免产生空引用
+            mapFragment.pinList.remove(pin);
             return false;
         }
     }
@@ -476,19 +483,52 @@ public class MapFragmentAuxiliary {
 
     /**
      * 在地图上添加连接起点和终点的路线
+     * @param origin 起点的location
+     * @param destination 终点的location
+     * @param transportationType 交通方式
+     */
+    public void addRoute(LatLng origin, LatLng destination, Transportation transportationType) {
+        PlanNode originNode = PlanNode.withLocation(origin);
+        PlanNode detinationNode = PlanNode.withLocation(destination);
+        requestRoute(originNode, detinationNode, transportationType);
+    }
+
+
+    /**
+     * 在地图上添加连接起点和终点的路线
      * @param origin 起点的pin
      * @param destination 终点的pin
+     * @param transportationType 交通方式
      */
-    public void addRoute(Pin origin, Pin destination) {
-
+    public void addRoute(Pin origin, Pin destination, Transportation transportationType) {
+        LatLng originLocation = new LatLng(origin.getPinLatitude(), origin.getPinLongitude());
+        LatLng destinationLocation = new LatLng(destination.getPinLatitude(), destination.getPinLongitude());
+        addRoute(originLocation, destinationLocation, transportationType);
     }
 
     /**
      * 根据Route在地图上添加路线
      * @param route 要添加的路线
      */
-    void addRoute(Route route) {
-
+    public void addRoute(Route route) {
+        int originID = route.getOrigin();
+        int destinationID = route.getDestination();
+        if (originID == destinationID) {
+            return;
+        }
+        Transportation transportation = route.getRouteTransportation();
+        Pin origin = null, destination = null;
+        for (Pin pin : mapFragment.pinList) {
+            if (pin.getPinID() == originID) {
+                origin = pin;
+            }
+            else if (pin.getPinID() == destinationID) {
+                destination = pin;
+            }
+        }
+        if (null != origin && null != destination) {
+            addRoute(origin, destination, transportation);
+        }
     }
 
     /**
@@ -497,7 +537,7 @@ public class MapFragmentAuxiliary {
      * @param destination 终点的planNode
      * @param transportationType 交通方式
      */
-    void requestRoute(@NonNull PlanNode origin, @NonNull PlanNode destination, Transportation transportationType) {
+    public void requestRoute(@NonNull PlanNode origin, @NonNull PlanNode destination, Transportation transportationType) {
         switch (transportationType) {
             //  TODO:在搜索时可以加入policy
             case WALK:
@@ -519,14 +559,14 @@ public class MapFragmentAuxiliary {
                 //  检查二者是否在同一个城市
                 LatLng originLocation =  origin.getLocation();
                 LatLng destinationLocation = destination.getLocation();
-                String orginCity = null, destinationCity = null;
+                String originCity = null, destinationCity = null;
                 if(null != originLocation && null != destinationLocation) {
                     requestReverseGeoCode(originLocation);
-                    orginCity = getAddressComponent().city;
+                    originCity = addressComponent.city;
                     requestReverseGeoCode(destinationLocation);
-                    destinationCity = getAddressComponent().city;
+                    destinationCity = addressComponent.city;
                 }
-                if (null != orginCity && null != destinationCity && orginCity.equals(destinationCity)) {
+                if (null != originCity && null != destinationCity && originCity.equals(destinationCity)) {
                     //  在相同城市
                     mapFragment.mRoutePlanSearch.transitSearch((new TransitRoutePlanOption())
                             .from(origin)
@@ -541,6 +581,12 @@ public class MapFragmentAuxiliary {
                 break;
             default:
                 break;
+        }
+    }
+
+    public void showWalkingRoute(WalkingRouteLine walkingRouteLine) {
+        if (null != walkingRouteLine) {
+            WalkingRouteOverlay overlay = new MyWalkingRouteOverlay(mBaidumap);
         }
     }
 

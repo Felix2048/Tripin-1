@@ -16,6 +16,7 @@ import com.android.tripin.base.BaseFragment;
 import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Route;
 import com.android.tripin.enums.PinStatus;
+import com.android.tripin.enums.Transportation;
 import com.android.tripin.manager.DataManager;
 import com.android.tripin.presenter.MapPresenter;
 import com.android.tripin.view.IMapView;
@@ -33,9 +34,12 @@ import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.PoiInfo;
+import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.poi.PoiSearch;
 import com.baidu.mapapi.search.route.RoutePlanSearch;
+import com.baidu.mapapi.search.route.WalkingRouteLine;
+import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.baidu.mapapi.search.sug.SuggestionSearch;
 
 import java.util.ArrayList;
@@ -102,6 +106,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     List<Route> routeList = new ArrayList<>();
     List<Marker> poiMarkerList = new ArrayList<>();
     Map<Pin, Marker> pinMarkerMap = new HashMap<>();
+    Map<Route, List<? extends RouteLine>> routeLineListMap = new HashMap<>();
     List<PoiInfo> poiInfoList;
     List<Pin> pinDeleteList = new ArrayList<>();    //  将要被删除的Pin
 
@@ -110,6 +115,8 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     int currentPinIndex;    //  当前pin的index
     double matchedPoiHash = Double.POSITIVE_INFINITY;   //  用户将当前pin_adding的icon拖动到poi点的附近，匹配到的poi的hash
     boolean mapStatusChangeIgnored = false; //  若为true，则此次mapStatusChange将会被忽略
+
+    List<WalkingRouteLine> walkingRouteLineList;
 
     /**
      * onCreateView
@@ -131,14 +138,19 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         //  定位
         initLocation();
 
-        Pin pin1 = new Pin(1, 31.24166, 121.48612,  "上海1",
+        Pin pin1 = new Pin(1, 1, 31.24166, 121.48612,  "上海1",
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第1个pin");
-        Pin pin2 = new Pin(1, 31.24296, 121.48602,  "上海2",
+        Pin pin2 = new Pin(2, 1,31.24296, 121.48602,  "上海2",
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第2个pin");
-        Pin pin3 = new Pin(1, 31.24168, 121.49812,  "上海3",
+        Pin pin3 = new Pin(3, 1,31.24168, 121.49812,  "上海3",
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第3个pin");
-        Pin pin4 = new Pin(1, 31.24178, 121.49809,  "上海4",
+        Pin pin4 = new Pin(4, 1, 31.24178, 121.49809,  "上海4",
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第4个pin");
+
+        Route route1 = new Route(1, 1, 1, 2, Transportation.MASS_TRANSIT, 0, true);
+        Route route2 = new Route(2, 1, 2, 3, Transportation.WALK, 0, true);
+        Route route3 = new Route(3, 1, 3, 4, Transportation.WALK, 0, true);
+
 
         //  加载pinList
         pinList.add(pin1);
@@ -146,7 +158,12 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         pinList.add(pin3);
         pinList.add(pin4);
 
-        //  将PinList显示在地图上
+        //  加载routeList
+        routeList.add(route1);
+        routeList.add(route2);
+        routeList.add(route3);
+
+        //  将trip显示在地图上
         mapFragmentAuxiliary.showTrip();
 
         return mView;
@@ -439,7 +456,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         mapFragmentAuxiliary.clearPoiInfo();
     }
 
-    private void deletePinsStart() {
+    public void deletePinsStart() {
         //  隐藏infowindow
         mBaiduMap.hideInfoWindow();
         ib_add_pin.setVisibility(View.GONE);
@@ -449,7 +466,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         isDeletingPins = true;
     }
 
-    private void deletePinsConfirm() {
+    public void deletePinsConfirm() {
         if (!pinDeleteList.isEmpty()) {
             ib_add_pin.setVisibility(View.VISIBLE);
             ib_delete_pin.setVisibility(View.VISIBLE);
@@ -466,7 +483,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         }
     }
 
-    private void deletePinsCancel() {
+    public void deletePinsCancel() {
         ib_add_pin.setVisibility(View.VISIBLE);
         ib_delete_pin.setVisibility(View.VISIBLE);
         ib_delete_pin_cancel.setVisibility(View.GONE);
@@ -479,5 +496,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         }
         isDeletingPins = false;
     }
+
+
 
 }

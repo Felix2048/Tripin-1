@@ -1,17 +1,10 @@
-package com.android.tripin;
+package com.android.tripin.fragment.map;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
+import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.base.BaseFragment;
-import com.android.tripin.fragment.map.MapFragment;
-import com.baidu.mapapi.SDKInitializer;
 
 /**
  * Created by Felix on 6/8/2018.
