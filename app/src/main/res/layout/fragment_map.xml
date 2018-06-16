@@ -122,7 +122,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="75dp"
         android:layout_marginEnd="15dp"
-        android:background="@drawable/ic_delete"
+        android:background="@drawable/ic_wipe"
         android:contentDescription="@string/delete_pin"
         android:visibility="gone"
         tools:ignore="RtlHardcoded" />

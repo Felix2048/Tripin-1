@@ -3,6 +3,7 @@ package com.android.tripin.presenter;
 import android.content.Intent;
 
 import com.android.tripin.R;
+import com.android.tripin.activity.LauncherActivity;
 import com.android.tripin.activity.SignUpActivity;
 import com.android.tripin.callback.LoginCallback;
 import com.android.tripin.model.LoginModel;
@@ -41,6 +42,10 @@ public class LoginPresenter implements ILoginPresenter {
             public void onSuccess() {
                 loginActivity.hideLoding();
                 loginActivity.showResult(R.string.login_success);
+                /**
+                 * 登陆成功，将登陆状态置为1
+                 */
+                LauncherActivity.CHECK_LOGIN_STATUS_FLAG=1;
                 /**
                  * 登陆成功还应该创建一个Intent，跳转至个人资料界面或者是主界面
                  */

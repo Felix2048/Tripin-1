@@ -14,5 +14,6 @@
         <attr name="shadow_bottom" format="reference"/>
     </declare-styleable>
 
+
     <attr name="SwipeBackLayoutStyle" format="reference"/>
 </resources>

@@ -46,6 +46,12 @@
     <string name="delete_pin">删除已有的Pin</string>
     <string name="delete_pin_cancle">取消删除Pin</string>
     <string name="delete_pin_confirm">确认删除已选的多个Pin</string>
+    <string name="personal_file_sign_out">注销</string>
+    <string name="btn_change_personal_file">确认</string>
+    <string name="change_personal_file_success">更改个人资料成功</string>
+    <string name="log_out_success">注销成功</string>
+    <string name="change_personal_file_failed">变更个人资料失败</string>
+    <string name="change_personal_file_netword_error">变更失败，网络连接错误</string>
 
 
 </resources>

@@ -26,4 +26,10 @@ public class ParserJsonToDataUtil {
         String verificationCode = getverificationCode.getVerificationCode();
         return verificationCode;
     }
+
+    public static String  getChangePersonalFileResponseMessage(String changePersonalFileResponse) {
+        ResponseMessage responseMessage = gson.fromJson(changePersonalFileResponse,ResponseMessage.class);
+        String errorCode = responseMessage.getErrorCode();
+        return errorCode;
+    }
 }
