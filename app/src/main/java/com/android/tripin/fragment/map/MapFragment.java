@@ -143,7 +143,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第2个pin");
         Pin pin3 = new Pin(3, 1,31.24168, 121.49812,  "上海3",
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第3个pin");
-        Pin pin4 = new Pin(4, 1, 31.24178, 121.49809,  "上海4",
+        Pin pin4 = new Pin(4, 1, 31.24078, 121.49809,  "上海4",
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第4个pin");
 
         Route route1 = new Route(1, 1, 1, 2, Transportation.MASS_TRANSIT, 0, true);

@@ -232,9 +232,9 @@ public class MapFragmentAuxiliary {
         for (Pin pin : mapFragment.pinList) {
             addPin(pin);
         }
-//        for (Route route : mapFragment.routeList) {
-//            addRoute(route);
-//        }
+        for (Route route : mapFragment.routeList) {
+            addRoute(route);
+        }
         //  初始化currentPinIndex为0
         mapFragment.currentPinIndex = 0;
         mapFragment.mapFragmentAuxiliary.getBackToCurrentPin();
@@ -491,8 +491,8 @@ public class MapFragmentAuxiliary {
      */
     public void addRoute(LatLng origin, LatLng destination, Transportation transportationType) {
         PlanNode originNode = PlanNode.withLocation(origin);
-        PlanNode detinationNode = PlanNode.withLocation(destination);
-        requestRoute(originNode, detinationNode, transportationType);
+        PlanNode destinationNode = PlanNode.withLocation(destination);
+        requestRoute(originNode, destinationNode, transportationType);
     }
 
 
@@ -559,27 +559,17 @@ public class MapFragmentAuxiliary {
                 break;
             case MASS_TRANSIT:
                 //  检查二者是否在同一个城市
-                LatLng originLocation =  origin.getLocation();
-                LatLng destinationLocation = destination.getLocation();
-                String originCity = null, destinationCity = null;
-                if(null != originLocation && null != destinationLocation) {
-                    requestReverseGeoCode(originLocation);
-                    originCity = addressComponent.city;
-                    requestReverseGeoCode(destinationLocation);
-                    destinationCity = addressComponent.city;
-                }
-                if (null != originCity && null != destinationCity && originCity.equals(destinationCity)) {
-                    //  在相同城市
-                    mapFragment.mRoutePlanSearch.transitSearch((new TransitRoutePlanOption())
-                            .from(origin)
-                            .to(destination));
-                }
-                else{
-                    //  不在相同城市
-                    mapFragment.mRoutePlanSearch.masstransitSearch((new MassTransitRoutePlanOption())
-                            .from(origin)
-                            .to(destination));
-                }
+                
+                //  在相同城市
+                showToast("在相同城市");
+                mapFragment.mRoutePlanSearch.transitSearch((new TransitRoutePlanOption())
+                        .from(origin)
+                        .to(destination));
+//                //  不在相同城市
+//                showToast("不在相同城市");
+//                mapFragment.mRoutePlanSearch.masstransitSearch((new MassTransitRoutePlanOption())
+//                        .from(origin)
+//                        .to(destination));
                 break;
             default:
                 break;
