@@ -9,7 +9,6 @@ public class ResponseMessage implements Serializable {
 
 
     String errorCode;
-    String msg;
     Object data;
 
     public ResponseMessage(String errorCode, Object data) {
@@ -24,13 +23,7 @@ public class ResponseMessage implements Serializable {
     public void setErrorCode(String errorCode) {
         this.errorCode = errorCode;
     }
-    public String getMsg() {
-        return msg;
-    }
 
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
 
     public Object getData() {
         return data;

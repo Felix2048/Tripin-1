@@ -1,6 +1,10 @@
 package com.android.tripin.model;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import com.android.tripin.callback.LoginCallback;
+import com.android.tripin.entity.UserInfo;
 import com.android.tripin.model.interfaces.ILoginModel;
 import com.android.tripin.util.OkHttp3Util;
 
@@ -14,6 +18,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.android.tripin.util.ParserJsonToDataUtil.getLoginDataResponseMessage;
 import static com.android.tripin.util.ParserJsonToDataUtil.getLoginResponseMessage;
 
 public class LoginModel implements ILoginModel {
@@ -36,7 +41,7 @@ public class LoginModel implements ILoginModel {
 
         RequestBody loginRequestBody = RequestBody.create(JSON,loginJson);
         Request loginRequest = new Request.Builder()
-                .url("")
+                .url("https://91bc1a06-e747-408d-9efe-e97283781f7d.mock.pstmn.io/user/login?id=7")
                 .post(loginRequestBody)
                 .build();
         client.newCall(loginRequest).enqueue(new Callback() {
@@ -47,9 +52,10 @@ public class LoginModel implements ILoginModel {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String loginResponse = response.body().string();
+                Log.v(TAG,"fuck"+loginResponse);
                 String errorCode = getLoginResponseMessage(loginResponse);
                 switch (errorCode){
-                    case "0" :
+                    case "0000" :
                         loginCallback.onSuccess();
                         break;
                     case "400" :

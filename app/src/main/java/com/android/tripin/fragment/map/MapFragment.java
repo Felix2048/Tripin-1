@@ -171,7 +171,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
 
     private void initView() {
         //  载入控件
-        pin_info = (RelativeLayout) mView.findViewById(R.id.pin_info);
+
         ib_location = (ImageButton) mView.findViewById(R.id.ib_location);
         ib_get_back_to_current_pin = (ImageButton) mView.findViewById(R.id.ib_get_back_to_current_pin);
         ib_previous_pin = (ImageButton) mView.findViewById(R.id.ib_previous_pin);

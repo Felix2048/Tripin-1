@@ -24,7 +24,7 @@
             android:textSize="16dp" />
 
         <TextView
-            android:id="@+id/arrive_time"
+            android:id="@+id/text_arrive_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -60,7 +60,7 @@
             android:textSize="16dp" />
 
         <TextView
-            android:id="@+id/leave_time"
+            android:id="@+id/text_leave_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -85,7 +85,8 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="10"/>
+        android:maxLines="10"
+        android:id="@+id/edit_pin_note"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -99,7 +100,8 @@
             android:layout_marginRight="20dp"
             android:layout_weight="1"
             android:background="@drawable/shape"
-            android:text="确认" />
+            android:text="确认"
+            android:id="@+id/btn_check_pin"/>
 
         <Button
             android:layout_width="91dp"
@@ -108,7 +110,8 @@
             android:background="@drawable/shape"
             android:text="删除"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"/>
+            android:layout_marginRight="20dp"
+            android:id="@+id/btn_delete_pin"/>
     </LinearLayout>
 
 

@@ -1,6 +1,9 @@
 package com.android.tripin.util;
 
+import android.util.Log;
+
 import com.android.tripin.entity.ResponseMessage;
+import com.android.tripin.entity.UserInfo;
 import com.android.tripin.entity.VerificationCode;
 import com.google.gson.Gson;
 
@@ -13,6 +16,12 @@ public class ParserJsonToDataUtil {
         ResponseMessage responseMessage = gson.fromJson(loginResponse,ResponseMessage.class);
         String errorCode = responseMessage.getErrorCode();
         return errorCode;
+    }
+
+    public static UserInfo getLoginDataResponseMessage(String loginResponse) {
+        ResponseMessage responseMessage = gson.fromJson(loginResponse,ResponseMessage.class);
+        UserInfo loginData = (UserInfo) responseMessage.getData();
+        return loginData;
     }
 
     public static String getSignUpResponseMessage(String signUpResponse) {
