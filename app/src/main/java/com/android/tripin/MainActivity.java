@@ -1,10 +1,10 @@
-package com.android.tripin.fragment.map;
+package com.android.tripin;
 
 import android.os.Bundle;
 
-import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.base.BaseFragment;
+import com.android.tripin.fragment.map.MapFragment;
 
 /**
  * Created by Felix on 6/8/2018.

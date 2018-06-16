@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.android.tripin.fragment.map.MainActivity;
+import com.android.tripin.MainActivity;
 
 /**
  * @author cginechen
