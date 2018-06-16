@@ -158,7 +158,6 @@
     <!--用于显示Pin的内容-->
     <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/pin_info"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -167,21 +166,11 @@
         android:clickable="true"
         android:focusable="true">
 
-        <TextView
-            android:id="@+id/pin_title"
+        <fragment
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="#000000"
-            android:layout_marginTop="5dp"/>
-
-        <TextView
-            android:id="@+id/pin_notes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/pin_title"
-            android:textSize="14sp"
-            android:textColor="#000000"/>
+            android:id="@+id/fragment_pin_detail"
+            android:name="com.android.tripin.fragment.PinDetailFragment"/>
 
     </RelativeLayout>
 
