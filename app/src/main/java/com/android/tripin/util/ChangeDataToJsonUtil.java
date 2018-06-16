@@ -37,5 +37,11 @@ public  class ChangeDataToJsonUtil {
         return  jsonSignUp;
     }
 
+    public static String getChangePersonalFileRequestJson(String userName,String email,String phone) {
+        UserInfo userInfo = UserInfo.getChangeFileUser(userName,email,phone);
+        String jsonChangePersonalFile = gson.toJson(userInfo);
+        return  jsonChangePersonalFile;
+    }
+
 
 }
