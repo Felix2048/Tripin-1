@@ -1,6 +1,7 @@
 package com.android.tripin.presenter;
 
 import android.content.Intent;
+import android.widget.Toast;
 
 import com.android.tripin.R;
 import com.android.tripin.activity.LauncherActivity;
@@ -16,16 +17,18 @@ public class LoginPresenter implements ILoginPresenter {
 
     private LoginModel loginModel;
     private LoginActivity loginActivity;
+    String loginJson;
 
     public LoginPresenter(LoginModel loginModel, LoginActivity loginActivity) {
         this.loginModel = loginModel;
         this.loginActivity = loginActivity;
+        loginJson = ChangeDataToJsonUtil.getLoginRequestJson(loginActivity.getUserName(),loginActivity.getPassword());
     }
 
     /**
      * 获取用户名，密码，将数据转化成loginJson
      */
-    String loginJson = ChangeDataToJsonUtil.getLoginRequestJson(loginActivity.getUserName(),loginActivity.getPassword());
+
 
 
     /**
@@ -42,11 +45,13 @@ public class LoginPresenter implements ILoginPresenter {
             public void onSuccess() {
                 loginActivity.hideLoding();
                 loginActivity.showResult(R.string.login_success);
+                Toast.makeText(loginActivity,"接受成功",Toast.LENGTH_SHORT).show();
                 /**
                  * 登陆成功，将登陆状态置为1
                  */
                 LauncherActivity.CHECK_LOGIN_STATUS_FLAG=1;
                 /**
+                 * TODO
                  * 登陆成功还应该创建一个Intent，跳转至个人资料界面或者是主界面
                  */
             }

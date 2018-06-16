@@ -1,6 +1,7 @@
 package com.android.tripin.activity;
 
 import android.app.ProgressDialog;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +14,7 @@ import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.model.LoginModel;
 import com.android.tripin.presenter.LoginPresenter;
+import com.android.tripin.util.ChangeDataToJsonUtil;
 import com.android.tripin.view.ILoginView;
 
 public class LoginActivity extends BaseActivity implements ILoginView, View.OnClickListener{
@@ -26,6 +28,23 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
     private ProgressDialog progressDialog;
     private LoginPresenter loginPresenter;
 
+    /**
+     * 获取用户输入账户
+     * @return
+     */
+    @Override
+    public String getUserName() {
+        return loginUserNameEditText.getText().toString();
+    }
+
+    /**
+     * 获取用户密码
+     * @return
+     */
+    @Override
+    public String getPassword() {
+        return loginPasswordEditText.getText().toString();
+    }
     @Override
     protected int getContextViewId() {
         return R.layout.activity_login;
@@ -36,7 +55,7 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         initView();
-        loginPresenter = initLoginPresenter();
+        loginPresenter = new LoginPresenter(new LoginModel(),this);
     }
 
     /**
@@ -50,15 +69,10 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
         progressDialog = new ProgressDialog(this);
         loginButton.setOnClickListener(this);
         createAccountTextView.setOnClickListener(this);
+        loginUserNameEditText.setOnClickListener(this);
+        loginPasswordEditText.setOnClickListener(this);
     }
 
-    /**
-     * 初始化LoginPresenter
-     */
-
-    public LoginPresenter initLoginPresenter() {
-        return new LoginPresenter(new LoginModel(),this);
-    }
 
     /**
      * 处理登陆界面点击事件
@@ -85,7 +99,7 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
     @Override
     public void showLoding(int msg) {
         progressDialog.setMessage(getString(msg));
-        if (!progressDialog.isShowing()){
+        if (!progressDialog.isShowing()) {
             progressDialog.show();
         }
     }
@@ -106,7 +120,9 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
      */
     @Override
     public void showResult(int result) {
+        Looper.prepare();
         Toast.makeText(this,result,Toast.LENGTH_SHORT).show();
+        Looper.loop();
     }
 
     /**
@@ -115,26 +131,12 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
      */
     @Override
     public void showError(int err) {
+        Looper.prepare();
         Toast.makeText(this,err,Toast.LENGTH_SHORT).show();
+        Looper.loop();
     }
 
-    /**
-     * 获取用户输入账户
-     * @return
-     */
-    @Override
-    public String getUserName() {
-        return loginUserNameEditText.getText().toString().trim();
-    }
 
-    /**
-     * 获取用户密码
-     * @return
-     */
-    @Override
-    public String getPassword() {
-        return loginPasswordEditText.getText().toString().trim();
-    }
 
     /**
      * 销毁presenter
