@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.core.SearchResult;
+import com.baidu.mapapi.search.route.BikingRouteLine;
 import com.baidu.mapapi.search.route.BikingRouteResult;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRouteResult;
@@ -72,7 +73,7 @@ public class MyOnGetRoutePlanResultListener implements OnGetRoutePlanResultListe
     }
 
     @Override
-    public void onGetTransitRouteResult(TransitRouteResult transitRouteResult) {
+        public void onGetTransitRouteResult(TransitRouteResult transitRouteResult) {
 
     }
 
@@ -128,6 +129,41 @@ public class MyOnGetRoutePlanResultListener implements OnGetRoutePlanResultListe
 
     @Override
     public void onGetBikingRouteResult(BikingRouteResult bikingRouteResult) {
-
+        if (bikingRouteResult == null || bikingRouteResult.error != SearchResult.ERRORNO.NO_ERROR) {
+            mapFragment.mapFragmentAuxiliary.showToast("抱歉，未找到结果");
+            if (bikingRouteResult.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
+                // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
+                mapFragment.mapFragmentAuxiliary.showToast("检索地址有歧义，请重新设置");
+                return;
+            }
+        }
+        if (bikingRouteResult.error == SearchResult.ERRORNO.NO_ERROR) {
+            if (bikingRouteResult.getRouteLines().size() > 1) {
+                //  获取到的路线结果 > 1, 选择其中最快的一条，并将结果存储
+                List<BikingRouteLine> bikingRouteLineList = bikingRouteResult.getRouteLines();
+                mapFragment.mapFragmentAuxiliary.addRouteLineListToMap(bikingRouteLineList);
+                //  获取用时最短的routeLine
+                double minDuration = Double.POSITIVE_INFINITY;
+                BikingRouteLine quickestBikingRouteLine = null;
+                for(BikingRouteLine bikingRouteLine : bikingRouteLineList) {
+                    int duration = bikingRouteLine.getDuration();
+                    if (duration < minDuration) {
+                        minDuration = duration;
+                        quickestBikingRouteLine = bikingRouteLine;
+                    }
+                }
+                if(null != quickestBikingRouteLine) {
+                    mapFragment.mapFragmentAuxiliary.showBikingRoute(quickestBikingRouteLine);
+                }
+            }
+            else if (bikingRouteResult.getRouteLines().size() == 1) {
+                // 直接显示
+                List<BikingRouteLine> bikingRouteLineList = bikingRouteResult.getRouteLines();
+                mapFragment.mapFragmentAuxiliary.addRouteLineListToMap(bikingRouteLineList);
+                mapFragment.mapFragmentAuxiliary.showBikingRoute(bikingRouteLineList.get(0));
+            } else {
+                Log.d("route result", "结果数 < 0");
+            }
+        }
     }
 }

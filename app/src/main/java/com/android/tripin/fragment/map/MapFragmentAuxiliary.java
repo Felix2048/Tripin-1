@@ -15,6 +15,7 @@ import com.android.tripin.R;
 import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Route;
 import com.android.tripin.enums.Transportation;
+import com.android.tripin.util.overlayutil.BikingRouteOverlay;
 import com.android.tripin.util.overlayutil.DrivingRouteOverlay;
 import com.android.tripin.util.overlayutil.OverlayManager;
 import com.android.tripin.util.overlayutil.WalkingRouteOverlay;
@@ -34,6 +35,7 @@ import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.search.poi.PoiBoundSearchOption;
 import com.baidu.mapapi.search.poi.PoiResult;
+import com.baidu.mapapi.search.route.BikingRouteLine;
 import com.baidu.mapapi.search.route.BikingRoutePlanOption;
 import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
@@ -675,6 +677,16 @@ public class MapFragmentAuxiliary {
             DrivingRouteOverlay overlay = new DrivingRouteOverlay(mapFragment.mBaiduMap);
 //            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
             overlay.setData(drivingRouteLine);
+            overlay.addToMap();
+//            overlay.zoomToSpan();
+        }
+    }
+
+    public void showBikingRoute(BikingRouteLine bikingRouteLine) {
+        if (null != bikingRouteLine) {
+            BikingRouteOverlay overlay = new BikingRouteOverlay(mapFragment.mBaiduMap);
+//            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
+            overlay.setData(bikingRouteLine);
             overlay.addToMap();
 //            overlay.zoomToSpan();
         }
