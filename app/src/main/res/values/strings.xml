@@ -54,7 +54,11 @@
     <string name="log_out_success">注销成功</string>
     <string name="change_personal_file_failed">变更个人资料失败</string>
     <string name="change_personal_file_netword_error">变更失败，网络连接错误</string>
-
+    <string name="change_pin_detail_success">修改成功</string>
+    <string name="change_pin_detail_failed">修改失败</string>
+    <string name="delete_pin_success">删除成功</string>
+    <string name="delete_pin_failed">删除失败</string>
+    <string name="pin_detail_network_error">网络错误</string>
 
 
 </resources>

@@ -41,4 +41,16 @@ public class ParserJsonToDataUtil {
         String errorCode = responseMessage.getErrorCode();
         return errorCode;
     }
+
+
+    /**
+     * 回调结果处理只需取得errorCode,故统一使用此方法，以上方法仍保留，暂时没时间去该代码。。。。
+     * @param requestResponse
+     * @return
+     */
+    public static String getResponseErrorCode(String requestResponse) {
+        ResponseMessage responseMessage = gson.fromJson(requestResponse,ResponseMessage.class);
+        String errorCode = responseMessage.getErrorCode();
+        return errorCode;
+    }
 }

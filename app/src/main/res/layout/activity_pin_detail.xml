@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="14dp"
-            android:background="@drawable/ic_right" />
+            android:background="@drawable/ic_right_arrow" />
 
     </LinearLayout>
 
@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="14dp"
-            android:background="@drawable/ic_right" />
+            android:background="@drawable/ic_right_arrow" />
 
     </LinearLayout>
     <TextView

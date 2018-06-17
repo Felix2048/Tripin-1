@@ -1,6 +1,7 @@
 package com.android.tripin.activity;
 
 import android.app.DatePickerDialog;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,20 +9,24 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
+import com.android.tripin.model.PinDetailModel;
+import com.android.tripin.presenter.interfaces.PinDetailPresenter;
+import com.android.tripin.view.IPinDetailView;
 
 import java.util.Calendar;
 
-public class PinDetailActivity extends BaseActivity implements View.OnClickListener{
+public class PinDetailActivity extends BaseActivity implements IPinDetailView, View.OnClickListener{
 
     private TextView arriveTimeText;
     private TextView leaveTimeText;
     private EditText pinNote;
     private Button checkPinButton;
     private Button deletePinButton;
-    private int mYear,mMonth,mDay;
+    private PinDetailPresenter pinDetailPresenter;
 
     @Override
     protected int getContextViewId() {
@@ -32,10 +37,8 @@ public class PinDetailActivity extends BaseActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_detail);
-        Calendar ca = Calendar.getInstance();
-        mYear = ca.get(Calendar.YEAR);
-        mMonth = ca.get(Calendar.MONTH);
-        mDay = ca.get(Calendar.DAY_OF_MONTH);
+        init();
+        pinDetailPresenter = new PinDetailPresenter(this,new PinDetailModel());
     }
 
     void init() {
@@ -55,13 +58,29 @@ public class PinDetailActivity extends BaseActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.text_arrive_time:
-                new DatePickerDialog(PinDetailActivity.this, onDateSetListener, mYear, mMonth, mDay).show();
-                break;
+                 Calendar c = Calendar.getInstance();
+                 new DatePickerDialog(PinDetailActivity.this, new DatePickerDialog.OnDateSetListener() {
+                     @Override
+                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                         arriveTimeText.setText(year+"年"+month+"月"+dayOfMonth+"日");
+                     }
+                 },c.get(Calendar.YEAR),c.get(Calendar.MONTH),c.get(Calendar.DAY_OF_MONTH)).show();
+                 break;
             case R.id.text_leave_time:
+                Calendar c1 = Calendar.getInstance();
+                new DatePickerDialog(PinDetailActivity.this, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        leaveTimeText.setText(year+"年"+month+"月"+dayOfMonth+"日");
+                    }
+                },c1.get(Calendar.YEAR),c1.get(Calendar.MONTH),c1.get(Calendar.DAY_OF_MONTH)).show();
                 break;
             case R.id.edit_pin_note:
+                String s = pinNote.getText().toString();
+                pinNote.setHint(s);
                 break;
             case R.id.btn_check_pin:
+
                 break;
             case R.id.btn_delete_pin:
                 break;
@@ -70,34 +89,54 @@ public class PinDetailActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
-    private DatePickerDialog.OnDateSetListener onDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            mYear = year;
-            mMonth = monthOfYear;
-            mDay = dayOfMonth;
-            String days;
-            if (mMonth + 1 < 10) {
-                if (mDay < 10) {
-                    days = new StringBuffer().append(mYear).append("年").append("0").
-                            append(mMonth + 1).append("月").append("0").append(mDay).append("日").toString();
-                } else {
-                    days = new StringBuffer().append(mYear).append("年").append("0").
-                            append(mMonth + 1).append("月").append(mDay).append("日").toString();
-                }
+    @Override
+    public void showChangeSuccess() {
+        Looper.prepare();
+        Toast.makeText(this, R.string.change_pin_detail_success,Toast.LENGTH_SHORT).show();
+        Looper.loop();
+    }
 
-            } else {
-                if (mDay < 10) {
-                    days = new StringBuffer().append(mYear).append("年").
-                            append(mMonth + 1).append("月").append("0").append(mDay).append("日").toString();
-                } else {
-                    days = new StringBuffer().append(mYear).append("年").
-                            append(mMonth + 1).append("月").append(mDay).append("日").toString();
-                }
+    @Override
+    public void showChangeFailed() {
+        Looper.prepare();
+        Toast.makeText(this, R.string.change_pin_detail_failed,Toast.LENGTH_SHORT).show();
+        Looper.loop();
+    }
 
-            }
+    @Override
+    public void showDeleteSuccess() {
+        Looper.prepare();
+        Toast.makeText(this, R.string.delete_pin_success,Toast.LENGTH_SHORT).show();
+        Looper.loop();
+    }
 
-        }
-    };
+    @Override
+    public void showDeleteFailed() {
+        Looper.prepare();
+        Toast.makeText(this, R.string.delete_pin_failed,Toast.LENGTH_SHORT).show();
+        Looper.loop();
+    }
+
+    @Override
+    public void showNetworkError() {
+        Looper.prepare();
+        Toast.makeText(this, R.string.pin_detail_network_error,Toast.LENGTH_SHORT).show();
+        Looper.loop();
+    }
+
+    @Override
+    public String getArriveTime() {
+        return arriveTimeText.getText().toString().trim();
+    }
+
+    @Override
+    public String getLeaveTime() {
+        return leaveTimeText.getText().toString().trim();
+    }
+
+    @Override
+    public String getPinNotes() {
+        return pinNote.getHint().toString().trim();
+    }
 }
