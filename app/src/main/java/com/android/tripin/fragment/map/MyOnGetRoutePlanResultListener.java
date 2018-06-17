@@ -8,6 +8,7 @@ import android.view.View;
 import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.core.SearchResult;
 import com.baidu.mapapi.search.route.BikingRouteResult;
+import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRouteResult;
 import com.baidu.mapapi.search.route.IndoorRouteResult;
 import com.baidu.mapapi.search.route.MassTransitRouteResult;
@@ -44,6 +45,7 @@ public class MyOnGetRoutePlanResultListener implements OnGetRoutePlanResultListe
             if (walkingRouteResult.getRouteLines().size() > 1) {
                 //  获取到的路线结果 > 1, 选择其中最快的一条，并将结果存储
                 List<WalkingRouteLine> walkingRouteLineList = walkingRouteResult.getRouteLines();
+                mapFragment.mapFragmentAuxiliary.addRouteLineListToMap(walkingRouteLineList);
                 //  获取用时最短的routeLine
                 double minDuration = Double.POSITIVE_INFINITY;
                 WalkingRouteLine quickestWalkingRouteLine = null;
@@ -61,11 +63,11 @@ public class MyOnGetRoutePlanResultListener implements OnGetRoutePlanResultListe
             else if (walkingRouteResult.getRouteLines().size() == 1) {
                 // 直接显示
                 List<WalkingRouteLine> walkingRouteLineList = walkingRouteResult.getRouteLines();
+                mapFragment.mapFragmentAuxiliary.addRouteLineListToMap(walkingRouteLineList);
                 mapFragment.mapFragmentAuxiliary.showWalkingRoute(walkingRouteLineList.get(0));
             } else {
                 Log.d("route result", "结果数 < 0");
             }
-
         }
     }
 
@@ -81,7 +83,42 @@ public class MyOnGetRoutePlanResultListener implements OnGetRoutePlanResultListe
 
     @Override
     public void onGetDrivingRouteResult(DrivingRouteResult drivingRouteResult) {
-
+        if (drivingRouteResult == null || drivingRouteResult.error != SearchResult.ERRORNO.NO_ERROR) {
+            mapFragment.mapFragmentAuxiliary.showToast("抱歉，未找到结果");
+            if (drivingRouteResult.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
+                // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
+                mapFragment.mapFragmentAuxiliary.showToast("检索地址有歧义，请重新设置");
+                return;
+            }
+        }
+        if (drivingRouteResult.error == SearchResult.ERRORNO.NO_ERROR) {
+            if (drivingRouteResult.getRouteLines().size() > 1) {
+                //  获取到的路线结果 > 1, 选择其中最快的一条，并将结果存储
+                List<DrivingRouteLine> drivingRouteLineList = drivingRouteResult.getRouteLines();
+                mapFragment.mapFragmentAuxiliary.addRouteLineListToMap(drivingRouteLineList);
+                //  获取用时最短的routeLine
+                double minDuration = Double.POSITIVE_INFINITY;
+                DrivingRouteLine quickestDrivingRouteLine = null;
+                for(DrivingRouteLine drivingRouteLine : drivingRouteLineList) {
+                    int duration = drivingRouteLine.getDuration();
+                    if (duration < minDuration) {
+                        minDuration = duration;
+                        quickestDrivingRouteLine = drivingRouteLine;
+                    }
+                }
+                if(null != quickestDrivingRouteLine) {
+                    mapFragment.mapFragmentAuxiliary.showDrivingRoute(quickestDrivingRouteLine);
+                }
+            }
+            else if (drivingRouteResult.getRouteLines().size() == 1) {
+                // 直接显示
+                List<DrivingRouteLine> drivingRouteLineList = drivingRouteResult.getRouteLines();
+                mapFragment.mapFragmentAuxiliary.addRouteLineListToMap(drivingRouteLineList);
+                mapFragment.mapFragmentAuxiliary.showDrivingRoute(drivingRouteLineList.get(0));
+            } else {
+                Log.d("route result", "结果数 < 0");
+            }
+        }
     }
 
     @Override

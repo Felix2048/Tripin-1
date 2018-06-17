@@ -77,20 +77,22 @@ public class DrivingRouteOverlay extends OverlayManager {
         }
 
         if (mRouteLine.getStarting() != null) {
-            overlayOptionses.add((new MarkerOptions())
-                    .position(mRouteLine.getStarting().getLocation())
-                            .icon(getStartMarker() != null ? getStartMarker() :
-                                    BitmapDescriptorFactory
-                                            .fromAssetWithDpi("Icon_start.png")).zIndex(10));
+            //  取消添加start的icon
+//            overlayOptionses.add((new MarkerOptions())
+//                    .position(mRouteLine.getStarting().getLocation())
+//                            .icon(getStartMarker() != null ? getStartMarker() :
+//                                    BitmapDescriptorFactory
+//                                            .fromAssetWithDpi("Icon_start.png")).zIndex(10));
         }
         if (mRouteLine.getTerminal() != null) {
-            overlayOptionses
-                    .add((new MarkerOptions())
-                            .position(mRouteLine.getTerminal().getLocation())
-                                    .icon(getTerminalMarker() != null ? getTerminalMarker() :
-                                            BitmapDescriptorFactory
-                                                    .fromAssetWithDpi("Icon_end.png"))
-                                                            .zIndex(10));
+            //  取消添加end的icon
+//            overlayOptionses
+//                    .add((new MarkerOptions())
+//                            .position(mRouteLine.getTerminal().getLocation())
+//                                    .icon(getTerminalMarker() != null ? getTerminalMarker() :
+//                                            BitmapDescriptorFactory
+//                                                    .fromAssetWithDpi("Icon_end.png"))
+//                                                            .zIndex(10));
         }
         // poly line
         if (mRouteLine.getAllStep() != null

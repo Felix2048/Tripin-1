@@ -15,6 +15,7 @@ import com.android.tripin.R;
 import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Route;
 import com.android.tripin.enums.Transportation;
+import com.android.tripin.util.overlayutil.DrivingRouteOverlay;
 import com.android.tripin.util.overlayutil.OverlayManager;
 import com.android.tripin.util.overlayutil.WalkingRouteOverlay;
 import com.baidu.mapapi.map.BitmapDescriptor;
@@ -27,11 +28,14 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.model.LatLngBounds;
 import com.baidu.mapapi.search.core.PoiInfo;
+import com.baidu.mapapi.search.core.RouteLine;
+import com.baidu.mapapi.search.core.RouteNode;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.search.poi.PoiBoundSearchOption;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.route.BikingRoutePlanOption;
+import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
 import com.baidu.mapapi.search.route.MassTransitRoutePlanOption;
 import com.baidu.mapapi.search.route.PlanNode;
@@ -39,6 +43,9 @@ import com.baidu.mapapi.search.route.TransitRoutePlanOption;
 import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
 import com.baidu.mapapi.utils.DistanceUtil;
+
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by Felix on 6/15/2018.
@@ -196,39 +203,42 @@ public class MapFragmentAuxiliary {
      * @param marker 被选中的标记覆盖物
      */
     public void selectPin(Marker marker) {
-        //  隐藏infowindow
-        mapFragment.mBaiduMap.hideInfoWindow();
         //  从marker中获取info信息
         Bundle bundle = marker.getExtraInfo();
         Pin pin = (Pin) bundle.getSerializable("pin");
-        //  修改currentPinIndex
-        mapFragment.currentPinIndex = mapFragment.pinList.indexOf(pin);
-        //  将信息显示在界面上
-        //  TODO: 使用intent将pinInfo传给pinDetailActivity
+        if(null != pin) {
+            //  如果获取pin成功
+            //  隐藏infowindow
+            mapFragment.mBaiduMap.hideInfoWindow();
+            //  修改currentPinIndex
+            mapFragment.currentPinIndex = mapFragment.pinList.indexOf(pin);
+            //  将信息显示在界面上
+            //  TODO: 使用intent将pinInfo传给pinDetailActivity
 //        TextView pin_title = (TextView) mapFragment.pin_info.findViewById(R.id.pin_title);
 //        pin_title.setText(pin.getPinTitle());
 //        TextView pin_notes = (TextView) mapFragment.pin_info.findViewById(R.id.pin_notes);
 //        pin_notes.setText(pin.getPinNotes());
-        //  加载infoWindow中的布局
-        TextView textView = new TextView(mapFragment.getContext());
-        textView.setBackgroundResource(R.drawable.common_bg_with_radius_and_border);
-        textView.setPadding(20, 10, 20, 20);
-        textView.setTextColor(Color.BLACK);
-        textView.setText(pin.getPinTitle());
-        textView.setGravity(Gravity.CENTER);
-        BitmapDescriptor infoWindowView = BitmapDescriptorFactory.fromView(textView);
-        //  infoWindow点击事件
-        InfoWindow.OnInfoWindowClickListener listener = new InfoWindow.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick() {
-                //  将布局显示出来
-                //  TODO:跳转到PinDetailActivity
+            //  加载infoWindow中的布局
+            TextView textView = new TextView(mapFragment.getContext());
+            textView.setBackgroundResource(R.drawable.common_bg_with_radius_and_border);
+            textView.setPadding(20, 10, 20, 20);
+            textView.setTextColor(Color.BLACK);
+            textView.setText(pin.getPinTitle());
+            textView.setGravity(Gravity.CENTER);
+            BitmapDescriptor infoWindowView = BitmapDescriptorFactory.fromView(textView);
+            //  infoWindow点击事件
+            InfoWindow.OnInfoWindowClickListener listener = new InfoWindow.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick() {
+                    //  将布局显示出来
+                    //  TODO:跳转到PinDetailActivity
 //                mapFragment.pin_info.setVisibility(View.VISIBLE);
-            }
-        };
-        //  显示infoWindow
-        InfoWindow infoWindow = new InfoWindow(infoWindowView, new LatLng(pin.getPinLatitude(), pin.getPinLongitude()), -100, listener);
-        mapFragment.mBaiduMap.showInfoWindow(infoWindow);
+                }
+            };
+            //  显示infoWindow
+            InfoWindow infoWindow = new InfoWindow(infoWindowView, new LatLng(pin.getPinLatitude(), pin.getPinLongitude()), -100, listener);
+            mapFragment.mBaiduMap.showInfoWindow(infoWindow);
+        }
     }
 
     /**
@@ -237,10 +247,12 @@ public class MapFragmentAuxiliary {
     public void showTrip() {
         //  清空地图
         mapFragment.mBaiduMap.clear();
+
         for (Pin pin : mapFragment.pinList) {
             addPin(pin);
         }
         for (Route route : mapFragment.routeList) {
+            addRoutePinSetMap(route);
             addRoute(route);
         }
         //  初始化currentPinIndex为0
@@ -531,6 +543,32 @@ public class MapFragmentAuxiliary {
             return;
         }
         Transportation transportation = route.getRouteTransportation();
+
+        Pin origin = null, destination = null;
+        HashSet<Pin> pins = mapFragment.routePinSetMap.get(route);
+        for (Pin pin : pins) {
+            if(pin.getPinID() == route.getOrigin()) {
+                origin = pin;
+            }
+            else if (pin.getPinID() == route.getDestination()) {
+                destination = pin;
+            }
+        }
+        if (null != origin && null != destination) {
+            addRoute(origin, destination, transportation);
+        }
+    }
+
+    /**
+     * 在pinList中找对应route中起始点ID的pin，routePinSetMap
+     * @param route 路线
+     */
+    public void addRoutePinSetMap(Route route) {
+        int originID = route.getOrigin();
+        int destinationID = route.getDestination();
+        if (originID == destinationID) {
+            return;
+        }
         Pin origin = null, destination = null;
         for (Pin pin : mapFragment.pinList) {
             if (pin.getPinID() == originID) {
@@ -540,8 +578,38 @@ public class MapFragmentAuxiliary {
                 destination = pin;
             }
         }
-        if (null != origin && null != destination) {
-            addRoute(origin, destination, transportation);
+        HashSet<Pin> pins = new HashSet<>();
+        pins.add(origin);
+        pins.add(destination);
+        mapFragment.routePinSetMap.put(route, pins);
+    }
+
+    /**
+     * 在routeList中匹配到对应的route，然后将(route, routeLineList)加入到routeLineListMap中
+     * @param routeLineList 回调获取到的routeLine
+     */
+    public void addRouteLineListToMap(List<? extends RouteLine> routeLineList) {
+        LatLng origin = routeLineList.get(0).getStarting().getLocation();
+        LatLng destination = routeLineList.get(0).getTerminal().getLocation();
+        Route route = null;
+        for (Route temp : mapFragment.routePinSetMap.keySet()) {
+            HashSet<Pin> pins = mapFragment.routePinSetMap.get(temp);
+            boolean originInPins = false, destinationInPins = false;
+            for (Pin pin: pins) {
+                if (origin.latitude == pin.getPinLatitude() && origin.longitude == pin.getPinLongitude()) {
+                    originInPins = true;
+                }
+                else if (destination.latitude == pin.getPinLatitude() && destination.longitude == pin.getPinLongitude()) {
+                    destinationInPins = true;
+                }
+            }
+            if (originInPins && destinationInPins) {
+                route = temp;
+                break;
+            }
+        }
+        if(null != route) {
+            mapFragment.routeLineListMap.put(route, routeLineList);
         }
     }
 
@@ -598,7 +666,17 @@ public class MapFragmentAuxiliary {
 //            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
             overlay.setData(walkingRouteLine);
             overlay.addToMap();
-            overlay.zoomToSpan();
+//            overlay.zoomToSpan();
+        }
+    }
+
+    public void showDrivingRoute(DrivingRouteLine drivingRouteLine) {
+        if (null != drivingRouteLine) {
+            DrivingRouteOverlay overlay = new DrivingRouteOverlay(mapFragment.mBaiduMap);
+//            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
+            overlay.setData(drivingRouteLine);
+            overlay.addToMap();
+//            overlay.zoomToSpan();
         }
     }
 

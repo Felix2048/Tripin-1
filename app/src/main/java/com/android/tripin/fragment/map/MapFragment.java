@@ -45,9 +45,11 @@ import com.baidu.mapapi.search.sug.SuggestionSearch;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Created by Felix on 6/8/2018.
@@ -105,6 +107,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     List<Route> routeList = new ArrayList<>();
     List<Marker> poiMarkerList = new ArrayList<>();
     Map<Pin, Marker> pinMarkerMap = new HashMap<>();
+    Map<Route, HashSet<Pin>> routePinSetMap = new HashMap<>();
     Map<Route, List<? extends RouteLine>> routeLineListMap = new HashMap<>();
     List<PoiInfo> poiInfoList;
     List<Pin> pinDeleteList = new ArrayList<>();    //  将要被删除的Pin
@@ -114,8 +117,6 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     int currentPinIndex = -1;    //  当前pin的index
     double matchedPoiHash = Double.POSITIVE_INFINITY;   //  用户将当前pin_adding的icon拖动到poi点的附近，匹配到的poi的hash
     boolean mapStatusChangeIgnored = false; //  若为true，则此次mapStatusChange将会被忽略
-
-    List<WalkingRouteLine> walkingRouteLineList;
 
     /**
      * onCreateView
@@ -142,7 +143,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第4个pin");
 
         Route route1 = new Route(1, 1, 1, 2, Transportation.WALK, 0, true);
-        Route route2 = new Route(2, 1, 2, 3, Transportation.WALK, 0, true);
+        Route route2 = new Route(2, 1, 2, 3, Transportation.DRIVING, 0, true);
         Route route3 = new Route(3, 1, 3, 4, Transportation.WALK, 0, true);
 
 
