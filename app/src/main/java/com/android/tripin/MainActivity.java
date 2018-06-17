@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.base.BaseFragment;
 import com.android.tripin.fragment.map.MapFragment;
+import com.android.tripin.manager.ActivityCollector;
 
 /**
  * Created by Felix on 6/8/2018.
@@ -40,6 +41,6 @@ public class MainActivity extends BaseActivity {
     public void onBackPressed() {
         super.onBackPressed();
         //  处理因按后退键导致的内存泄漏
-        finish();
+        ActivityCollector.finishAll();
     }
 }

@@ -111,7 +111,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
 
     boolean isAddingPin = false;    //  是否向地图正在添加Pin
     boolean isDeletingPins = false;  //  是否从地图中删除Pin
-    int currentPinIndex;    //  当前pin的index
+    int currentPinIndex = -1;    //  当前pin的index
     double matchedPoiHash = Double.POSITIVE_INFINITY;   //  用户将当前pin_adding的icon拖动到poi点的附近，匹配到的poi的hash
     boolean mapStatusChangeIgnored = false; //  若为true，则此次mapStatusChange将会被忽略
 
@@ -123,11 +123,6 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //  在使用 SDK 各组间之前初始化 context 信息，传入 ApplicationContext
-        SDKInitializer.initialize(Objects.requireNonNull(getActivity()).getApplicationContext());
-        //  自4.3.0起，百度地图SDK所有接口均支持百度坐标和国测局坐标，用此方法设置您使用的坐标类型.
-        //  包括BD09LL和GCJ02两种坐标，默认是BD09LL坐标。
-        SDKInitializer.setCoordType(CoordType.BD09LL);
         mView = inflater.inflate(R.layout.fragment_map, container, false);
         this.inflater = inflater;
         //  初始化控件
@@ -141,12 +136,12 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第1个pin");
         Pin pin2 = new Pin(2, 1,31.24296, 121.48602,  "上海2",
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第2个pin");
-        Pin pin3 = new Pin(3, 1,31.24168, 121.49812,  "上海3",
+        Pin pin3 = new Pin(3, 1,31.23968, 121.49501,  "上海3",
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第3个pin");
         Pin pin4 = new Pin(4, 1, 31.24078, 121.49809,  "上海4",
                 new Date(), new Date(), PinStatus.WANTED, "这是我的第4个pin");
 
-        Route route1 = new Route(1, 1, 1, 2, Transportation.MASS_TRANSIT, 0, true);
+        Route route1 = new Route(1, 1, 1, 2, Transportation.WALK, 0, true);
         Route route2 = new Route(2, 1, 2, 3, Transportation.WALK, 0, true);
         Route route3 = new Route(3, 1, 3, 4, Transportation.WALK, 0, true);
 
@@ -162,7 +157,6 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         routeList.add(route2);
         routeList.add(route3);
 
-        //  将trip显示在地图上
         mapFragmentAuxiliary.showTrip();
 
         return mView;

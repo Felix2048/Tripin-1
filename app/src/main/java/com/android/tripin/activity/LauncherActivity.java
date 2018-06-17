@@ -1,10 +1,12 @@
 package com.android.tripin.activity;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
 
 import com.android.tripin.MainActivity;
+import com.android.tripin.manager.ActivityCollector;
 
 /**
  * @author cginechen
@@ -33,6 +35,7 @@ public class LauncherActivity extends Activity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finish();
+        //  处理因按后退键导致的内存泄漏
+        ActivityCollector.finishAll();
     }
 }

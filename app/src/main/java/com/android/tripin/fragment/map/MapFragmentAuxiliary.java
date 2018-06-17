@@ -15,6 +15,7 @@ import com.android.tripin.R;
 import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Route;
 import com.android.tripin.enums.Transportation;
+import com.android.tripin.util.overlayutil.OverlayManager;
 import com.android.tripin.util.overlayutil.WalkingRouteOverlay;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -32,6 +33,7 @@ import com.baidu.mapapi.search.poi.PoiBoundSearchOption;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.route.BikingRoutePlanOption;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
+import com.baidu.mapapi.search.route.MassTransitRoutePlanOption;
 import com.baidu.mapapi.search.route.PlanNode;
 import com.baidu.mapapi.search.route.TransitRoutePlanOption;
 import com.baidu.mapapi.search.route.WalkingRouteLine;
@@ -58,6 +60,12 @@ public class MapFragmentAuxiliary {
      * 是否显示对话框
      */
     boolean hasShownDialogue;
+
+//    boolean isRequestingOriginCity = false;
+//    boolean isRequestingDestinationCity = false;
+
+//    String originCity;
+//    String destinationCity;
 
     MapFragment mapFragment;
 
@@ -139,35 +147,40 @@ public class MapFragmentAuxiliary {
      * 返回当前pinIndex的Pin的位置
      */
     public void getBackToCurrentPin() {
-        getBackToPin(mapFragment.currentPinIndex);
-        setZoomLevelInMap(18);
-        mapFragment.zoomLevel = 18;
+        if(mapFragment.currentPinIndex != -1) {
+            getBackToPin(mapFragment.currentPinIndex);
+            setZoomLevelInMap(18);
+            mapFragment.zoomLevel = 18;
+        }
     }
 
     /**
      * （循环）返回的前一个pinIndex的Pin的位置
      */
     public void getToNextPin() {
-        if(mapFragment.currentPinIndex == mapFragment.pinList.size() - 1) {
-            mapFragment.currentPinIndex = 0;
+        if(mapFragment.currentPinIndex != -1) {
+
+            if (mapFragment.currentPinIndex == mapFragment.pinList.size() - 1) {
+                mapFragment.currentPinIndex = 0;
+            } else {
+                mapFragment.currentPinIndex++;
+            }
+            getBackToCurrentPin();
         }
-        else {
-            mapFragment.currentPinIndex++;
-        }
-        getBackToCurrentPin();
     }
 
     /**
      * （循环）返回的后一个pinIndex的Pin的位置
      */
     public void getToPreviousPin() {
-        if (mapFragment.currentPinIndex == 0) {
-            mapFragment.currentPinIndex = mapFragment.pinList.size() - 1;
+        if(mapFragment.currentPinIndex != -1) {
+            if (mapFragment.currentPinIndex == 0) {
+                mapFragment.currentPinIndex = mapFragment.pinList.size() - 1;
+            } else {
+                mapFragment.currentPinIndex--;
+            }
+            getBackToCurrentPin();
         }
-        else {
-            mapFragment.currentPinIndex--;
-        }
-        getBackToCurrentPin();
     }
 
     /**
@@ -499,7 +512,11 @@ public class MapFragmentAuxiliary {
      */
     public void addRoute(Pin origin, Pin destination, Transportation transportationType) {
         LatLng originLocation = new LatLng(origin.getPinLatitude(), origin.getPinLongitude());
+//        isRequestingOriginCity = true;
+//        requestReverseGeoCode(originLocation);
         LatLng destinationLocation = new LatLng(destination.getPinLatitude(), destination.getPinLongitude());
+//        isRequestingDestinationCity = true;
+//        requestReverseGeoCode(destinationLocation);
         addRoute(originLocation, destinationLocation, transportationType);
     }
 
@@ -534,37 +551,41 @@ public class MapFragmentAuxiliary {
      * @param destination 终点的planNode
      * @param transportationType 交通方式
      */
-    public void requestRoute(@NonNull PlanNode origin, @NonNull PlanNode destination, Transportation transportationType) {
+    public void requestRoute(PlanNode origin, PlanNode destination, Transportation transportationType) {
         switch (transportationType) {
             //  TODO:在搜索时可以加入policy
             case WALK:
-                mapFragment.mRoutePlanSearch.walkingSearch((new WalkingRoutePlanOption())
+                WalkingRoutePlanOption walkingRoutePlanOption = (new WalkingRoutePlanOption())
                         .from(origin)
-                        .to(destination));
+                        .to(destination);
+                mapFragment.mRoutePlanSearch.walkingSearch(walkingRoutePlanOption);
                 break;
             case DRIVING:
-                mapFragment.mRoutePlanSearch.drivingSearch((new DrivingRoutePlanOption())
+                DrivingRoutePlanOption drivingRoutePlanOption = (new DrivingRoutePlanOption())
                         .from(origin)
-                        .to(destination));
+                        .to(destination);
+                mapFragment.mRoutePlanSearch.drivingSearch(drivingRoutePlanOption);
                 break;
             case RIDING:
-                mapFragment.mRoutePlanSearch.bikingSearch((new BikingRoutePlanOption())
+                BikingRoutePlanOption bikingRoutePlanOption = (new BikingRoutePlanOption())
                         .from(origin)
-                        .to(destination));
+                        .to(destination);
+                mapFragment.mRoutePlanSearch.bikingSearch(bikingRoutePlanOption);
                 break;
             case MASS_TRANSIT:
                 //  检查二者是否在同一个城市
-                
                 //  在相同城市
                 showToast("在相同城市");
-                mapFragment.mRoutePlanSearch.transitSearch((new TransitRoutePlanOption())
-                        .from(origin)
-                        .to(destination));
+                TransitRoutePlanOption transitRoutePlanOption = (new TransitRoutePlanOption())
+                        .from(origin).to(destination).city("上海");
+                mapFragment.mRoutePlanSearch.transitSearch(transitRoutePlanOption);
+
 //                //  不在相同城市
 //                showToast("不在相同城市");
-//                mapFragment.mRoutePlanSearch.masstransitSearch((new MassTransitRoutePlanOption())
+//                MassTransitRoutePlanOption massTransitRoutePlanOption = (new MassTransitRoutePlanOption())
 //                        .from(origin)
-//                        .to(destination));
+//                        .to(destination);
+//                mapFragment.mRoutePlanSearch.masstransitSearch(massTransitRoutePlanOption);
                 break;
             default:
                 break;

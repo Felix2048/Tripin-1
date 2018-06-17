@@ -25,10 +25,18 @@ public class MyOnGetGeoCoderResultListener implements OnGetGeoCoderResultListene
             mapFragment.mapFragmentAuxiliary.showToast("抱歉，未能找到结果");
         }
         else {
+//            if (mapFragment.mapFragmentAuxiliary.isRequestingOriginCity) {
+//                mapFragment.mapFragmentAuxiliary.originCity = result.getAddressDetail().city;
+//                mapFragment.mapFragmentAuxiliary.isRequestingOriginCity = false;
+//            } else if (mapFragment.mapFragmentAuxiliary.isRequestingDestinationCity) {
+//                mapFragment.mapFragmentAuxiliary.destinationCity = result.getAddressDetail().city;
+//                mapFragment.mapFragmentAuxiliary.isRequestingDestinationCity = false;
+//            } else {
 //            mapFragment.mapFragmentAuxiliary.showToast("位置：" + result.getAddress());
-            mapFragment.mapCenterAddress = result.getAddress();
-            mapFragment.cityInMap = result.getAddressDetail().city;
-            mapFragment.mapFragmentAuxiliary.addressComponent = result.getAddressDetail();
+                mapFragment.mapCenterAddress = result.getAddress();
+                mapFragment.cityInMap = result.getAddressDetail().city;
+                mapFragment.mapFragmentAuxiliary.addressComponent = result.getAddressDetail();
+//            }
         }
     }
     // 地理编码查询结果回调函数
