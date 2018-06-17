@@ -1,6 +1,5 @@
 package com.android.tripin.fragment.map;
 
-import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -16,6 +15,7 @@ import com.android.tripin.R;
 import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Route;
 import com.android.tripin.enums.Transportation;
+import com.android.tripin.util.overlayutil.WalkingRouteOverlay;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.InfoWindow;
@@ -26,22 +26,17 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.model.LatLngBounds;
 import com.baidu.mapapi.search.core.PoiInfo;
-import com.baidu.mapapi.search.core.RouteLine;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
 import com.baidu.mapapi.search.poi.PoiBoundSearchOption;
 import com.baidu.mapapi.search.poi.PoiResult;
 import com.baidu.mapapi.search.route.BikingRoutePlanOption;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
-import com.baidu.mapapi.search.route.MassTransitRoutePlanOption;
 import com.baidu.mapapi.search.route.PlanNode;
 import com.baidu.mapapi.search.route.TransitRoutePlanOption;
 import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
-import com.baidu.mapapi.search.route.WalkingRouteResult;
 import com.baidu.mapapi.utils.DistanceUtil;
-
-import java.util.List;
 
 /**
  * Created by Felix on 6/15/2018.
@@ -577,9 +572,13 @@ public class MapFragmentAuxiliary {
     }
 
     public void showWalkingRoute(WalkingRouteLine walkingRouteLine) {
-//        if (null != walkingRouteLine) {
-//            WalkingRouteOverlay overlay = new MyWalkingRouteOverlay(mBaidumap);
-//        }
+        if (null != walkingRouteLine) {
+            WalkingRouteOverlay overlay = new WalkingRouteOverlay(mapFragment.mBaiduMap);
+//            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
+            overlay.setData(walkingRouteLine);
+            overlay.addToMap();
+            overlay.zoomToSpan();
+        }
     }
 
 }
