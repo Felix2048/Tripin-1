@@ -105,16 +105,10 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     LayoutInflater inflater;
     LinearLayout pin_adding;    //  显示正在添加的Pin的icon
 
-    List<Pin> pinList = new ArrayList<>();
-    List<Route> routeList = new ArrayList<>();
-    List<Marker> poiMarkerList = new ArrayList<>();
-    Map<Pin, Marker> pinMarkerMap = new HashMap<>();
-    Map<Route, HashSet<Pin>> routePinSetMap = new HashMap<>();
-    Map<Route, List<? extends RouteLine>> routeLineListMap = new HashMap<>();
-    Map<RouteLine, OverlayManager> routeOverlayManagerMap = new HashMap<>();
-    List<PoiInfo> poiInfoList;
-    List<Pin> pinDeleteList = new ArrayList<>();    //  将要被删除的Pin
 
+    List<PoiInfo> poiInfoList;
+    List<Marker> poiMarkerList = new ArrayList<>();
+    List<Pin> pinDeleteList = new ArrayList<>();    //  将要被删除的Pin
     boolean isAddingPin = false;    //  是否向地图正在添加Pin
     boolean isDeletingPins = false;  //  是否从地图中删除Pin
     int currentPinIndex = -1;    //  当前pin的index
@@ -135,31 +129,6 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         initMapView();
         //  定位
         initLocation();
-
-        Pin pin1 = new Pin(1, 1, 31.24166, 121.48612,  "上海1",
-                new Date(), new Date(), PinStatus.WANTED, "这是我的第1个pin");
-        Pin pin2 = new Pin(2, 1,31.24296, 121.48602,  "上海2",
-                new Date(), new Date(), PinStatus.WANTED, "这是我的第2个pin");
-        Pin pin3 = new Pin(3, 1,31.23968, 121.49501,  "上海3",
-                new Date(), new Date(), PinStatus.WANTED, "这是我的第3个pin");
-        Pin pin4 = new Pin(4, 1, 31.24078, 121.49809,  "上海4",
-                new Date(), new Date(), PinStatus.WANTED, "这是我的第4个pin");
-
-        Route route1 = new Route(1, 1, 1, 2, Transportation.WALK, 0, true);
-        Route route2 = new Route(2, 1, 2, 3, Transportation.MASS_TRANSIT, 0, true);
-        Route route3 = new Route(3, 1, 3, 4, Transportation.RIDING, 0, true);
-
-
-        //  加载pinList
-        pinList.add(pin1);
-        pinList.add(pin2);
-        pinList.add(pin3);
-        pinList.add(pin4);
-
-        //  加载routeList
-        routeList.add(route1);
-        routeList.add(route2);
-        routeList.add(route3);
 
         mapFragmentAuxiliary.showTrip();
 
@@ -420,7 +389,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     public void addPinConfirm() {
         pin_adding.setVisibility(View.GONE);
         //  以当前位置构造一个Pin
-        Pin pin = new Pin(DataManager.getPlanID(), mapCenter.latitude, mapCenter.longitude, mapCenterAddress, new Date(), new Date(), PinStatus.WANTED, "");
+        Pin pin = new Pin(DataManager.getPinCountAndIncrease(), mapCenter.latitude, mapCenter.longitude, mapCenterAddress, new Date(), new Date(), PinStatus.WANTED, "");
         if(mapFragmentAuxiliary.addPin(pin)) {   //  判断是否成功添加Pin
             isAddingPin = false;
             ib_add_pin.setVisibility(View.VISIBLE);
@@ -429,7 +398,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             ib_delete_pin.setVisibility(View.VISIBLE);
             //  隐藏Pin的icon
             pin_adding.setVisibility(View.GONE);
-            pinList.add(pin);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList().add(pin);
             mapFragmentAuxiliary.clearPoiInfo();
             mapFragmentAuxiliary.selectPin(pin);
             matchedPoiHash = Double.POSITIVE_INFINITY;
@@ -489,7 +458,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         ib_delete_pin_confirm.setVisibility(View.GONE);
         if (!pinDeleteList.isEmpty()) {
             for (Pin pin : pinDeleteList) {
-                pinMarkerMap.get(pin).setIcon(pinIcon); //  取消被选中
+                DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinMarkerMap().get(pin).setIcon(pinIcon); //  取消被选中
             }
             pinDeleteList.clear();
         }
@@ -498,17 +467,17 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
 
     public void deleteRoute(Route route) {
         if (null != route) {
-            List<? extends RouteLine> routeLineList = routeLineListMap.get(route);
+            List<? extends RouteLine> routeLineList = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteLineListMap().get(route);
             for (RouteLine routeLine : routeLineList) {
-                if(routeOverlayManagerMap.containsKey(routeLine)) {
-                    OverlayManager overlay = routeOverlayManagerMap.get(routeLine);
+                if(DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().containsKey(routeLine)) {
+                    OverlayManager overlay = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().get(routeLine);
                     overlay.removeFromMap();
                     break;
                 }
             }
-            routeLineListMap.remove(route);
-            routePinSetMap.remove(route);
-            routeList.remove(route);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteLineListMap().remove(route);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRoutePinSetMap().remove(route);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteList().remove(route);
         }
     }
 

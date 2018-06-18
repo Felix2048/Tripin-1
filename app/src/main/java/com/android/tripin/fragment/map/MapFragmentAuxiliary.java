@@ -148,8 +148,8 @@ public class MapFragmentAuxiliary {
      * @param pinIndex 要移动到的pin的index
      */
     public void getBackToPin(int pinIndex) {
-        if(null != mapFragment.pinList && !mapFragment.pinList.isEmpty() && pinIndex >= 0 && pinIndex < mapFragment.pinList.size()) {
-            Pin pin = mapFragment.pinList.get(pinIndex);
+        if(null != DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList() && !DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList().isEmpty() && pinIndex >= 0 && pinIndex < DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList().size()) {
+            Pin pin = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList().get(pinIndex);
             moveToLocationInMap(new LatLng(pin.getPinLatitude(), pin.getPinLongitude()));
             selectPin(pin);
         }
@@ -172,7 +172,7 @@ public class MapFragmentAuxiliary {
     public void getToNextPin() {
         if(mapFragment.currentPinIndex != -1) {
 
-            if (mapFragment.currentPinIndex == mapFragment.pinList.size() - 1) {
+            if (mapFragment.currentPinIndex == DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList().size() - 1) {
                 mapFragment.currentPinIndex = 0;
             } else {
                 mapFragment.currentPinIndex++;
@@ -187,7 +187,7 @@ public class MapFragmentAuxiliary {
     public void getToPreviousPin() {
         if(mapFragment.currentPinIndex != -1) {
             if (mapFragment.currentPinIndex == 0) {
-                mapFragment.currentPinIndex = mapFragment.pinList.size() - 1;
+                mapFragment.currentPinIndex = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList().size() - 1;
             } else {
                 mapFragment.currentPinIndex--;
             }
@@ -200,7 +200,7 @@ public class MapFragmentAuxiliary {
      * @param pin 被选中的Pin
      */
     public void selectPin(Pin pin) {
-        selectPin(mapFragment.pinMarkerMap.get(pin));
+        selectPin(DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinMarkerMap().get(pin));
     }
 
     /**
@@ -216,7 +216,7 @@ public class MapFragmentAuxiliary {
             //  隐藏infowindow
             mapFragment.mBaiduMap.hideInfoWindow();
             //  修改currentPinIndex
-            mapFragment.currentPinIndex = mapFragment.pinList.indexOf(pin);
+            mapFragment.currentPinIndex = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList().indexOf(pin);
             //  将信息显示在界面上
             //  TODO: 使用intent将pinInfo传给pinDetailActivity
 //        TextView pin_title = (TextView) mapFragment.pin_info.findViewById(R.id.pin_title);
@@ -253,10 +253,10 @@ public class MapFragmentAuxiliary {
         //  清空地图
         mapFragment.mBaiduMap.clear();
 
-        for (Pin pin : mapFragment.pinList) {
+        for (Pin pin : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList()) {
             addPin(pin);
         }
-        for (Route route : mapFragment.routeList) {
+        for (Route route : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteList()) {
             addRoutePinSetMap(route);
             addRoute(route);
         }
@@ -376,7 +376,7 @@ public class MapFragmentAuxiliary {
             //info必须实现序列化接口
             bundle.putSerializable("pin", pin);
             marker.setExtraInfo(bundle);
-            mapFragment.pinMarkerMap.put(pin, marker);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinMarkerMap().put(pin, marker);
             return true;
         }
         else {
@@ -450,7 +450,7 @@ public class MapFragmentAuxiliary {
         LatLng northeast = new LatLng(latLng.latitude + 0.00001141 * 50, latLng.longitude + 0.00000899 * 50);
         LatLng southwest = new LatLng(latLng.latitude - 0.00001141 * 50, latLng.longitude - 0.00000899 * 50);
         LatLngBounds latLngBounds = new LatLngBounds.Builder().include(northeast).include(southwest).build();
-        for (Pin pin : mapFragment.pinMarkerMap.keySet()) {
+        for (Pin pin : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinMarkerMap().keySet()) {
             LatLng temp = new LatLng(pin.getPinLatitude(), pin.getPinLongitude());
             if (latLngBounds.contains(temp)) {
                 pinFound = true;
@@ -488,12 +488,12 @@ public class MapFragmentAuxiliary {
      * @param pin 要删除的Pin
      */
     public void deletePin(Pin pin) {
-        Marker marker = mapFragment.pinMarkerMap.get(pin);
+        Marker marker = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinMarkerMap().get(pin);
         if (null != marker) {
             marker.remove();
         }
-        mapFragment.pinMarkerMap.remove(pin);
-        mapFragment.pinList.remove(pin);
+        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinMarkerMap().remove(pin);
+        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList().remove(pin);
         //  调用presenter删除Pin
     }
 
@@ -548,7 +548,7 @@ public class MapFragmentAuxiliary {
         Transportation transportation = route.getRouteTransportation();
 
         Pin origin = null, destination = null;
-        HashSet<Pin> pins = mapFragment.routePinSetMap.get(route);
+        HashSet<Pin> pins = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRoutePinSetMap().get(route);
         for (Pin pin : pins) {
             if(pin.getPinID() == route.getOrigin()) {
                 origin = pin;
@@ -581,7 +581,7 @@ public class MapFragmentAuxiliary {
             return;
         }
         Pin origin = null, destination = null;
-        for (Pin pin : mapFragment.pinList) {
+        for (Pin pin : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList()) {
             if (pin.getPinID() == originID) {
                 origin = pin;
             }
@@ -592,7 +592,7 @@ public class MapFragmentAuxiliary {
         HashSet<Pin> pins = new HashSet<>();
         pins.add(origin);
         pins.add(destination);
-        mapFragment.routePinSetMap.put(route, pins);
+        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRoutePinSetMap().put(route, pins);
     }
 
     /**
@@ -603,8 +603,8 @@ public class MapFragmentAuxiliary {
         LatLng origin = routeLineList.get(0).getStarting().getLocation();
         LatLng destination = routeLineList.get(0).getTerminal().getLocation();
         Route route = null;
-        for (Route temp : mapFragment.routePinSetMap.keySet()) {
-            HashSet<Pin> pins = mapFragment.routePinSetMap.get(temp);
+        for (Route temp : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRoutePinSetMap().keySet()) {
+            HashSet<Pin> pins = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRoutePinSetMap().get(temp);
             boolean originInPins = false, destinationInPins = false;
             for (Pin pin: pins) {
                 if (origin.latitude == pin.getPinLatitude() && origin.longitude == pin.getPinLongitude()) {
@@ -620,7 +620,7 @@ public class MapFragmentAuxiliary {
             }
         }
         if(null != route) {
-            mapFragment.routeLineListMap.put(route, routeLineList);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteLineListMap().put(route, routeLineList);
         }
     }
 
@@ -681,7 +681,7 @@ public class MapFragmentAuxiliary {
 //            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
             overlay.setData(walkingRouteLine);
             overlay.addToMap();
-            mapFragment.routeOverlayManagerMap.put(walkingRouteLine, overlay);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().put(walkingRouteLine, overlay);
 //            overlay.zoomToSpan();
         }
     }
@@ -696,7 +696,7 @@ public class MapFragmentAuxiliary {
 //            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
             overlay.setData(drivingRouteLine);
             overlay.addToMap();
-            mapFragment.routeOverlayManagerMap.put(drivingRouteLine, overlay);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().put(drivingRouteLine, overlay);
 //            overlay.zoomToSpan();
         }
     }
@@ -711,7 +711,7 @@ public class MapFragmentAuxiliary {
 //            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
             overlay.setData(bikingRouteLine);
             overlay.addToMap();
-            mapFragment.routeOverlayManagerMap.put(bikingRouteLine, overlay);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().put(bikingRouteLine, overlay);
 //            overlay.zoomToSpan();
         }
     }
@@ -726,7 +726,7 @@ public class MapFragmentAuxiliary {
 //            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
             overlay.setData(transitRouteLine);
             overlay.addToMap();
-            mapFragment.routeOverlayManagerMap.put(transitRouteLine, overlay);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().put(transitRouteLine, overlay);
 //            overlay.zoomToSpan();
         }
     }
