@@ -498,7 +498,15 @@ public class MapFragmentAuxiliary {
         DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinMarkerMap().remove(pin);
         DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList().remove(pin);
         //  调用presenter删除Pin
+    }
 
+    /**
+     * 将地图中的pin和对应的route移除，同时更新route
+     * @param pin 要删除的Pin
+     */
+    public void deletePinAndRoute(Pin pin) {
+       mapFragment.pinDeleteList.add(pin);
+       mapFragment.deletePinsConfirm();
     }
 
     /**
