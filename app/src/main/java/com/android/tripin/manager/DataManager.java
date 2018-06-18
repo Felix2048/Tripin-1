@@ -4,6 +4,7 @@ import com.android.tripin.util.MapDiagram;
 import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Plan;
 import com.android.tripin.entity.Route;
+import com.android.tripin.entity.UserInfo;
 import com.android.tripin.enums.PinStatus;
 import com.android.tripin.enums.PlanType;
 import com.android.tripin.enums.Transportation;
@@ -23,7 +24,11 @@ public class DataManager implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private boolean isInitialized = false;
+
+
+    private static boolean isLogin = false;
+
+    private static boolean isInitialized = false;
 
     private static int pinCount = 1;
 
@@ -36,6 +41,8 @@ public class DataManager implements Serializable {
     private static Plan currentPlan = null;
 
     private static List<Plan> planList = new ArrayList<>();
+
+
 
     private static HashMap<Plan, MapDiagram> planMapDiagramHashMap = new HashMap<>();
 
@@ -69,6 +76,13 @@ public class DataManager implements Serializable {
 
     public static List<Plan> getPlanList() {
         return planList;
+    }
+    public static boolean getIsLogin() {
+        return isLogin;
+    }
+
+    public static void setIsLogin(boolean isLogin) {
+        DataManager.isLogin = isLogin;
     }
 
     public static HashMap<Plan, MapDiagram> getPlanMapDiagramHashMap() {

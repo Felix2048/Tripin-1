@@ -2,6 +2,7 @@ package com.android.tripin.fragment.map;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -354,6 +355,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         mPoiSearch.destroy();
         // 释放路线搜索实例
         mRoutePlanSearch.destroy();
+        Log.v(TAG,"fuck map"+TAG);
     }
 
     /**

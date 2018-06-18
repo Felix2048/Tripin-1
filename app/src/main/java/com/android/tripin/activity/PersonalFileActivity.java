@@ -32,17 +32,13 @@ public class PersonalFileActivity extends BaseActivity implements IPersonalFileV
 
     void init() {
         image_back_to_home = (ImageView) findViewById(R.id.image_back_to_home);
-        wipe_user_email = (ImageView ) findViewById(R.id.wipe_user_email);
-        wipe_user_name = (ImageView) findViewById(R.id.wipe_user_name);
-        wipe_user_phone = (ImageView) findViewById(R.id.wipe_user_phone);
+
         personal_file_email = (EditText) findViewById(R.id.personal_file_email);
         personal_file_phone = (EditText) findViewById(R.id.personal_file_phone);
        personal_file_user_name = (EditText) findViewById(R.id.personal_file_user_name);
         btn_change_personal_file = (Button) findViewById(R.id.btn_change_personal_file);
         btn_log_out = (Button) findViewById(R.id.btn_log_out);
-        wipe_user_phone.setOnClickListener(this);
-        wipe_user_name.setOnClickListener(this);
-        wipe_user_email.setOnClickListener(this);
+
         image_back_to_home.setOnClickListener(this);
         btn_log_out.setOnClickListener(this);
         btn_change_personal_file.setOnClickListener(this);
@@ -109,15 +105,6 @@ public class PersonalFileActivity extends BaseActivity implements IPersonalFileV
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.wipe_user_email:
-                personal_file_email.setHint("");
-                break;
-            case R.id.wipe_user_name:
-                personal_file_user_name.setHint("");
-                break;
-            case R.id.wipe_user_phone:
-                personal_file_phone.setHint("");
-                break;
             case R.id.image_back_to_home:
                 /**
                  * 返回到主界面

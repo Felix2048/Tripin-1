@@ -1,6 +1,7 @@
 package com.android.tripin.presenter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.aliyuncs.DefaultAcsClient;
@@ -35,9 +36,7 @@ public class SignUpPresenter implements ISignUpPresenter{
             public void onSuccess() {
                 signUpActivity.hideLoding();
                 signUpActivity.showResult(R.string.sign_up_success);
-                /**
-                 * 注册成功，跳转到个人资料界面
-                 */
+                signUpActivity.goHome();
             }
 
             @Override
@@ -101,8 +100,10 @@ public class SignUpPresenter implements ISignUpPresenter{
      */
     @Override
     public void signUp() {
-        signUpActivity.showLoding(R.string.sign_up_ing);
-        signUpModel.signUp(signUpJson,signUpCallback);
+        if (signUpActivity.onJudgePasswordEqual()==1 && signUpActivity.onJudgeVerificationCode()==1) {
+            signUpModel.signUp(signUpJson,signUpCallback);
+        }
+
     }
 
     /**

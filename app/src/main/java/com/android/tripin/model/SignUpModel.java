@@ -46,35 +46,36 @@ public class SignUpModel implements ISignUpModel {
          * 请求地址尚未指定
          */
 
-        RequestBody signUpRequestBody = RequestBody.create(JSON,signUpJson);
-        Request signUpRequest = new Request.Builder()
-                .url("")
-                .post(signUpRequestBody)
-                .build();
-        client.newCall(signUpRequest).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                signUpCallback.onConnectFailed();
-            }
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String signUpResponse = response.body().string();
-                String errorCode = getSignUpResponseMessage(signUpResponse);
-                switch (errorCode){
-                    case "0000" :
-                        signUpCallback.onSuccess();
-                        break;
-                    case "1002" :
-                        signUpCallback.onUserNameUsed();
-                        break;
-                    case "1003":
-                        signUpCallback.onPhoneUsed();
-                        break;
-                    default:
-                        break;
-                }
-            }
-        });
+//        RequestBody signUpRequestBody = RequestBody.create(JSON,signUpJson);
+//        Request signUpRequest = new Request.Builder()
+//                .url("")
+//                .post(signUpRequestBody)
+//                .build();
+//        client.newCall(signUpRequest).enqueue(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                signUpCallback.onConnectFailed();
+//            }
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                String signUpResponse = response.body().string();
+//                String errorCode = getSignUpResponseMessage(signUpResponse);
+//                switch (errorCode){
+//                    case "0000" :
+//                        signUpCallback.onSuccess();
+//                        break;
+//                    case "1002" :
+//                        signUpCallback.onUserNameUsed();
+//                        break;
+//                    case "1003":
+//                        signUpCallback.onPhoneUsed();
+//                        break;
+//                    default:
+//                        break;
+//                }
+//            }
+//        });
+        signUpCallback.onSuccess();
     }
 
     /**

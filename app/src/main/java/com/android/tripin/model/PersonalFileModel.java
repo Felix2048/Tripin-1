@@ -30,6 +30,11 @@ public class PersonalFileModel implements IPersonalFileModel {
     @Override
     public void changePersonalFile(String changePersonalFileJson, PersonalFileCallback personalFileCallback) {
         RequestBody changePersonalFileRequestBody = RequestBody.create(JSON,changePersonalFileJson);
+
+        /**
+         * todo
+         * 增加修改个人信息界面所需url
+         */
         Request changePersonalFileRequest = new Request.Builder()
                 .url("")
                 .post(changePersonalFileRequestBody)
