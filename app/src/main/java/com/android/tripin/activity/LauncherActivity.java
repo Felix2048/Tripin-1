@@ -27,7 +27,7 @@ public class LauncherActivity extends Activity {
             finish();
             return;
         }
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, CreatePlanActivity.class);
         startActivity(intent);
         finish();
     }
