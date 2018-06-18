@@ -1,5 +1,7 @@
-package com.android.tripin.entity;
+package com.android.tripin.util;
 
+import com.android.tripin.entity.Pin;
+import com.android.tripin.entity.Route;
 import com.android.tripin.util.overlayutil.OverlayManager;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.search.core.RouteLine;
@@ -26,7 +28,6 @@ public class MapDiagram {
     public MapDiagram() {
     }
 
-
     public List<Pin> getPinList() {
         return pinList;
     }
@@ -49,6 +50,13 @@ public class MapDiagram {
 
     public Map<RouteLine, OverlayManager> getRouteOverlayManagerMap() {
         return routeOverlayManagerMap;
+    }
+
+    public void clear() {
+        pinMarkerMap.clear();
+        routePinSetMap.clear();
+        routeLineListMap.clear();
+        routeOverlayManagerMap.clear();
     }
 
 }

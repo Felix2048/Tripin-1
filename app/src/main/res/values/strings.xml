@@ -68,7 +68,10 @@
     <string name="item_1">Plan</string>
     <string name="item_2">Map</string>
     <string name="item_3">Share</string>
-
+    <string name="show_pin_title">在这里显示Pin的标题</string>
+    <string name="schedule_pin_status">想去</string>
+    <string name="show_schedule_pin_arrive_time">在这里显示pin的到达时间</string>
+    <string name="show_schedule_pin_departure_time">在这里显示pin的离开时间</string>
 
 
 </resources>

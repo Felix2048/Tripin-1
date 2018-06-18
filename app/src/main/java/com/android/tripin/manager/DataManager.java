@@ -1,6 +1,6 @@
 package com.android.tripin.manager;
 
-import com.android.tripin.entity.MapDiagram;
+import com.android.tripin.util.MapDiagram;
 import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Plan;
 import com.android.tripin.entity.Route;
@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -49,6 +48,10 @@ public class DataManager implements Serializable {
 
     public static int getPinCountAndIncrease() {
         return pinCount++;
+    }
+
+    public static int getPinCount() {
+        return pinCount;
     }
 
     public static int getRouteCountAndIncrease() {

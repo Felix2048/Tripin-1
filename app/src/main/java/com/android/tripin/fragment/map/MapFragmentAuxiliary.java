@@ -51,8 +51,11 @@ import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
 import com.baidu.mapapi.utils.DistanceUtil;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Felix on 6/15/2018.
@@ -254,13 +257,13 @@ public class MapFragmentAuxiliary {
      */
     public void showTrip() {
         //  清空地图
+        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clear();
         mapFragment.mBaiduMap.clear();
 
         for (Pin pin : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList()) {
             addPin(pin);
         }
         for (Route route : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteList()) {
-            addRoutePinSetMap(route);
             addRoute(route);
         }
         //  初始化currentPinIndex为0
@@ -501,6 +504,66 @@ public class MapFragmentAuxiliary {
     }
 
     /**
+     * 将地图中的pin和对应的route移除，同时更新route
+     * @param pin 要删除的Pin
+     */
+    public void deletePinAndRoute(Pin pin) {
+       mapFragment.pinDeleteList.add(pin);
+       mapFragment.deletePinsConfirm();
+    }
+
+    /**
+     * 删除涉及要被删除的pin的route
+     */
+    public void deleteRoutes() {
+        Map<Route, HashSet<Pin>> routePinSetMap = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRoutePinSetMap();
+        for (Route route : routePinSetMap.keySet()) {
+            if (checkDeleteRoute(route, routePinSetMap.get(route))) {
+                mapFragment.routeDeleteList.add(route);
+            }
+        }
+    }
+
+    /**
+     * 判断是否要删除route（route），检查每条route的起点终点中是否包含要删除的pin
+     * @param route 要检查的route
+     * @param pinSet 起点和终点的set
+     * @return isDeleteRoute 是否要删除该route
+     */
+    public boolean checkDeleteRoute(Route route, Set<Pin> pinSet) {
+        for (Pin temp : mapFragment.pinDeleteList) {
+            for (Pin pin : pinSet) {
+                //  检查每条路线的起点终点中是否包含要删除的pin
+                if (temp.equals(pin)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 从地图中删除一条路线
+     * @param route 要删除的路线
+     */
+    public void deleteRoute(Route route) {
+        if (null != route) {
+            List<? extends RouteLine> routeLineList = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteLineListMap().get(route);
+            for (RouteLine routeLine : routeLineList) {
+                if(DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().containsKey(routeLine)) {
+                    OverlayManager overlay = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().get(routeLine);
+                    overlay.removeFromMap();
+                    DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().remove(routeLine);
+                    break;
+                }
+            }
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteLineListMap().remove(route);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRoutePinSetMap().remove(route);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteList().remove(route);
+        }
+    }
+
+    /**
      * 发起逆地址编码请求，获取location所在地的AddressComponent
      * @param location 请求的地址
      */
@@ -523,19 +586,27 @@ public class MapFragmentAuxiliary {
 
 
     /**
-     * 在地图上添加连接起点和终点的路线
+     * 构建一条route并在地图上添加连接起点和终点的路线
      * @param origin 起点的pin
      * @param destination 终点的pin
-     * @param transportationType 交通方式
      */
-    public void addRouteWithPins(Pin origin, Pin destination, Transportation transportationType) {
-        LatLng originLocation = new LatLng(origin.getPinLatitude(), origin.getPinLongitude());
-//        isRequestingOriginCity = true;
-//        requestReverseGeoCode(originLocation);
-        LatLng destinationLocation = new LatLng(destination.getPinLatitude(), destination.getPinLongitude());
-//        isRequestingDestinationCity = true;
-//        requestReverseGeoCode(destinationLocation);
-        addRouteWithLocation(originLocation, destinationLocation, transportationType);
+    public void addRoute(Pin origin, Pin destination) {
+        if (null != origin && null != destination) {
+            double distantce = DistanceUtil.getDistance(new LatLng(origin.getPinLatitude(), origin.getPinLongitude()),
+                    new LatLng(origin.getPinLatitude(), destination.getPinLongitude()));
+            Transportation transportation;
+            if (distantce > 2000) {
+                //  如果距离大于2km，使用该计划默认的交通方式
+                transportation = DataManager.getCurrentPlan().getDefaultTransportation();
+            }
+            else {
+                //  否则走路
+                transportation = Transportation.WALK;
+            }
+            Route route = new Route(DataManager.getRouteCountAndIncrease(), DataManager.getCurrentPlan().getPlanID(), origin.getPinID(),
+                    destination.getPinID(), transportation,0, 0, true);
+            addRoute(route);
+        }
     }
 
     /**
@@ -543,6 +614,7 @@ public class MapFragmentAuxiliary {
      * @param route 要添加的路线
      */
     public void addRoute(Route route) {
+        addRoutePinSetMap(route);
         int originID = route.getOrigin();
         int destinationID = route.getDestination();
         if (originID == destinationID) {
@@ -561,16 +633,27 @@ public class MapFragmentAuxiliary {
             }
         }
         if (null != origin && null != destination) {
-            addRouteWithPins(origin, destination, transportation);
+            LatLng originLocation = new LatLng(origin.getPinLatitude(), origin.getPinLongitude());
+//        isRequestingOriginCity = true;
+//        requestReverseGeoCode(originLocation);
+            LatLng destinationLocation = new LatLng(destination.getPinLatitude(), destination.getPinLongitude());
+//        isRequestingDestinationCity = true;
+//        requestReverseGeoCode(destinationLocation);
+            addRouteWithLocation(originLocation, destinationLocation, transportation);
         }
     }
 
     /**
      * 添加新添加的pin与上一个pin的路线
      */
-    public void addRoute(Pin newAddedPin) {
-
-
+    public void addRouteForNewAddedPin() {
+        List<Pin> pinList = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList();
+        if (pinList.size() > 1) {
+            //  多于1个Pin才添加路线
+            Pin origin = pinList.get(pinList.size() - 2);
+            Pin destination = pinList.get(pinList.size() - 1);
+            addRoute(origin, destination);
+        }
     }
 
     /**
@@ -610,10 +693,16 @@ public class MapFragmentAuxiliary {
             HashSet<Pin> pins = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRoutePinSetMap().get(temp);
             boolean originInPins = false, destinationInPins = false;
             for (Pin pin: pins) {
-                if (origin.latitude == pin.getPinLatitude() && origin.longitude == pin.getPinLongitude()) {
+                //  检测是否位于Pin附近50m内
+                boolean pinFound = false;
+                //  构建LatLngBounds
+                LatLng northeast = new LatLng(pin.getPinLatitude() + 0.00001141 * 50, pin.getPinLongitude() + 0.00000899 * 50);
+                LatLng southwest = new LatLng(pin.getPinLatitude() - 0.00001141 * 50, pin.getPinLongitude() - 0.00000899 * 50);
+                LatLngBounds latLngBounds = new LatLngBounds.Builder().include(northeast).include(southwest).build();
+                if (latLngBounds.contains(origin)) {
                     originInPins = true;
                 }
-                else if (destination.latitude == pin.getPinLatitude() && destination.longitude == pin.getPinLongitude()) {
+                else if (latLngBounds.contains(destination)) {
                     destinationInPins = true;
                 }
             }
@@ -734,5 +823,35 @@ public class MapFragmentAuxiliary {
         }
     }
 
-
+    /**
+     * 为pinList中孤立的点创建Route
+     */
+    public void addRouteForIsolatedPins() {
+        List<Pin> isolatedPinList = new ArrayList<>();
+        int pinCount = DataManager.getPinCount();
+        boolean[][] originToDestination = new boolean[pinCount][pinCount];  //  表示是否存在这样一条路径
+        for (Route route : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteList()) {
+            originToDestination[route.getOrigin()][route.getDestination()] = true;
+        }
+        for (Pin pin : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList()) {
+            int pinID = pin.getPinID();
+            boolean isOrigin = false, isDestination = false;
+            for (int i = 0; i < pinCount; i++) {
+                if (originToDestination[pinID][i]) {
+                    isOrigin = true;
+                }
+                else if (originToDestination[i][pinID]) {
+                    isDestination = true;
+                }
+            }
+            if (!isOrigin || !isDestination) {
+                isolatedPinList.add(pin);
+            }
+        }
+        if(isolatedPinList.size() > 1) {
+            for (int i = 0; i < isolatedPinList.size() - 1; i++) {
+                addRoute(isolatedPinList.get(i), isolatedPinList.get(i + 1));
+            }
+        }
+    }
 }

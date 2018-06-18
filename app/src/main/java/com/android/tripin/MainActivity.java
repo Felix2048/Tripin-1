@@ -13,7 +13,7 @@ import com.android.tripin.activity.LoginActivity;
 import com.android.tripin.activity.PersonalFileActivity;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.fragment.InvitationFragment;
-import com.android.tripin.fragment.PlanFragment;
+import com.android.tripin.fragment.schedule.ScheduleFragment;
 import com.android.tripin.fragment.map.MapFragment;
 import com.android.tripin.manager.ActivityCollector;
 import com.android.tripin.manager.DataManager;
@@ -42,7 +42,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
 
     private MapFragment mapFragment;
-    private PlanFragment planFragment;
+    private ScheduleFragment scheduleFragment;
     private InvitationFragment invitationFragment;
     BottomNavigationBar bottomNavigationBar;
     private ImageButton btnUser;
@@ -103,10 +103,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         FragmentTransaction transaction = fm.beginTransaction();
         switch(position){
             case 0:
-                if(planFragment == null){
-                    planFragment = PlanFragment.newInstance();
+                if(scheduleFragment == null){
+                    scheduleFragment = ScheduleFragment.newInstance();
                 }
-                transaction.replace(R.id.fragment_container, planFragment);
+                transaction.replace(R.id.fragment_container, scheduleFragment);
                 break;
             case 1:
                 if(mapFragment == null){
