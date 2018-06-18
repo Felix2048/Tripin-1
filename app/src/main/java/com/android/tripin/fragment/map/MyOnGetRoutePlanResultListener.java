@@ -14,6 +14,7 @@ import com.baidu.mapapi.search.route.DrivingRouteResult;
 import com.baidu.mapapi.search.route.IndoorRouteResult;
 import com.baidu.mapapi.search.route.MassTransitRouteResult;
 import com.baidu.mapapi.search.route.OnGetRoutePlanResultListener;
+import com.baidu.mapapi.search.route.TransitRouteLine;
 import com.baidu.mapapi.search.route.TransitRouteResult;
 import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
@@ -33,7 +34,7 @@ public class MyOnGetRoutePlanResultListener implements OnGetRoutePlanResultListe
     }
 
     @Override
-    public void onGetWalkingRouteResult(WalkingRouteResult walkingRouteResult) {
+     public void onGetWalkingRouteResult(WalkingRouteResult walkingRouteResult) {
         if (walkingRouteResult == null || walkingRouteResult.error != SearchResult.ERRORNO.NO_ERROR) {
             mapFragment.mapFragmentAuxiliary.showToast("抱歉，未找到结果");
             if (walkingRouteResult.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
@@ -74,7 +75,42 @@ public class MyOnGetRoutePlanResultListener implements OnGetRoutePlanResultListe
 
     @Override
         public void onGetTransitRouteResult(TransitRouteResult transitRouteResult) {
-
+        if (transitRouteResult == null || transitRouteResult.error != SearchResult.ERRORNO.NO_ERROR) {
+            mapFragment.mapFragmentAuxiliary.showToast("抱歉，未找到结果");
+            if (transitRouteResult.error == SearchResult.ERRORNO.AMBIGUOUS_ROURE_ADDR) {
+                // 起终点或途经点地址有岐义，通过以下接口获取建议查询信息
+                mapFragment.mapFragmentAuxiliary.showToast("检索地址有歧义，请重新设置");
+                return;
+            }
+        }
+        if (transitRouteResult.error == SearchResult.ERRORNO.NO_ERROR) {
+            if (transitRouteResult.getRouteLines().size() > 1) {
+                //  获取到的路线结果 > 1, 选择其中最快的一条，并将结果存储
+                List<TransitRouteLine> transitRouteLineList = transitRouteResult.getRouteLines();
+                mapFragment.mapFragmentAuxiliary.addRouteLineListToMap(transitRouteLineList);
+                //  获取用时最短的routeLine
+                double minDuration = Double.POSITIVE_INFINITY;
+                TransitRouteLine quickestTransitRouteLine = null;
+                for(TransitRouteLine transitRouteLine : transitRouteLineList) {
+                    int duration = transitRouteLine.getDuration();
+                    if (duration < minDuration) {
+                        minDuration = duration;
+                        quickestTransitRouteLine = transitRouteLine;
+                    }
+                }
+                if(null != quickestTransitRouteLine) {
+                    mapFragment.mapFragmentAuxiliary.showTransitRoute(quickestTransitRouteLine);
+                }
+            }
+            else if (transitRouteResult.getRouteLines().size() == 1) {
+                // 直接显示
+                List<TransitRouteLine> transitRouteLineList = transitRouteResult.getRouteLines();
+                mapFragment.mapFragmentAuxiliary.addRouteLineListToMap(transitRouteLineList);
+                mapFragment.mapFragmentAuxiliary.showTransitRoute(transitRouteLineList.get(0));
+            } else {
+                Log.d("route result", "结果数 < 0");
+            }
+        }
     }
 
     @Override
@@ -124,7 +160,6 @@ public class MyOnGetRoutePlanResultListener implements OnGetRoutePlanResultListe
 
     @Override
     public void onGetIndoorRouteResult(IndoorRouteResult indoorRouteResult) {
-
     }
 
     @Override

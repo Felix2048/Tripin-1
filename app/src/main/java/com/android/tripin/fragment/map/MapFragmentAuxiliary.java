@@ -18,6 +18,7 @@ import com.android.tripin.enums.Transportation;
 import com.android.tripin.util.overlayutil.BikingRouteOverlay;
 import com.android.tripin.util.overlayutil.DrivingRouteOverlay;
 import com.android.tripin.util.overlayutil.OverlayManager;
+import com.android.tripin.util.overlayutil.TransitRouteOverlay;
 import com.android.tripin.util.overlayutil.WalkingRouteOverlay;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -41,6 +42,7 @@ import com.baidu.mapapi.search.route.DrivingRouteLine;
 import com.baidu.mapapi.search.route.DrivingRoutePlanOption;
 import com.baidu.mapapi.search.route.MassTransitRoutePlanOption;
 import com.baidu.mapapi.search.route.PlanNode;
+import com.baidu.mapapi.search.route.TransitRouteLine;
 import com.baidu.mapapi.search.route.TransitRoutePlanOption;
 import com.baidu.mapapi.search.route.WalkingRouteLine;
 import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
@@ -645,9 +647,9 @@ public class MapFragmentAuxiliary {
             case MASS_TRANSIT:
                 //  检查二者是否在同一个城市
                 //  在相同城市
-                showToast("在相同城市");
+//                showToast("在相同城市");
                 TransitRoutePlanOption transitRoutePlanOption = (new TransitRoutePlanOption())
-                        .from(origin).to(destination).city("上海");
+                        .from(origin).to(destination).city("北京");
                 mapFragment.mRoutePlanSearch.transitSearch(transitRoutePlanOption);
 
 //                //  不在相同城市
@@ -691,5 +693,16 @@ public class MapFragmentAuxiliary {
 //            overlay.zoomToSpan();
         }
     }
+
+    public void showTransitRoute(TransitRouteLine transitRouteLine) {
+        if (null != transitRouteLine) {
+            TransitRouteOverlay overlay = new TransitRouteOverlay(mapFragment.mBaiduMap);
+//            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
+            overlay.setData(transitRouteLine);
+            overlay.addToMap();
+//            overlay.zoomToSpan();
+        }
+    }
+
 
 }
