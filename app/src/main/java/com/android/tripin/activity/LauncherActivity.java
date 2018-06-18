@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.android.tripin.MainActivity;
 import com.android.tripin.manager.ActivityCollector;
+import com.squareup.haha.perflib.Main;
 
 /**
  * @author cginechen

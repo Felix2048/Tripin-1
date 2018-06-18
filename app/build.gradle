@@ -88,5 +88,9 @@ dependencies {
     api 'com.squareup.okhttp3:okhttp:3.10.0'
     api 'com.google.code.gson:gson:2.8.0'
     api 'org.litepal.android:core:2.0.0'
-
+    implementation files('libs/aliyun-java-sdk-core-3.3.1.jar')
+    compile 'com.ashokvarma.android:bottom-navigation-bar:2.0.4'
+    compile 'com.android.support:appcompat-v7:27.1.1'
+    compile 'com.android.support:design:27.1.1'
+    compile 'com.android.support:support-v4:27.1.1'
 }

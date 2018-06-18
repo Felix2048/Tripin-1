@@ -43,8 +43,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
         android:hint="@string/sign_up_phone"
-        android:paddingLeft="8dp"
-        android:password="true"/>
+        android:paddingLeft="8dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"

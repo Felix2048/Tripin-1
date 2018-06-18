@@ -64,7 +64,7 @@ public class CreatePlanActivity extends BaseActivity {
     protected ArrayList<String> initData() {
         ArrayList<String> mDatas = new ArrayList<String>();
         for (int i = 0; i < 1; i++) {
-            mDatas.add("我是商品" + i);
+            mDatas.add("我是计划" + i);
         }
         return mDatas;
     }

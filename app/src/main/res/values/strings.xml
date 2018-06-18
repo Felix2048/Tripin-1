@@ -65,5 +65,10 @@
     <string name="search_history">搜索历史</string>
     <string name="search_failed">搜索失败</string>
 
+    <string name="item_1">Plan</string>
+    <string name="item_2">Map</string>
+    <string name="item_3">Share</string>
+
+
 
 </resources>
