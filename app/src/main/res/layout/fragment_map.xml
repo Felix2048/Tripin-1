@@ -80,7 +80,6 @@
         android:layout_marginRight="15dp"
         android:layout_marginBottom="30dp"
         android:background="@drawable/ic_add_pin"
-        android:layout_marginStart="10dp"
         android:contentDescription="@string/add_pin_to_plan"
         android:visibility="gone"
         tools:ignore="RtlHardcoded" />
@@ -94,7 +93,6 @@
         android:layout_marginRight="15dp"
         android:layout_marginBottom="30dp"
         android:background="@drawable/add_pin_confirm"
-        android:layout_marginStart="10dp"
         android:contentDescription="@string/confirm_add_pin_to_plan"
         android:visibility="gone"
         tools:ignore="RtlHardcoded" />
@@ -136,7 +134,6 @@
         android:layout_marginRight="15dp"
         android:layout_marginBottom="30dp"
         android:background="@drawable/add_pin_confirm"
-        android:layout_marginStart="10dp"
         android:contentDescription="@string/delete_pin_confirm"
         android:visibility="gone"
         tools:ignore="RtlHardcoded" />

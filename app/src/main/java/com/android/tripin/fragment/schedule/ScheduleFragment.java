@@ -23,8 +23,6 @@ public class ScheduleFragment extends BaseFragment {
 
     private final static String TAG = ScheduleFragment.class.getSimpleName();
 
-    private static ScheduleFragment scheduleFragment = null;
-
     private final static String TITLE = "Plan";
 
     public static String getTitle() {
@@ -49,13 +47,6 @@ public class ScheduleFragment extends BaseFragment {
         return view;
     }
 
-    public static ScheduleFragment newInstance() {
-       if (null != scheduleFragment) {
-           return scheduleFragment;
-       }
-       else {
-           scheduleFragment = new ScheduleFragment();
-           return scheduleFragment;
-       }
+    public ScheduleFragment() {
     }
 }

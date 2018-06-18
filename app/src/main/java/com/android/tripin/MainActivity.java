@@ -64,6 +64,14 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         bottomNavigationBar.setTabSelectedListener(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //  处理因按后退键导致的内存泄漏
+        ActivityCollector.finishAll();
+        //  保存DataManager
+    }
+
 
     private void setDefaultFragment() {
         FragmentManager fm = getSupportFragmentManager();
@@ -80,7 +88,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         switch(position){
             case 0:
                 if(scheduleFragment == null){
-                    scheduleFragment = ScheduleFragment.newInstance();
+                    scheduleFragment = new ScheduleFragment();
                 }
                 transaction.replace(R.id.fragment_container, scheduleFragment);
                 break;
@@ -116,7 +124,5 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        //  处理因按后退键导致的内存泄漏
-        ActivityCollector.finishAll();
     }
 }
