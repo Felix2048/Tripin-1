@@ -3,6 +3,8 @@ package com.android.tripin.fragment.map;
 import com.android.tripin.entity.Pin;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.Marker;
+import com.android.tripin.manager.DataManager;
+
 
 /**
  * Created by Felix on 6/15/2018.
@@ -25,8 +27,8 @@ public class MyOnMarkerClickListener implements BaiduMap.OnMarkerClickListener {
         else if(mapFragment.isDeletingPins) {
             //  获取Pin
             Pin pin = null;
-            for (Pin temp : mapFragment.pinMarkerMap.keySet()) {
-                if (marker.equals(mapFragment.pinMarkerMap.get(temp))) {
+            for (Pin temp : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinMarkerMap().keySet()) {
+                if (marker.equals(DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinMarkerMap().get(temp))) {
                     pin = temp;
                     break;
                 }

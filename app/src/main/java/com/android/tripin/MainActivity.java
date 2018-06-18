@@ -1,10 +1,19 @@
 package com.android.tripin;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
+import com.android.tripin.base.BaseActivity;
 import com.android.tripin.fragment.InvitationFragment;
 import com.android.tripin.fragment.PlanFragment;
 import com.android.tripin.fragment.map.MapFragment;
+import com.android.tripin.manager.ActivityCollector;
+import com.android.tripin.manager.DataManager;
+import com.ashokvarma.bottomnavigation.BottomNavigationBar;
+import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
 /**
  * Created by Felix on 6/8/2018.
@@ -12,20 +21,20 @@ import com.android.tripin.fragment.map.MapFragment;
  */
 
 
+public class MainActivity extends BaseActivity implements BottomNavigationBar.OnTabSelectedListener{
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.TextView;
+    private final static String TAG = MainActivity.class.getSimpleName();
 
+    /**
+     * 初始化dataManager
+     */
+    private DataManager dataManager = new DataManager();
 
-import com.ashokvarma.bottomnavigation.BottomNavigationBar;
-import com.ashokvarma.bottomnavigation.BottomNavigationItem;
+    @Override
+    protected int getContextViewId() {
+        return R.id.tripin;
+    }
 
-
-public class MainActivity extends AppCompatActivity implements BottomNavigationBar.OnTabSelectedListener{
 
     private MapFragment mapFragment;
     private PlanFragment planFragment;
@@ -49,8 +58,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
                 .addItem(new BottomNavigationItem(R.drawable.ic_favorite_white_24dp, "Share").setActiveColorResource(R.color.green))
                 .setFirstSelectedPosition(0)
                 .initialise();
-
-
 
 
         setDefaultFragment();
@@ -104,5 +111,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationB
     @Override
     public void onTabReselected(int position) {
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        //  处理因按后退键导致的内存泄漏
+        ActivityCollector.finishAll();
     }
 }

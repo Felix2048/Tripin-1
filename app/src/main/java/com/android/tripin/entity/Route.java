@@ -25,27 +25,21 @@ public class Route implements Serializable {
 
     private int routeTime;
 
+    private int distance;
+
     private boolean routeIsChosen;
 
     public Route() {
     }
 
-    public Route(int planID, int origin, int destination, Transportation routeTransportation, int routeTime, boolean routeIsChosen) {
-        this.planID = planID;
-        this.origin = origin;
-        this.destination = destination;
-        this.routeTransportation = routeTransportation;
-        this.routeTime = routeTime;
-        this.routeIsChosen = routeIsChosen;
-    }
-
-    public Route(int routeID, int planID, int origin, int destination, Transportation routeTransportation, int routeTime, boolean routeIsChosen) {
+    public Route(int routeID, int planID, int origin, int destination, Transportation routeTransportation, int routeTime, int distance, boolean routeIsChosen) {
         this.routeID = routeID;
         this.planID = planID;
         this.origin = origin;
         this.destination = destination;
         this.routeTransportation = routeTransportation;
         this.routeTime = routeTime;
+        this.distance = distance;
         this.routeIsChosen = routeIsChosen;
     }
 
@@ -101,6 +95,14 @@ public class Route implements Serializable {
         this.routeTime = routeTime;
     }
 
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
     public boolean isRouteIsChosen() {
         return routeIsChosen;
     }
@@ -119,6 +121,7 @@ public class Route implements Serializable {
                 getOrigin() == route.getOrigin() &&
                 getDestination() == route.getDestination() &&
                 getRouteTime() == route.getRouteTime() &&
+                getDistance() == route.getDistance() &&
                 isRouteIsChosen() == route.isRouteIsChosen() &&
                 getRouteTransportation() == route.getRouteTransportation();
     }
@@ -126,19 +129,6 @@ public class Route implements Serializable {
     @Override
     public int hashCode() {
 
-        return Objects.hash(getRouteID(), getPlanID(), getOrigin(), getDestination(), getRouteTransportation(), getRouteTime(), isRouteIsChosen());
-    }
-
-    @Override
-    public String toString() {
-        return "Route{" +
-                "routeID=" + routeID +
-                ", planID=" + planID +
-                ", origin=" + origin +
-                ", destination=" + destination +
-                ", routeTransportation=" + routeTransportation +
-                ", routeTime=" + routeTime +
-                ", routeIsChosen=" + routeIsChosen +
-                '}';
+        return Objects.hash(getRouteID(), getPlanID(), getOrigin(), getDestination(), getRouteTransportation(), getRouteTime(), getDistance(), isRouteIsChosen());
     }
 }
