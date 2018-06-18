@@ -109,6 +109,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     List<PoiInfo> poiInfoList;
     List<Marker> poiMarkerList = new ArrayList<>();
     List<Pin> pinDeleteList = new ArrayList<>();    //  将要被删除的Pin
+    List<Route> routeDeleteList = new ArrayList<>();    //  将要被删除的Pin
     boolean isAddingPin = false;    //  是否向地图正在添加Pin
     boolean isDeletingPins = false;  //  是否从地图中删除Pin
     int currentPinIndex = -1;    //  当前pin的index
@@ -389,7 +390,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     public void addPinConfirm() {
         pin_adding.setVisibility(View.GONE);
         //  以当前位置构造一个Pin
-        Pin pin = new Pin(DataManager.getPinCountAndIncrease(), mapCenter.latitude, mapCenter.longitude, mapCenterAddress, new Date(), new Date(), PinStatus.WANTED, "");
+        Pin pin = new Pin(DataManager.getPinCountAndIncrease(), DataManager.getCurrentPlan().getPlanID(), mapCenter.latitude, mapCenter.longitude, mapCenterAddress, new Date(), new Date(), PinStatus.WANTED, "");
         if(mapFragmentAuxiliary.addPin(pin)) {   //  判断是否成功添加Pin
             isAddingPin = false;
             ib_add_pin.setVisibility(View.VISIBLE);
@@ -402,8 +403,9 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             mapFragmentAuxiliary.clearPoiInfo();
             mapFragmentAuxiliary.selectPin(pin);
             matchedPoiHash = Double.POSITIVE_INFINITY;
-            //  调用presenter添加pin
             mapFragmentAuxiliary.showToast("Pin添加成功");
+            mapFragmentAuxiliary.addRouteForNewAddedPin();
+            //  调用presenter添加pin
         }
         else{
             pin_adding.setVisibility(View.VISIBLE);
@@ -443,8 +445,14 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             for (Pin pin : pinDeleteList) {
                 mapFragmentAuxiliary.deletePin(pin);
             }
+            mapFragmentAuxiliary.deleteRoutes();
+            for (Route route : routeDeleteList) {
+                mapFragmentAuxiliary.deleteRoute(route);
+            }
             pinDeleteList.clear();
+            routeDeleteList.clear();
             isDeletingPins = false;
+            mapFragmentAuxiliary.addRouteForIsolatedPins();
         }
         else {
             mapFragmentAuxiliary.showToast("未选择要删除的Pin");
@@ -461,24 +469,11 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
                 DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinMarkerMap().get(pin).setIcon(pinIcon); //  取消被选中
             }
             pinDeleteList.clear();
+            routeDeleteList.clear();
         }
         isDeletingPins = false;
     }
 
-    public void deleteRoute(Route route) {
-        if (null != route) {
-            List<? extends RouteLine> routeLineList = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteLineListMap().get(route);
-            for (RouteLine routeLine : routeLineList) {
-                if(DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().containsKey(routeLine)) {
-                    OverlayManager overlay = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().get(routeLine);
-                    overlay.removeFromMap();
-                    break;
-                }
-            }
-            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteLineListMap().remove(route);
-            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRoutePinSetMap().remove(route);
-            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteList().remove(route);
-        }
-    }
+
 
 }
