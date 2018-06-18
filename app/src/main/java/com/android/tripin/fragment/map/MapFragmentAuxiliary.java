@@ -15,6 +15,7 @@ import com.android.tripin.R;
 import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Route;
 import com.android.tripin.enums.Transportation;
+import com.android.tripin.manager.DataManager;
 import com.android.tripin.util.overlayutil.BikingRouteOverlay;
 import com.android.tripin.util.overlayutil.DrivingRouteOverlay;
 import com.android.tripin.util.overlayutil.OverlayManager;
@@ -380,8 +381,6 @@ public class MapFragmentAuxiliary {
         }
         else {
             mapFragment.mapFragmentAuxiliary.showToast("此处已经添加过Pin...");
-            //  从pinList中移除，以避免产生空引用
-            mapFragment.pinList.remove(pin);
             return false;
         }
     }
@@ -513,7 +512,7 @@ public class MapFragmentAuxiliary {
      * @param destination 终点的location
      * @param transportationType 交通方式
      */
-    public void addRoute(LatLng origin, LatLng destination, Transportation transportationType) {
+    public void addRouteWithLocation(LatLng origin, LatLng destination, Transportation transportationType) {
         PlanNode originNode = PlanNode.withLocation(origin);
         PlanNode destinationNode = PlanNode.withLocation(destination);
         requestRoute(originNode, destinationNode, transportationType);
@@ -526,14 +525,14 @@ public class MapFragmentAuxiliary {
      * @param destination 终点的pin
      * @param transportationType 交通方式
      */
-    public void addRoute(Pin origin, Pin destination, Transportation transportationType) {
+    public void addRouteWithPins(Pin origin, Pin destination, Transportation transportationType) {
         LatLng originLocation = new LatLng(origin.getPinLatitude(), origin.getPinLongitude());
 //        isRequestingOriginCity = true;
 //        requestReverseGeoCode(originLocation);
         LatLng destinationLocation = new LatLng(destination.getPinLatitude(), destination.getPinLongitude());
 //        isRequestingDestinationCity = true;
 //        requestReverseGeoCode(destinationLocation);
-        addRoute(originLocation, destinationLocation, transportationType);
+        addRouteWithLocation(originLocation, destinationLocation, transportationType);
     }
 
     /**
@@ -559,8 +558,16 @@ public class MapFragmentAuxiliary {
             }
         }
         if (null != origin && null != destination) {
-            addRoute(origin, destination, transportation);
+            addRouteWithPins(origin, destination, transportation);
         }
+    }
+
+    /**
+     * 添加新添加的pin与上一个pin的路线
+     */
+    public void addRoute(Pin newAddedPin) {
+
+
     }
 
     /**
@@ -664,42 +671,62 @@ public class MapFragmentAuxiliary {
         }
     }
 
+    /**
+     * 在地图上显示walkingRouteLine
+     * @param walkingRouteLine 要显示的routeLine
+     */
     public void showWalkingRoute(WalkingRouteLine walkingRouteLine) {
         if (null != walkingRouteLine) {
             WalkingRouteOverlay overlay = new WalkingRouteOverlay(mapFragment.mBaiduMap);
 //            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
             overlay.setData(walkingRouteLine);
             overlay.addToMap();
+            mapFragment.routeOverlayManagerMap.put(walkingRouteLine, overlay);
 //            overlay.zoomToSpan();
         }
     }
 
+    /**
+     * 在地图上显示drivingRouteLine
+     * @param drivingRouteLine 要显示的routeLine
+     */
     public void showDrivingRoute(DrivingRouteLine drivingRouteLine) {
         if (null != drivingRouteLine) {
             DrivingRouteOverlay overlay = new DrivingRouteOverlay(mapFragment.mBaiduMap);
 //            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
             overlay.setData(drivingRouteLine);
             overlay.addToMap();
+            mapFragment.routeOverlayManagerMap.put(drivingRouteLine, overlay);
 //            overlay.zoomToSpan();
         }
     }
 
+    /**
+     * 在地图上显示bikingRouteLine
+     * @param bikingRouteLine 要显示的routeLine
+     */
     public void showBikingRoute(BikingRouteLine bikingRouteLine) {
         if (null != bikingRouteLine) {
             BikingRouteOverlay overlay = new BikingRouteOverlay(mapFragment.mBaiduMap);
 //            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
             overlay.setData(bikingRouteLine);
             overlay.addToMap();
+            mapFragment.routeOverlayManagerMap.put(bikingRouteLine, overlay);
 //            overlay.zoomToSpan();
         }
     }
 
+    /**
+     * 在地图上显示transitRouteLine
+     * @param transitRouteLine 要显示的routeLine
+     */
     public void showTransitRoute(TransitRouteLine transitRouteLine) {
         if (null != transitRouteLine) {
             TransitRouteOverlay overlay = new TransitRouteOverlay(mapFragment.mBaiduMap);
 //            mapFragment.mBaiduMap.setOnMarkerClickListener(overlay);
             overlay.setData(transitRouteLine);
             overlay.addToMap();
+            mapFragment.routeOverlayManagerMap.put(transitRouteLine, overlay);
 //            overlay.zoomToSpan();
         }
     }

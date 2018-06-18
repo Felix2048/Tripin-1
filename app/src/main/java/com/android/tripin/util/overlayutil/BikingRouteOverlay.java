@@ -24,6 +24,7 @@ import java.util.List;
 
 /**
  * 用于显示骑行路线的Overlay
+ * modified: felix
  */
 public class BikingRouteOverlay extends OverlayManager {
 

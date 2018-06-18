@@ -19,6 +19,7 @@ import com.android.tripin.enums.PinStatus;
 import com.android.tripin.enums.Transportation;
 import com.android.tripin.manager.DataManager;
 import com.android.tripin.presenter.MapPresenter;
+import com.android.tripin.util.overlayutil.OverlayManager;
 import com.android.tripin.view.IMapView;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
@@ -31,6 +32,7 @@ import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.UiSettings;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.PoiInfo;
@@ -109,6 +111,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     Map<Pin, Marker> pinMarkerMap = new HashMap<>();
     Map<Route, HashSet<Pin>> routePinSetMap = new HashMap<>();
     Map<Route, List<? extends RouteLine>> routeLineListMap = new HashMap<>();
+    Map<RouteLine, OverlayManager> routeOverlayManagerMap = new HashMap<>();
     List<PoiInfo> poiInfoList;
     List<Pin> pinDeleteList = new ArrayList<>();    //  将要被删除的Pin
 
@@ -430,6 +433,8 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             mapFragmentAuxiliary.clearPoiInfo();
             mapFragmentAuxiliary.selectPin(pin);
             matchedPoiHash = Double.POSITIVE_INFINITY;
+            //  调用presenter添加pin
+            mapFragmentAuxiliary.showToast("Pin添加成功");
         }
         else{
             pin_adding.setVisibility(View.VISIBLE);
@@ -451,7 +456,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     }
 
     public void deletePinsStart() {
-        //  隐藏infowindow
+        //  隐藏infoWindow
         mBaiduMap.hideInfoWindow();
         ib_add_pin.setVisibility(View.GONE);
         ib_delete_pin.setVisibility(View.GONE);
@@ -491,6 +496,20 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         isDeletingPins = false;
     }
 
-
+    public void deleteRoute(Route route) {
+        if (null != route) {
+            List<? extends RouteLine> routeLineList = routeLineListMap.get(route);
+            for (RouteLine routeLine : routeLineList) {
+                if(routeOverlayManagerMap.containsKey(routeLine)) {
+                    OverlayManager overlay = routeOverlayManagerMap.get(routeLine);
+                    overlay.removeFromMap();
+                    break;
+                }
+            }
+            routeLineListMap.remove(route);
+            routePinSetMap.remove(route);
+            routeList.remove(route);
+        }
+    }
 
 }
