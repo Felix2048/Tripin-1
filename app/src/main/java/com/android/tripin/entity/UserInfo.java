@@ -12,6 +12,12 @@ public class UserInfo implements Serializable {
     private String phone;
 
     private String email;
+
+    public UserInfo(String userName, String phone) {
+        this.userName = userName;
+        this.phone = phone;
+    }
+
     private int userID;
 
     public UserInfo(String userName, String password, String phone) {

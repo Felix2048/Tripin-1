@@ -59,6 +59,11 @@
     <string name="delete_pin_success">删除成功</string>
     <string name="delete_pin_failed">删除失败</string>
     <string name="pin_detail_network_error">网络错误</string>
+    <string name="search_with_userName_or_phone">请输入用户名或手机号</string>
+    <string name="invite_friends">邀请好友</string>
+    <string name="search">搜素</string>
+    <string name="search_history">搜索历史</string>
+    <string name="search_failed">搜索失败</string>
 
 
 </resources>

@@ -25,6 +25,15 @@ public  class ChangeDataToJsonUtil {
     }
 
     /**
+     * 将用户输入的搜索信息封装成json
+     */
+
+    public static String parseSearchInfoToJson(String userInfo) {
+        UserInfo userInfo1 = new UserInfo(userInfo,userInfo);
+        String jsonSearch = gson.toJson(userInfo1);
+        return jsonSearch;
+    }
+    /**
      * 将用户输入的用户名，密码，手机号转化成JSON数据，供注册使用
      * @param userName
      * @param password
