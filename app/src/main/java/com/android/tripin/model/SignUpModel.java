@@ -2,6 +2,14 @@ package com.android.tripin.model;
 
 import android.content.SharedPreferences;
 
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.IAcsClient;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.http.MethodType;
+import com.aliyuncs.profile.DefaultProfile;
+import com.aliyuncs.profile.IClientProfile;
 import com.android.tripin.callback.SignUpCallback;
 import com.android.tripin.model.interfaces.ISignUpModel;
 import com.android.tripin.util.OkHttp3Util;
@@ -71,33 +79,54 @@ public class SignUpModel implements ISignUpModel {
 
     /**
      * 发送获取验证码请求，取得验证码存储至本地
-     * @param signUpCallback
+     * @param
      */
     @Override
-    public void sendVerificationCode( SignUpCallback signUpCallback) {
+    public void sendVerificationCode(String phone) {
 
-        /**
+        /*
          * 请求地址尚未指定
-         */
-        Request sendVerificationCodeRequest= new Request.Builder()
-                .url("")
-                .build();
-        client.newCall(sendVerificationCodeRequest).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                signUpCallback.getVerificationCodeFailed();
-            }
+        */
 
+        new Thread(new Runnable() {
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String sendVerificationCodeResponse = response.body().string();
-                String verificationCode = ParserJsonToDataUtil.getSendVerificationCodeResponseMessage(sendVerificationCodeResponse);
-                /**
-                 * 将验证码临时存储到本地
-                 */
-                signUpCallback.getVerificationCodeSuccess(verificationCode);
+            public void run() {
+                String validateCode = (int) (Math.random() * 10000) + "";
+                if (validateCode.length() < 4)
+                    for (int i = 0; i < 4 - validateCode.length(); i++)
+                        validateCode = "0" + validateCode;
+
+                System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
+                System.setProperty("sun.net.client.defaultReadTimeout", "10000");
+                final String product = "Dysmsapi";
+                final String domain = "dysmsapi.aliyuncs.com";
+                final String accessKeyId = "LTAI5uqu2psqSOaP";
+                final String accessKeySecret = "WtskXmINTnxlG2ZP078n1OUJ4EYYBN";
+                IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId,
+                        accessKeySecret);
+                try {
+                    DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+                } catch (ClientException e) {
+                    e.printStackTrace();
+                }
+
+                IAcsClient acsClient = new DefaultAcsClient(profile);
+                SendSmsRequest request = new SendSmsRequest();
+                request.setMethod(MethodType.POST);
+                request.setPhoneNumbers(phone);
+                request.setSignName("Tripin");
+                request.setTemplateCode("SMS_126410008");
+                request.setTemplateParam("{\"code\":\"" + validateCode + "\"}");
+                request.setOutId("yourOutId");
+                SendSmsResponse sendSmsResponse = null;
+
+                try {
+                    sendSmsResponse = acsClient.getAcsResponse(request);
+                } catch (ClientException e) {
+                    e.printStackTrace();
+                }
             }
-        });
+        }).start();
     }
 
 }

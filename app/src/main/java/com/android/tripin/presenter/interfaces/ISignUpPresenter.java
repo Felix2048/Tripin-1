@@ -8,5 +8,5 @@ public interface ISignUpPresenter {
     /**
      * 点击发送验证码
      */
-    void sendVerificationCode();
+    void sendVerificationCode(String phone);
 }

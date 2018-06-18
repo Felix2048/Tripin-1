@@ -49,11 +49,20 @@ public class InvitationFragment extends BaseFragment implements SearchCallback{
     private RecyclerView searchListRecyclerView;
     private RecyclerView searchHistoryListRecyclerView;
     private List<UserInfo> userInfoList = new ArrayList<>();
-
     public static String getTitle() {
         return TITLE;
     }
+    private static InvitationFragment invitationFragment = null;
 
+    public static InvitationFragment newInstance() {
+        if (null != invitationFragment) {
+            return invitationFragment;
+        }
+        else {
+            invitationFragment = new InvitationFragment();
+            return invitationFragment;
+        }
+    }
     /**
      * onCreateView
      */

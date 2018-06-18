@@ -53,7 +53,7 @@ public class CreatePlanAdapter extends RecyclerView.Adapter<CreatePlanAdapter.My
     //  添加数据
     public void addData(int position) {
 //      在list中添加数据，并通知条目加入一条
-        list.add(position, "我是商品" + position);
+        list.add(position, "我是计划" + position);
         //添加动画
         notifyItemInserted(position);
     }

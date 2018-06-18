@@ -61,7 +61,7 @@ import java.util.Set;
 public class MapFragment extends BaseFragment implements IMapView, OnClickListener, OnLongClickListener {
 
     private final static String TAG = MapFragment.class.getSimpleName();
-
+    private static MapFragment homeFragment = new MapFragment();
     //  Map
     MapView mMapView;
     BaiduMap mBaiduMap;
@@ -120,6 +120,10 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     int currentPinIndex = -1;    //  当前pin的index
     double matchedPoiHash = Double.POSITIVE_INFINITY;   //  用户将当前pin_adding的icon拖动到poi点的附近，匹配到的poi的hash
     boolean mapStatusChangeIgnored = false; //  若为true，则此次mapStatusChange将会被忽略
+
+    public static MapFragment newInstance(){
+        return homeFragment;
+    }
 
     /**
      * onCreateView

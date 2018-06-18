@@ -3,6 +3,14 @@ package com.android.tripin.presenter;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.IAcsClient;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.profile.DefaultProfile;
+import com.aliyuncs.profile.IClientProfile;
+import com.aliyuncs.http.MethodType;
 import com.android.tripin.R;
 import com.android.tripin.activity.SignUpActivity;
 import com.android.tripin.callback.SignUpCallback;
@@ -101,8 +109,8 @@ public class SignUpPresenter implements ISignUpPresenter{
      * 发送验证码
      */
     @Override
-    public void sendVerificationCode() {
-        signUpModel.sendVerificationCode(signUpCallback);
+    public void sendVerificationCode(String phone) {
+       signUpModel.sendVerificationCode(phone);
     }
 
 }

@@ -63,7 +63,7 @@ public class SignUpActivity extends BaseActivity implements ISignUpView, View.On
                 signUpPresenter.signUp();
                 break;
             case R.id.btn_send_verification_code:
-                signUpPresenter.sendVerificationCode();
+                signUpPresenter.sendVerificationCode(signUpUserPhone.getText().toString().trim());
                 break;
             default:
                 break;
