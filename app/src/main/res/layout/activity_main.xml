@@ -28,7 +28,8 @@
             android:layout_centerInParent="true"
             android:text="我的计划"
             android:textSize="20dp"
-            android:id="@+id/choose_plan_text"/>
+            android:id="@+id/choose_plan_text"
+            android:clickable="true"/>
 
         <ImageButton
 

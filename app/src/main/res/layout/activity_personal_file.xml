@@ -63,21 +63,14 @@
             android:layout_weight="1"
             android:background="@null"
             android:gravity="center_vertical|end"
-            android:hint="请输入姓名"
+            android:hint="Daru"
             android:singleLine="true"
             android:paddingStart="10dp"
             android:textColor="@color/item_group_edt"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            android:layout_marginRight="10dp"/>
 
-        <!--清除输入内容-->
-        <ImageView
-            android:id="@+id/wipe_user_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:padding="8dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_wipe" />
+
     </LinearLayout>
     <View
         android:layout_width="match_parent"
@@ -118,21 +111,13 @@
             android:layout_weight="1"
             android:background="@null"
             android:gravity="center_vertical|end"
-            android:hint="请输入手机号"
+            android:hint="13188888888"
             android:singleLine="true"
             android:paddingStart="10dp"
             android:textColor="@color/item_group_edt"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            android:layout_marginRight="10dp"/>
 
-        <!--清除输入内容-->
-        <ImageView
-            android:id="@+id/wipe_user_phone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:padding="8dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_wipe" />
     </LinearLayout>
     <View
         android:layout_width="match_parent"
@@ -174,21 +159,14 @@
             android:layout_weight="1"
             android:background="@null"
             android:gravity="center_vertical|end"
-            android:hint="请输入邮箱地址"
+            android:hint="请输入你的邮箱"
             android:singleLine="true"
             android:paddingStart="10dp"
             android:textColor="@color/item_group_edt"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            android:layout_marginRight="10dp"/>
 
-        <!--清除输入内容-->
-        <ImageView
-            android:id="@+id/wipe_user_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:padding="8dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_wipe" />
+
     </LinearLayout>
     <View
         android:layout_width="match_parent"

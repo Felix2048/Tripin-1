@@ -1,17 +1,20 @@
 package com.android.tripin.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.tripin.MainActivity;
 import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.model.SignUpModel;
 import com.android.tripin.presenter.SignUpPresenter;
 import com.android.tripin.view.ISignUpView;
+import com.squareup.haha.perflib.Main;
 
 public class SignUpActivity extends BaseActivity implements ISignUpView, View.OnClickListener{
     private final static String TAG = SignUpActivity.class.getSimpleName();
@@ -134,7 +137,7 @@ public class SignUpActivity extends BaseActivity implements ISignUpView, View.On
      */
     @Override
     public int onJudgeVerificationCode() {
-        if(this.getVerificationCode().equals("yanzhengma")) {
+        if(this.getVerificationCode().equals("9527")) {
             return 1;
         }else {
             return 0;
@@ -142,9 +145,13 @@ public class SignUpActivity extends BaseActivity implements ISignUpView, View.On
 
     }
 
+    public void goHome() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
     @Override
     public int onJudgePasswordEqual() {
-        if(this.getVerificationCode().equals("yanzhengma")) {
+        if(this.getPassword().equals(this.getConfirmPassword())) {
             return 1;
         }else {
             return 0;

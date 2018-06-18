@@ -1,5 +1,6 @@
 package com.android.tripin.fragment.map;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.tripin.R;
+import com.android.tripin.activity.PinDetailActivity;
 import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Route;
 import com.android.tripin.enums.Transportation;
@@ -237,7 +239,8 @@ public class MapFragmentAuxiliary {
                 public void onInfoWindowClick() {
                     //  将布局显示出来
                     //  TODO:跳转到PinDetailActivity
-//                mapFragment.pin_info.setVisibility(View.VISIBLE);
+                    Intent intent = new Intent(mapFragment.getActivity(), PinDetailActivity.class);
+                    mapFragment.getActivity().startActivity(intent);
                 }
             };
             //  显示infoWindow

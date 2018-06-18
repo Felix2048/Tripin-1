@@ -83,6 +83,7 @@ public class PinDetailActivity extends BaseActivity implements IPinDetailView, V
 
                 break;
             case R.id.btn_delete_pin:
+
                 break;
             default:
                 break;

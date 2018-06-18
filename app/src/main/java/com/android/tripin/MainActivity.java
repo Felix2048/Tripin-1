@@ -1,11 +1,16 @@
 package com.android.tripin;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.android.tripin.activity.CreatePlanActivity;
+import com.android.tripin.activity.LoginActivity;
+import com.android.tripin.activity.PersonalFileActivity;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.fragment.InvitationFragment;
 import com.android.tripin.fragment.PlanFragment;
@@ -58,10 +63,29 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 .addItem(new BottomNavigationItem(R.drawable.ic_favorite_white_24dp, "Share").setActiveColorResource(R.color.green))
                 .setFirstSelectedPosition(0)
                 .initialise();
-
-
         setDefaultFragment();
         bottomNavigationBar.setTabSelectedListener(this);
+
+        btnUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (DataManager.getIsLogin() == false) {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(MainActivity.this, PersonalFileActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        choosePlan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, CreatePlanActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 

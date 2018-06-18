@@ -20,12 +20,13 @@ public class PersonalFilePresenter implements IPersonalFilePresenter {
     public PersonalFilePresenter(PersonalFileModel personalFileModel, PersonalFileActivity personalFileActivity) {
         this.personalFileModel = personalFileModel;
         this.personalFileActivity = personalFileActivity;
+        changePersonalFileRequestJson = ChangeDataToJsonUtil.getChangePersonalFileRequestJson(personalFileActivity.getUserName(),personalFileActivity.getUserEmail(),personalFileActivity.getUserPhone());
     }
 
     /**
      * 获取用户名，密码，将数据转化成loginJson
      */
-    String changePersonalFileRequestJson = ChangeDataToJsonUtil.getChangePersonalFileRequestJson(personalFileActivity.getUserName(),personalFileActivity.getUserEmail(),personalFileActivity.getUserPhone());
+    String changePersonalFileRequestJson;
 
 
 

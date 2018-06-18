@@ -1,6 +1,7 @@
 package com.android.tripin.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.tripin.MainActivity;
 import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.model.LoginModel;
@@ -92,6 +94,10 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
         }
     }
 
+    public void goHome() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
     /**
      * 显示登陆提示框
      * @param msg
@@ -122,7 +128,6 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
     public void showResult(int result) {
         Looper.prepare();
         Toast.makeText(this,result,Toast.LENGTH_SHORT).show();
-        Looper.loop();
     }
 
     /**
@@ -131,9 +136,7 @@ public class LoginActivity extends BaseActivity implements ILoginView, View.OnCl
      */
     @Override
     public void showError(int err) {
-        Looper.prepare();
         Toast.makeText(this,err,Toast.LENGTH_SHORT).show();
-        Looper.loop();
     }
 
 
