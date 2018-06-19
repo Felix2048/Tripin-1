@@ -1,6 +1,7 @@
 package com.android.tripin.entity;
 
 import com.android.tripin.enums.PinStatus;
+import com.baidu.mapapi.model.LatLng;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -157,5 +158,9 @@ public class Pin implements Serializable {
     public int hashCode() {
 
         return Objects.hash(getPinID(), getPlanID(), getPinLatitude(), getPinLongitude(), getPinTitle(), getPinArrival(), getPinDeparture(), getPinStatus(), getPinNotes());
+    }
+
+    public LatLng getLatLng() {
+        return new LatLng(getPinLatitude(), getPinLongitude());
     }
 }

@@ -72,7 +72,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
     double zoomLevel;
     //  按钮
     ImageButton ib_location;
-    ImageButton ib_get_back_to_current_pin;
+    ImageButton ib_planning_route;
     ImageButton ib_previous_pin;
     ImageButton ib_next_pin;
     ImageButton ib_add_pin;
@@ -146,7 +146,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         //  载入控件
 
         ib_location = (ImageButton) mView.findViewById(R.id.ib_location);
-        ib_get_back_to_current_pin = (ImageButton) mView.findViewById(R.id.ib_get_back_to_current_pin);
+        ib_planning_route = (ImageButton) mView.findViewById(R.id.ib_planning_route);
         ib_previous_pin = (ImageButton) mView.findViewById(R.id.ib_previous_pin);
         ib_next_pin = (ImageButton) mView.findViewById(R.id.ib_next_pin);
         ib_add_pin = (ImageButton) mView.findViewById(R.id.ib_add_pin);
@@ -158,7 +158,7 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         ib_delete_pin_confirm = (ImageButton) mView.findViewById(R.id.ib_delete_pin_confirm);
         //  添加点击事件Listener
         ib_location.setOnClickListener(this);
-        ib_get_back_to_current_pin.setOnClickListener(this);
+        ib_planning_route.setOnClickListener(this);
         ib_previous_pin.setOnClickListener(this);
         ib_next_pin.setOnClickListener(this);
         ib_add_pin.setOnClickListener(this);
@@ -256,8 +256,8 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
             case R.id.ib_location:
                 isFirstLocation = true;
                 break;
-            case R.id.ib_get_back_to_current_pin:
-                mapFragmentAuxiliary.getBackToCurrentPin();
+            case R.id.ib_planning_route:
+                mapFragmentAuxiliary.planRoute();
                 break;
             case R.id.ib_next_pin:
                 mapFragmentAuxiliary.getToNextPin();

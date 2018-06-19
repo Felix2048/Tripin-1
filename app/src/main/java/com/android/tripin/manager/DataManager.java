@@ -40,6 +40,8 @@ public class DataManager implements Serializable {
 
     private static List<Plan> planList = new ArrayList<>();
 
+    private static List<UserInfo> userInfoList = new ArrayList<>();
+
     private static HashMap<Plan, MapDiagram> planMapDiagramHashMap = new HashMap<>();
 
     public static int getPinCountAndIncrease() {
