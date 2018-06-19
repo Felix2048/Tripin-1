@@ -72,7 +72,7 @@
         <activity android:name=".activity.SignUpActivity" />
         <activity android:name=".activity.PersonalFileActivity" />
         <activity android:name=".activity.PinDetailActivity" />
-        <activity android:name=".activity.CreatePlanActivity"></activity>
+        <activity android:name=".activity.CreatePlanActivity" />
     </application>
 
 </manifest>

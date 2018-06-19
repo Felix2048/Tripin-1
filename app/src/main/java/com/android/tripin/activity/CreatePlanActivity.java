@@ -1,5 +1,6 @@
 package com.android.tripin.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -7,11 +8,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.tripin.MainActivity;
 import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.recyclerView.CreatePlanAdapter;
+import com.android.tripin.util.RecylerViewClickListener2;
 
 
 import java.util.ArrayList;
@@ -53,6 +56,17 @@ public class CreatePlanActivity extends BaseActivity {
         list = initData();
         adapter = new CreatePlanAdapter(CreatePlanActivity.this, list);
         mRecyclerView.setAdapter(adapter);
+        mRecyclerView.addOnItemTouchListener(new RecylerViewClickListener2(this, mRecyclerView, new RecylerViewClickListener2.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(CreatePlanActivity.this,MainActivity.class);
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+                Toast.makeText(CreatePlanActivity.this,"这是长按事件",Toast.LENGTH_SHORT).show();
+            }
+        }));
 //      添加动画
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }
@@ -64,7 +78,7 @@ public class CreatePlanActivity extends BaseActivity {
     protected ArrayList<String> initData() {
         ArrayList<String> mDatas = new ArrayList<String>();
         for (int i = 0; i < 1; i++) {
-            mDatas.add("我是计划" + i);
+            mDatas.add("计划" + i);
         }
         return mDatas;
     }
