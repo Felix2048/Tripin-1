@@ -13,6 +13,8 @@ import android.widget.Toast;
 import com.android.tripin.MainActivity;
 import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
+import com.android.tripin.entity.Plan;
+import com.android.tripin.manager.DataManager;
 import com.android.tripin.recyclerView.CreatePlanAdapter;
 import com.android.tripin.util.ChangePlanNameDialogUtil;
 import com.android.tripin.util.RecylerViewClickListener2;
@@ -34,7 +36,7 @@ public class CreatePlanActivity extends BaseActivity {
     private RecyclerView mRecyclerView;
     private ImageView iv_add;
     private CreatePlanAdapter adapter;
-    private List<String> list = new ArrayList<String>();
+    private List<Plan> list = DataManager.getPlanList();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +56,6 @@ public class CreatePlanActivity extends BaseActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 //      获取数据，向适配器传数据，绑定适配器
-        list = initData();
         adapter = new CreatePlanAdapter(CreatePlanActivity.this, list);
         mRecyclerView.setAdapter(adapter);
 
@@ -66,11 +67,4 @@ public class CreatePlanActivity extends BaseActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
     }
 
-    protected ArrayList<String> initData() {
-        ArrayList<String> mDatas = new ArrayList<String>();
-        for (int i = 0; i < 1; i++) {
-            mDatas.add("计划" + i);
-        }
-        return mDatas;
-    }
 }

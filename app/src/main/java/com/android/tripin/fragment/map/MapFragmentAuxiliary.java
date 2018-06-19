@@ -259,18 +259,20 @@ public class MapFragmentAuxiliary {
      */
     public void showTrip() {
         //  清空地图
-        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clear();
-        mapFragment.mBaiduMap.clear();
+        if (null != DataManager.getCurrentPlan()) {
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clear();
+            mapFragment.mBaiduMap.clear();
 
-        for (Pin pin : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList()) {
-            addPin(pin);
+            for (Pin pin : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList()) {
+                addPin(pin);
+            }
+            for (Route route : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteList()) {
+                addRoute(route);
+            }
+            //  初始化currentPinIndex为0
+            mapFragment.currentPinIndex = 0;
+            mapFragment.mapFragmentAuxiliary.getBackToCurrentPin();
         }
-        for (Route route : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteList()) {
-            addRoute(route);
-        }
-        //  初始化currentPinIndex为0
-        mapFragment.currentPinIndex = 0;
-        mapFragment.mapFragmentAuxiliary.getBackToCurrentPin();
     }
 
     /**
@@ -551,17 +553,19 @@ public class MapFragmentAuxiliary {
     public void deleteRoute(Route route) {
         if (null != route) {
             List<? extends RouteLine> routeLineList = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteLineListMap().get(route);
-            for (RouteLine routeLine : routeLineList) {
-                if(DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().containsKey(routeLine)) {
-                    OverlayManager overlay = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().get(routeLine);
-                    overlay.removeFromMap();
-                    DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().remove(routeLine);
-                    break;
+            if (null != routeLineList) {
+                for (RouteLine routeLine : routeLineList) {
+                    if (DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().containsKey(routeLine)) {
+                        OverlayManager overlay = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().get(routeLine);
+                        overlay.removeFromMap();
+                        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteOverlayManagerMap().remove(routeLine);
+                        break;
+                    }
                 }
+                DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteLineListMap().remove(route);
+                DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRoutePinSetMap().remove(route);
+                DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteList().remove(route);
             }
-            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteLineListMap().remove(route);
-            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRoutePinSetMap().remove(route);
-            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getRouteList().remove(route);
         }
     }
 

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.android.tripin.MainActivity;
 import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
+import com.android.tripin.manager.DataManager;
 import com.android.tripin.model.LoginModel;
 import com.android.tripin.presenter.LoginPresenter;
 import com.android.tripin.util.ChangeDataToJsonUtil;

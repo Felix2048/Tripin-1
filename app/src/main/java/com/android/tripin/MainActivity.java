@@ -49,6 +49,17 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     private TextView choosePlan;
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if(null != DataManager.getCurrentPlan()) {
+            choosePlan.setText(DataManager.getCurrentPlan().getPlanName());
+        }
+        else{
+            choosePlan.setText("添加计划");
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -82,8 +93,13 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         choosePlan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CreatePlanActivity.class);
-                startActivity(intent);
+                if (DataManager.getIsLogin() == true) {
+                    Intent intent = new Intent(MainActivity.this, CreatePlanActivity.class);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }

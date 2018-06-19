@@ -332,9 +332,11 @@ public class MapFragment extends BaseFragment implements IMapView, OnClickListen
         super.onResume();
         //在Fragment执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
         mMapView.onResume();
-        if (DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).isUpdated()) {
-            mapFragmentAuxiliary.showTrip();
-            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).setUpdated(false);
+        if (null != DataManager.getCurrentPlan()) {
+            if (DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).isUpdated()) {
+                mapFragmentAuxiliary.showTrip();
+                DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).setUpdated(false);
+            }
         }
     }
 

@@ -9,7 +9,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.tripin.R;
+import com.android.tripin.entity.Pin;
+import com.android.tripin.entity.Plan;
+import com.android.tripin.enums.PlanType;
+import com.android.tripin.enums.Transportation;
+import com.android.tripin.manager.DataManager;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,9 +24,9 @@ import java.util.List;
  */
 public class CreatePlanAdapter extends RecyclerView.Adapter<CreatePlanAdapter.MyViewHolder>{
     private Context context;
-    private List<String> list;
+    private List<Plan> list;
 
-    public CreatePlanAdapter(Context context, List<String> list) {
+    public CreatePlanAdapter(Context context, List<Plan> list) {
         this.context = context;
         this.list = list;
     }
@@ -33,11 +39,19 @@ public class CreatePlanAdapter extends RecyclerView.Adapter<CreatePlanAdapter.My
     }
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        holder.tv.setText(list.get(position));
+        holder.tv.setText(list.get(position).getPlanName());
+        holder.tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DataManager.setCurrentPlan(DataManager.getPlanList().get(DataManager.getPlanList().indexOf(list.get(position))));
+                DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).setUpdated(true);
+                Snackbar.make(v, "当前计划已修改为" + list.get(position).getPlanName(), Snackbar.LENGTH_SHORT).show();
+            }
+        });
         holder.tv_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (list.size() == 1) {
+                if (list.size() == 1 || (list.get(position).equals(DataManager.getCurrentPlan()))) {
                     Snackbar.make(v, "此条目不能删除", Snackbar.LENGTH_SHORT).show();
                 } else {
                     //               删除自带默认动画
@@ -53,12 +67,20 @@ public class CreatePlanAdapter extends RecyclerView.Adapter<CreatePlanAdapter.My
     //  添加数据
     public void addData(int position) {
 //      在list中添加数据，并通知条目加入一条
-        list.add(position, "我是计划" + position);
+        Plan plan =  new Plan(DataManager.getPlanCountAndIncrease(), DataManager.getMapCountAndIncrease(),"计划" + position,
+                PlanType.PUBLIC, new Date(), new Date(), Transportation.MASS_TRANSIT);
+//        list.add(position,plan);
+        DataManager.createPlan(plan);
+
+        list = DataManager.getPlanList();
         //添加动画
         notifyItemInserted(position);
     }
     //  删除数据
     public void removeData(int position) {
+        if (DataManager.getCurrentPlan().equals(list.get(position))) {
+            return;
+        }
         list.remove(position);
         //删除动画
         notifyItemRemoved(position);

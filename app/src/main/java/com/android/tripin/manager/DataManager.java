@@ -116,14 +116,20 @@ public class DataManager implements Serializable {
         }
     }
 
+    public static void createPlan(Plan plan) {
+        planList.add(plan);
+        MapDiagram mapDiagram = new MapDiagram();
+        planMapDiagramHashMap.put(plan, mapDiagram);
+        if (null == currentPlan) {
+            currentPlan = plan;
+        }
+    }
+
     private void init() {
-        Plan plan1 = new Plan(getPlanCountAndIncrease(), getMapCountAndIncrease(), " 上海",
-                PlanType.PUBLIC, new Date(), new Date(), Transportation.MASS_TRANSIT);
-        Plan plan2 = new Plan(getPlanCountAndIncrease(), getMapCountAndIncrease(), " 北京",
+        Plan plan1 = new Plan(getPlanCountAndIncrease(), getMapCountAndIncrease(), " Demo",
                 PlanType.PUBLIC, new Date(), new Date(), Transportation.MASS_TRANSIT);
 
         planList.add(plan1);
-        planList.add(plan2);
 
         UserInfo user1 = new UserInfo("zhengjiadi", "zhengjiadi", "zhengjiadi@gmail.com", "15201703512");
         UserInfo user2 = new UserInfo("gaoshang", "gaoshang", "gaoshang@gmail.com", "15201703513");
@@ -159,14 +165,7 @@ public class DataManager implements Serializable {
         mapDiagram1.getRouteList().add(route2);
         mapDiagram1.getRouteList().add(route3);
 
-        MapDiagram mapDiagram2 = new MapDiagram();
-
-        Pin pin5 = new Pin(getPinCountAndIncrease(), plan2.getPlanID(), 39.915291, 116.403857,  "天安门",
-                new Date(), new Date(), PinStatus.WANTED, "这是天安门");
-        mapDiagram2.getPinList().add(pin5);
-
         planMapDiagramHashMap.put(plan1, mapDiagram1);
-        planMapDiagramHashMap.put(plan2, mapDiagram2);
 
         currentPlan = plan1;
 
