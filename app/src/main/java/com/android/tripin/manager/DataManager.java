@@ -50,9 +50,11 @@ public class DataManager implements Serializable {
 
     private static List<Plan> planList = new ArrayList<>();
 
+
     public static List<UserInfo> getUserInfoList() {
         return userInfoList;
     }
+
 
     private static List<UserInfo> userInfoList = new ArrayList<>();
 
@@ -89,6 +91,7 @@ public class DataManager implements Serializable {
     public static List<Plan> getPlanList() {
         return planList;
     }
+
     public static boolean getIsLogin() {
         return isLogin;
     }

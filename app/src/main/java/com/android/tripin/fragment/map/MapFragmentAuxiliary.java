@@ -18,6 +18,7 @@ import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Route;
 import com.android.tripin.enums.Transportation;
 import com.android.tripin.manager.DataManager;
+import com.android.tripin.util.HamiltonianGraph;
 import com.android.tripin.util.overlayutil.BikingRouteOverlay;
 import com.android.tripin.util.overlayutil.DrivingRouteOverlay;
 import com.android.tripin.util.overlayutil.OverlayManager;
@@ -243,6 +244,7 @@ public class MapFragmentAuxiliary {
                     //  将布局显示出来
                     //  TODO:跳转到PinDetailActivity
                     Intent intent = new Intent(mapFragment.getActivity(), PinDetailActivity.class);
+                    intent.putExtra("pin", pin);
                     mapFragment.getActivity().startActivity(intent);
                 }
             };
@@ -853,5 +855,15 @@ public class MapFragmentAuxiliary {
                 addRoute(isolatedPinList.get(i), isolatedPinList.get(i + 1));
             }
         }
+    }
+
+    /**
+     * 规划路径，并重新加载
+     */
+    public void planRoute() {
+        List<Pin> orderedPins = HamiltonianGraph.getOrderedPins(DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList());
+        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).setPinList(orderedPins);
+        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clearAndUpdateRoute();
+        showTrip();
     }
 }

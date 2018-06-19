@@ -29,6 +29,16 @@ public class MapDiagram {
     Map<Route, List<? extends RouteLine>> routeLineListMap = new HashMap<>();
     Map<RouteLine, OverlayManager> routeOverlayManagerMap = new HashMap<>();
 
+    boolean isUpdated = false;
+
+    public boolean isUpdated() {
+        return isUpdated;
+    }
+
+    public void setUpdated(boolean updated) {
+        isUpdated = updated;
+    }
+
     public MapDiagram() {
     }
 
@@ -56,6 +66,12 @@ public class MapDiagram {
         return routeOverlayManagerMap;
     }
 
+
+    public void setPinList(List<Pin> pinList) {
+        this.pinList = pinList;
+    }
+
+
     public void clearAndUpdateRoute() {
         clear();
         routeList.clear();
@@ -75,6 +91,7 @@ public class MapDiagram {
             }
             Route route = new Route(DataManager.getRouteCountAndIncrease(), DataManager.getCurrentPlan().getPlanID(), origin.getPinID(),
                     destination.getPinID(), transportation,0, 0, true);
+            routeList.add(route);
         }
     }
 
