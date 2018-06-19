@@ -14,6 +14,8 @@ import com.android.tripin.R;
 import com.android.tripin.base.BaseFragment;
 import com.android.tripin.callback.SearchCallback;
 import com.android.tripin.entity.UserInfo;
+import com.android.tripin.manager.DataManager;
+import com.android.tripin.recyclerView.SearchResultAdapter;
 import com.android.tripin.util.OkHttp3Util;
 
 import java.io.IOException;
@@ -48,6 +50,7 @@ public class InvitationFragment extends BaseFragment implements SearchCallback{
     private Button btnSearch;
     private RecyclerView searchListRecyclerView;
     private RecyclerView searchHistoryListRecyclerView;
+    private SearchResultAdapter searchResultAdapter;
     private List<UserInfo> userInfoList = new ArrayList<>();
     public static String getTitle() {
         return TITLE;
@@ -71,6 +74,7 @@ public class InvitationFragment extends BaseFragment implements SearchCallback{
         View v = inflater.inflate(R.layout.fragment_invitation,container,false);
         searchWithUserNameOrPhone = (EditText)v.findViewById(R.id.search_user_name_or_phone);
         btnSearch = (Button) v.findViewById(R.id.btn_search_user);
+        searchResultAdapter = new SearchResultAdapter(DataManager.getUserInfoList());
         searchListRecyclerView = (RecyclerView) v.findViewById(R.id.search_result_list);
         searchHistoryListRecyclerView = (RecyclerView) v.findViewById(R.id.search_history_list);
 

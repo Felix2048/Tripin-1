@@ -50,6 +50,12 @@ public class DataManager implements Serializable {
 
     private static List<Plan> planList = new ArrayList<>();
 
+
+    public static List<UserInfo> getUserInfoList() {
+        return userInfoList;
+    }
+
+
     private static List<UserInfo> userInfoList = new ArrayList<>();
 
     private static HashMap<Plan, MapDiagram> planMapDiagramHashMap = new HashMap<>();
@@ -118,6 +124,16 @@ public class DataManager implements Serializable {
 
         planList.add(plan1);
         planList.add(plan2);
+
+        UserInfo user1 = new UserInfo("zhengjiadi", "zhengjiadi", "zhengjiadi@gmail.com", "15201703512");
+        UserInfo user2 = new UserInfo("gaoshang", "gaoshang", "gaoshang@gmail.com", "15201703513");
+        UserInfo user3 = new UserInfo("quanningzhen", "quanningzhen", "quanningzhen@gmail.com", "15201703514");
+        UserInfo user4 = new UserInfo("zhengyang", "zhengyang", "zhengyang@gmail.com", "15201703515");
+        userInfoList.add(user1);
+        userInfoList.add(user2);
+        userInfoList.add(user3);
+        userInfoList.add(user4);
+
 
         MapDiagram mapDiagram1 = new MapDiagram();
 
