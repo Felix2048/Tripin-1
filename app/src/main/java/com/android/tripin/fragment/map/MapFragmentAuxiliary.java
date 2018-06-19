@@ -862,10 +862,7 @@ public class MapFragmentAuxiliary {
      */
     public void planRoute() {
         List<Pin> orderedPins = HamiltonianGraph.getOrderedPins(DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList());
-        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList().clear();
-        for (Pin pin : orderedPins) {
-            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList().add(pin);
-        }
+        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).setPinList(orderedPins);
         DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clearAndUpdateRoute();
         showTrip();
     }

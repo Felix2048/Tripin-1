@@ -22,7 +22,6 @@ import java.util.Map;
  */
 public class MapDiagram {
 
-
     List<Pin> pinList = new ArrayList<>();
     List<Route> routeList = new ArrayList<>();
     Map<Pin, Marker> pinMarkerMap = new HashMap<>();
@@ -66,6 +65,12 @@ public class MapDiagram {
     public Map<RouteLine, OverlayManager> getRouteOverlayManagerMap() {
         return routeOverlayManagerMap;
     }
+
+
+    public void setPinList(List<Pin> pinList) {
+        this.pinList = pinList;
+    }
+
 
     public void clearAndUpdateRoute() {
         clear();
