@@ -1,17 +1,13 @@
 package com.android.tripin.recyclerView;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.PointerIcon;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.tripin.MainActivity;
 import com.android.tripin.R;
 
 import java.util.List;
@@ -30,29 +26,9 @@ public class CreatePlanAdapter extends RecyclerView.Adapter<CreatePlanAdapter.My
     }
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.plan_item,parent,false);
-        final MyViewHolder holder = new MyViewHolder(view);
-        holder.planItemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(view.getContext(), MainActivity.class);
-                view.getContext().startActivity(intent);
-            }
-
-        });
-        holder.tv.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return false;
-            }
-        });
-
-        holder.tv_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
+        MyViewHolder holder = new MyViewHolder(LayoutInflater.from(
+                context).inflate(R.layout.plan_item, parent,
+                false));
         return holder;
     }
     @Override
@@ -93,14 +69,11 @@ public class CreatePlanAdapter extends RecyclerView.Adapter<CreatePlanAdapter.My
      */
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tv, tv_delete;
-        View planItemView;
-        LinearLayout linearLayout;
         //因为删除有可能会删除中间条目，然后会造成角标越界，所以必须整体刷新一下！
         public MyViewHolder(View view) {
             super(view);
             tv = (TextView) view.findViewById(R.id.id_num);
             tv_delete = (TextView) view.findViewById(R.id.tv_delete);
-            linearLayout = (LinearLayout) view.findViewById(R.id.line_plan_item);
         }
     }
 }
