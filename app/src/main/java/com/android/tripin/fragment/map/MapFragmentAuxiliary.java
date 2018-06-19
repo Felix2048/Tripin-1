@@ -861,9 +861,12 @@ public class MapFragmentAuxiliary {
      * 规划路径，并重新加载
      */
     public void planRoute() {
-        List<Pin> orderedPins = HamiltonianGraph.getOrderedPins(DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList());
-        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).setPinList(orderedPins);
-        DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clearAndUpdateRoute();
-        showTrip();
+        List<Pin> pinList = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList();
+        if (null != pinList && pinList.size() > 1) {
+            List<Pin> orderedPins = HamiltonianGraph.getOrderedPins(pinList);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).setPinList(orderedPins);
+            DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clearAndUpdateRoute();
+            showTrip();
+        }
     }
 }

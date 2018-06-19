@@ -62,6 +62,7 @@ public class ScheduleFragment extends BaseFragment {
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 //滑动事件
                 Collections.swap(pinList,viewHolder.getAdapterPosition(),target.getAdapterPosition());
+                DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clearAndUpdateRoute();
                 scheduleRecycleViewAdapter.notifyItemMoved(viewHolder.getAdapterPosition(),target.getAdapterPosition());
                 return false;
             }
@@ -70,6 +71,7 @@ public class ScheduleFragment extends BaseFragment {
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 //侧滑事件
                 pinList.remove(viewHolder.getAdapterPosition());
+                DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clearAndUpdateRoute();
                 scheduleRecycleViewAdapter.notifyItemRemoved(viewHolder.getAdapterPosition());
             }
 
