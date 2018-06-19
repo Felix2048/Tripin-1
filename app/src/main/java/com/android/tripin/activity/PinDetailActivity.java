@@ -143,11 +143,13 @@ public class PinDetailActivity extends BaseActivity implements IPinDetailView, V
                     }
                 }
                 DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).setUpdated(true);
+                DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clearAndUpdateRoute();
                 finish();
                 break;
             case R.id.btn_delete_pin:
                 DataManager.deletePin(pin);
                 DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).setUpdated(true);
+                DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clearAndUpdateRoute();
                 finish();
                 break;
             case R.id.pin_detail_return:
