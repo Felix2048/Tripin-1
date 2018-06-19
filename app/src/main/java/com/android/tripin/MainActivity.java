@@ -124,7 +124,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 break;
             case 2:
                 if(invitationFragment == null){
-                     invitationFragment= InvitationFragment.newInstance();
+                    invitationFragment= InvitationFragment.newInstance();
                 }
                 transaction.replace(R.id.fragment_container, invitationFragment);
                 break;

@@ -72,6 +72,10 @@
     <string name="schedule_pin_status">想去</string>
     <string name="show_schedule_pin_arrive_time">在这里显示pin的到达时间</string>
     <string name="show_schedule_pin_departure_time">在这里显示pin的离开时间</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 
 
 </resources>

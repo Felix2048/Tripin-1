@@ -43,11 +43,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
                 android:gravity="center"
-                android:text="删除"
                 android:textColor="#BD1B21"
                 android:textSize="20sp" />
+
+
         </LinearLayout>
     </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
