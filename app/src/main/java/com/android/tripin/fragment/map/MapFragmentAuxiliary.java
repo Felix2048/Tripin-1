@@ -592,10 +592,10 @@ public class MapFragmentAuxiliary {
      */
     public void addRoute(Pin origin, Pin destination) {
         if (null != origin && null != destination) {
-            double distantce = DistanceUtil.getDistance(new LatLng(origin.getPinLatitude(), origin.getPinLongitude()),
+            double distance = DistanceUtil.getDistance(new LatLng(origin.getPinLatitude(), origin.getPinLongitude()),
                     new LatLng(origin.getPinLatitude(), destination.getPinLongitude()));
             Transportation transportation;
-            if (distantce > 2000) {
+            if (distance > 2000) {
                 //  如果距离大于2km，使用该计划默认的交通方式
                 transportation = DataManager.getCurrentPlan().getDefaultTransportation();
             }

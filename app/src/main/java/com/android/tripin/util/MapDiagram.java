@@ -2,9 +2,13 @@ package com.android.tripin.util;
 
 import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Route;
+import com.android.tripin.enums.Transportation;
+import com.android.tripin.manager.DataManager;
 import com.android.tripin.util.overlayutil.OverlayManager;
 import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.RouteLine;
+import com.baidu.mapapi.utils.DistanceUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +54,28 @@ public class MapDiagram {
 
     public Map<RouteLine, OverlayManager> getRouteOverlayManagerMap() {
         return routeOverlayManagerMap;
+    }
+
+    public void clearAndUpdateRoute() {
+        clear();
+        routeList.clear();
+        for(int i = 0; i < pinList.size() - 1; i++) {
+            Pin origin = pinList.get(i);
+            Pin destination = pinList.get(i + 1);
+            double distance = DistanceUtil.getDistance(new LatLng(origin.getPinLatitude(), origin.getPinLongitude()),
+                    new LatLng(origin.getPinLatitude(), destination.getPinLongitude()));
+            Transportation transportation;
+            if (distance > 2000) {
+                //  如果距离大于2km，使用该计划默认的交通方式
+                transportation = DataManager.getCurrentPlan().getDefaultTransportation();
+            }
+            else {
+                //  否则走路
+                transportation = Transportation.WALK;
+            }
+            Route route = new Route(DataManager.getRouteCountAndIncrease(), DataManager.getCurrentPlan().getPlanID(), origin.getPinID(),
+                    destination.getPinID(), transportation,0, 0, true);
+        }
     }
 
     public void clear() {

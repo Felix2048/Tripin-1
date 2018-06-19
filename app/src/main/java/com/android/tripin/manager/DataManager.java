@@ -24,8 +24,6 @@ public class DataManager implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-
-
     private static boolean isLogin = false;
 
     private static boolean isInitialized = false;
@@ -51,8 +49,6 @@ public class DataManager implements Serializable {
     private static String verificationCode = "";
 
     private static List<Plan> planList = new ArrayList<>();
-
-
 
     private static HashMap<Plan, MapDiagram> planMapDiagramHashMap = new HashMap<>();
 
@@ -99,6 +95,10 @@ public class DataManager implements Serializable {
         return planMapDiagramHashMap;
     }
 
+    public static void deletePin(Pin pin) {
+        planMapDiagramHashMap.get(currentPlan).getPinList().remove(pin);
+        planMapDiagramHashMap.get(currentPlan).clearAndUpdateRoute();
+    }
 
     public DataManager() {
         if (!isInitialized) {
