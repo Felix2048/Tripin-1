@@ -73,6 +73,7 @@ public class DataManager implements Serializable {
     public static List<Plan> getPlanList() {
         return planList;
     }
+
     public static boolean getIsLogin() {
         return isLogin;
     }

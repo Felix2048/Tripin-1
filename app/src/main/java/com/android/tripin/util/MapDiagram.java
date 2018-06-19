@@ -22,12 +22,23 @@ import java.util.Map;
  */
 public class MapDiagram {
 
+
     List<Pin> pinList = new ArrayList<>();
     List<Route> routeList = new ArrayList<>();
     Map<Pin, Marker> pinMarkerMap = new HashMap<>();
     Map<Route, HashSet<Pin>> routePinSetMap = new HashMap<>();
     Map<Route, List<? extends RouteLine>> routeLineListMap = new HashMap<>();
     Map<RouteLine, OverlayManager> routeOverlayManagerMap = new HashMap<>();
+
+    boolean isUpdated = false;
+
+    public boolean isUpdated() {
+        return isUpdated;
+    }
+
+    public void setUpdated(boolean updated) {
+        isUpdated = updated;
+    }
 
     public MapDiagram() {
     }
@@ -75,6 +86,7 @@ public class MapDiagram {
             }
             Route route = new Route(DataManager.getRouteCountAndIncrease(), DataManager.getCurrentPlan().getPlanID(), origin.getPinID(),
                     destination.getPinID(), transportation,0, 0, true);
+            routeList.add(route);
         }
     }
 

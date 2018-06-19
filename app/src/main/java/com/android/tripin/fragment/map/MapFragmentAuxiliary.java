@@ -243,6 +243,7 @@ public class MapFragmentAuxiliary {
                     //  将布局显示出来
                     //  TODO:跳转到PinDetailActivity
                     Intent intent = new Intent(mapFragment.getActivity(), PinDetailActivity.class);
+                    intent.putExtra("pin", pin);
                     mapFragment.getActivity().startActivity(intent);
                 }
             };
