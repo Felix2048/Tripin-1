@@ -13,6 +13,7 @@ import com.android.tripin.base.BaseFragment;
 import com.android.tripin.entity.Pin;
 import com.android.tripin.manager.DataManager;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class ScheduleFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
     private ScheduleRecycleViewAdapter scheduleRecycleViewAdapter;
-    private List<Pin> pinList;
+    private List<Pin> pinList = DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinList();
 
     /**
      * onCreateView

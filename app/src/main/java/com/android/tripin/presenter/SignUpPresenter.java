@@ -15,6 +15,7 @@ import com.aliyuncs.http.MethodType;
 import com.android.tripin.R;
 import com.android.tripin.activity.SignUpActivity;
 import com.android.tripin.callback.SignUpCallback;
+import com.android.tripin.manager.DataManager;
 import com.android.tripin.model.SignUpModel;
 import com.android.tripin.presenter.interfaces.ISignUpPresenter;
 import com.android.tripin.util.ChangeDataToJsonUtil;
@@ -36,6 +37,7 @@ public class SignUpPresenter implements ISignUpPresenter{
             public void onSuccess() {
                 signUpActivity.hideLoding();
                 signUpActivity.showResult(R.string.sign_up_success);
+                DataManager.setIsLogin(true);
                 signUpActivity.goHome();
             }
 

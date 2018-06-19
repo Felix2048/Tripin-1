@@ -38,6 +38,16 @@ public class DataManager implements Serializable {
 
     private static Plan currentPlan = null;
 
+    public static String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public static void setVerificationCode(String verificationCode) {
+        DataManager.verificationCode = verificationCode;
+    }
+
+    private static String verificationCode = "";
+
     private static List<Plan> planList = new ArrayList<>();
 
     private static List<UserInfo> userInfoList = new ArrayList<>();

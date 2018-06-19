@@ -38,7 +38,8 @@ public class ScheduleRecycleViewAdapter extends RecyclerView.Adapter<ScheduleRec
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.schedule_item, parent, false);
-        return new MyViewHolder(view);
+        MyViewHolder holder=  new MyViewHolder(view);
+        return holder;
     }
 
     @Override

@@ -61,7 +61,7 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         bottomNavigationBar.addItem(new BottomNavigationItem(R.drawable.ic_book_white_24dp, "Plan").setActiveColorResource(R.color.green))
                 .addItem(new BottomNavigationItem(R.drawable.ic_location_on_white_24dp, "Map").setActiveColorResource(R.color.green))
                 .addItem(new BottomNavigationItem(R.drawable.ic_favorite_white_24dp, "Share").setActiveColorResource(R.color.green))
-                .setFirstSelectedPosition(0)
+                .setFirstSelectedPosition(1)
                 .initialise();
         setDefaultFragment();
         bottomNavigationBar.setTabSelectedListener(this);
