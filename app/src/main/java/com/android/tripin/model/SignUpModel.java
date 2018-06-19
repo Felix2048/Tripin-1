@@ -11,6 +11,7 @@ import com.aliyuncs.http.MethodType;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.android.tripin.callback.SignUpCallback;
+import com.android.tripin.manager.DataManager;
 import com.android.tripin.model.interfaces.ISignUpModel;
 import com.android.tripin.util.OkHttp3Util;
 import com.android.tripin.util.ParserJsonToDataUtil;
@@ -31,7 +32,7 @@ import static com.android.tripin.util.ParserJsonToDataUtil.getSignUpResponseMess
 
 public class SignUpModel implements ISignUpModel {
 
-
+    DataManager dataManager = new DataManager();
     public OkHttpClient client = OkHttp3Util.getClient();
 
     /**
@@ -96,7 +97,7 @@ public class SignUpModel implements ISignUpModel {
                 if (validateCode.length() < 4)
                     for (int i = 0; i < 4 - validateCode.length(); i++)
                         validateCode = "0" + validateCode;
-
+                DataManager.setVerificationCode(validateCode);
                 System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
                 System.setProperty("sun.net.client.defaultReadTimeout", "10000");
                 final String product = "Dysmsapi";
@@ -116,7 +117,7 @@ public class SignUpModel implements ISignUpModel {
                 request.setMethod(MethodType.POST);
                 request.setPhoneNumbers(phone);
                 request.setSignName("Tripin");
-                request.setTemplateCode("SMS_126410008");
+                request.setTemplateCode("SMS_137665892");
                 request.setTemplateParam("{\"code\":\"" + validateCode + "\"}");
                 request.setOutId("yourOutId");
                 SendSmsResponse sendSmsResponse = null;

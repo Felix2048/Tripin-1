@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.android.tripin.MainActivity;
 import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
+import com.android.tripin.manager.DataManager;
 import com.android.tripin.model.SignUpModel;
 import com.android.tripin.presenter.SignUpPresenter;
 import com.android.tripin.view.ISignUpView;
@@ -137,7 +138,8 @@ public class SignUpActivity extends BaseActivity implements ISignUpView, View.On
      */
     @Override
     public int onJudgeVerificationCode() {
-        if(this.getVerificationCode().equals("9527")) {
+        String verificationCode = DataManager.getVerificationCode();
+        if(this.getVerificationCode().equals(verificationCode)) {
             return 1;
         }else {
             return 0;

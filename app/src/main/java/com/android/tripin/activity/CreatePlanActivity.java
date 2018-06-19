@@ -14,6 +14,7 @@ import com.android.tripin.MainActivity;
 import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
 import com.android.tripin.recyclerView.CreatePlanAdapter;
+import com.android.tripin.util.ChangePlanNameDialogUtil;
 import com.android.tripin.util.RecylerViewClickListener2;
 
 
@@ -56,17 +57,7 @@ public class CreatePlanActivity extends BaseActivity {
         list = initData();
         adapter = new CreatePlanAdapter(CreatePlanActivity.this, list);
         mRecyclerView.setAdapter(adapter);
-        mRecyclerView.addOnItemTouchListener(new RecylerViewClickListener2(this, mRecyclerView, new RecylerViewClickListener2.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                Intent intent = new Intent(CreatePlanActivity.this,MainActivity.class);
-            }
 
-            @Override
-            public void onItemLongClick(View view, int position) {
-                Toast.makeText(CreatePlanActivity.this,"这是长按事件",Toast.LENGTH_SHORT).show();
-            }
-        }));
 //      添加动画
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
     }

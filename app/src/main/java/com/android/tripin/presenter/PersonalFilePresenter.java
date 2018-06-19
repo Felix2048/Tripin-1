@@ -3,6 +3,7 @@ package com.android.tripin.presenter;
 import com.android.tripin.activity.LauncherActivity;
 import com.android.tripin.activity.PersonalFileActivity;
 import com.android.tripin.callback.PersonalFileCallback;
+import com.android.tripin.manager.DataManager;
 import com.android.tripin.model.PersonalFileModel;
 import com.android.tripin.presenter.interfaces.IPersonalFilePresenter;
 import com.android.tripin.util.ChangeDataToJsonUtil;
@@ -62,7 +63,7 @@ public class PersonalFilePresenter implements IPersonalFilePresenter {
          * 写一个Intent，跳转到主界面
          */
         personalFileActivity.backToHome();
-        LauncherActivity.CHECK_LOGIN_STATUS_FLAG=1;
+        DataManager.setIsLogin(false);
         personalFileActivity.showLogoutSuccess();
     }
 }

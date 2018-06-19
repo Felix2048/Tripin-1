@@ -70,6 +70,12 @@ public class ChangePlanNameDialogUtil extends Dialog{
 
         // 为按钮绑定点击事件监听器
         btn_save.setOnClickListener(mClickListener);
+        mClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        };
 
         this.setCancelable(true);
     }
