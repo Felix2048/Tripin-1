@@ -1,9 +1,18 @@
 package com.android.tripin;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -20,6 +29,9 @@ import com.android.tripin.manager.DataManager;
 import com.ashokvarma.bottomnavigation.BottomNavigationBar;
 import com.ashokvarma.bottomnavigation.BottomNavigationItem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Felix on 6/8/2018.
  * Description: Main Activity
@@ -34,6 +46,10 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
      * 初始化dataManager
      */
     private DataManager dataManager = new DataManager();
+
+    private int REQUESTCODE = 0;
+
+    private List<String> permissionList = new ArrayList<String>();
 
     @Override
     protected int getContextViewId() {
@@ -102,6 +118,17 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
                 }
             }
         });
+
+        //  请求权限
+        permissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        permissionList.add(Manifest.permission.INTERNET);
+        for(String permission : permissionList) {
+            checkPermission(permission);
+        }
+
+
     }
 
     @Override
@@ -164,5 +191,46 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+    }
+
+    /**
+     * 运行时请求权限，检查是否成功获取权限
+     */
+    public void checkPermission(String permission) {
+        if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{permission}, permission.hashCode());
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUESTCODE) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE)) {
+                    askForPermission();
+                }
+            }
+        }
+    }
+
+    private void askForPermission() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("需要权限");
+        builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                intent.setData(Uri.parse("package:" + getPackageName())); // 根据包名打开对应的设置界面
+                startActivity(intent);
+            }
+        });
+        builder.create().show();
     }
 }
