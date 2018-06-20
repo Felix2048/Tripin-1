@@ -62,6 +62,7 @@ public class PersonalFilePresenter implements IPersonalFilePresenter {
         /**
          * 写一个Intent，跳转到主界面
          */
+        DataManager.setCurrentUser(null);
         personalFileActivity.backToHome();
         DataManager.setIsLogin(false);
         personalFileActivity.showLogoutSuccess();

@@ -38,6 +38,16 @@ public class DataManager implements Serializable {
 
     private static Plan currentPlan = null;
 
+    private static UserInfo currentUser = null;
+
+    private static String verificationCode = "";
+
+    private static List<Plan> planList = new ArrayList<>();
+
+    private static List<UserInfo> userInfoList = new ArrayList<>();
+
+    private static HashMap<Plan, MapDiagram> planMapDiagramHashMap = new HashMap<>();
+
     public static String getVerificationCode() {
         return verificationCode;
     }
@@ -46,19 +56,9 @@ public class DataManager implements Serializable {
         DataManager.verificationCode = verificationCode;
     }
 
-    private static String verificationCode = "";
-
-    private static List<Plan> planList = new ArrayList<>();
-
-
     public static List<UserInfo> getUserInfoList() {
         return userInfoList;
     }
-
-
-    private static List<UserInfo> userInfoList = new ArrayList<>();
-
-    private static HashMap<Plan, MapDiagram> planMapDiagramHashMap = new HashMap<>();
 
     public static int getPinCountAndIncrease() {
         return pinCount++;
@@ -98,6 +98,14 @@ public class DataManager implements Serializable {
 
     public static void setIsLogin(boolean isLogin) {
         DataManager.isLogin = isLogin;
+    }
+
+    public static UserInfo getCurrentUser() {
+        return currentUser;
+    }
+
+    public static void setCurrentUser(UserInfo currentUser) {
+        DataManager.currentUser = currentUser;
     }
 
     public static HashMap<Plan, MapDiagram> getPlanMapDiagramHashMap() {

@@ -12,6 +12,8 @@ import android.widget.Toast;
 import com.android.tripin.MainActivity;
 import com.android.tripin.R;
 import com.android.tripin.base.BaseActivity;
+import com.android.tripin.entity.UserInfo;
+import com.android.tripin.manager.DataManager;
 import com.android.tripin.model.PersonalFileModel;
 import com.android.tripin.presenter.PersonalFilePresenter;
 import com.android.tripin.view.IPersonalFileView;
@@ -42,6 +44,17 @@ public class PersonalFileActivity extends BaseActivity implements IPersonalFileV
         image_back_to_home.setOnClickListener(this);
         btn_log_out.setOnClickListener(this);
         btn_change_personal_file.setOnClickListener(this);
+
+        showUserInfo();
+    }
+
+    protected void showUserInfo() {
+        UserInfo userInfo = DataManager.getCurrentUser();
+        if (null != userInfo) {
+            personal_file_user_name.setText(userInfo.getUserName());
+            personal_file_phone.setText(userInfo.getPhone());
+            personal_file_email.setText(userInfo.getEmail());
+        }
     }
 
     @Override
