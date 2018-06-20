@@ -42,10 +42,11 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
+
     /**
      * 初始化dataManager
      */
-    private DataManager dataManager = new DataManager();
+    private DataManager dataManager;
 
     private int REQUESTCODE = 0;
 
@@ -122,13 +123,9 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
         //  请求权限
         permissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
         permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        permissionList.add(Manifest.permission.INTERNET);
-        for(String permission : permissionList) {
-            checkPermission(permission);
-        }
-
-
+        String[] permissions = new String[permissionList.size()];
+        checkPermission(permissionList.toArray(permissions));
+        dataManager = new DataManager();
     }
 
     @Override
@@ -196,9 +193,16 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     /**
      * 运行时请求权限，检查是否成功获取权限
      */
-    public void checkPermission(String permission) {
-        if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{permission}, permission.hashCode());
+    public void checkPermission(String[] permissions) {
+        List<String> requestPermissionList = new ArrayList<>();
+        for (String permission : permissions) {
+            if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionList.add(permission);
+            }
+        }
+        if (!requestPermissionList.isEmpty()) {
+            String[] requestPermissions = new String[requestPermissionList.size()];
+            ActivityCompat.requestPermissions(this, requestPermissionList.toArray(requestPermissions), REQUESTCODE);
         }
     }
 
@@ -206,13 +210,16 @@ public class MainActivity extends BaseActivity implements BottomNavigationBar.On
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUESTCODE) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (!shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE)) {
-                    askForPermission();
-                }
-            }
-        }
+//        if (requestCode == REQUESTCODE) {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                for (String permission : permissions) {
+//                    if (!shouldShowRequestPermissionRationale(permission)) {
+//                        askForPermission();
+//                        break;
+//                    }
+//                }
+//            }
+//        }
     }
 
     private void askForPermission() {

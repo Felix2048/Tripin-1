@@ -32,7 +32,6 @@ import static com.android.tripin.util.ParserJsonToDataUtil.getSignUpResponseMess
 
 public class SignUpModel implements ISignUpModel {
 
-    DataManager dataManager = new DataManager();
     public OkHttpClient client = OkHttp3Util.getClient();
 
     /**

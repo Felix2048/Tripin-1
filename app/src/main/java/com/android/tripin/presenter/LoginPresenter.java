@@ -16,7 +16,6 @@ import com.android.tripin.util.ChangeDataToJsonUtil;
 
 public class LoginPresenter implements ILoginPresenter {
     private final static String TAG = LoginPresenter.class.getSimpleName();
-    DataManager dataManager = new DataManager();
     private LoginModel loginModel;
     private LoginActivity loginActivity;
     String loginJson;
