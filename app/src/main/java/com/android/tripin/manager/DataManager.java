@@ -177,6 +177,14 @@ public class DataManager implements Serializable {
 
         currentPlan = plan1;
 
+        isLogin = true;
+
+        UserInfo userInfo = new UserInfo("Demo", "demo123456", "demo@tripin.com", "13712341234");
+
+        currentUser = userInfo;
+
+        userInfoList.add(userInfo);
+
     }
 
 }
