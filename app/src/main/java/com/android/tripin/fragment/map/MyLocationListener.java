@@ -33,6 +33,8 @@ public class MyLocationListener implements BDLocationListener {
             if (mapFragment.isFirstLocation) {
                 //获取经纬度
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                //pin到达检测
+                mapFragment.mapFragmentAuxiliary.pinArrivalCheck(latLng);
                 mapFragment.mapFragmentAuxiliary.moveToLocationInMap(latLng);
                 mapFragment.isFirstLocation = false;
                 mapFragment.mapFragmentAuxiliary.showToast("位置：" + location.getAddrStr());

@@ -16,6 +16,7 @@ import com.android.tripin.R;
 import com.android.tripin.activity.PinDetailActivity;
 import com.android.tripin.entity.Pin;
 import com.android.tripin.entity.Route;
+import com.android.tripin.enums.PinStatus;
 import com.android.tripin.enums.Transportation;
 import com.android.tripin.manager.DataManager;
 import com.android.tripin.util.HamiltonianGraph;
@@ -871,6 +872,26 @@ public class MapFragmentAuxiliary {
             DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).setPinList(orderedPins);
             DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).clearAndUpdateRoute();
             showTrip();
+        }
+    }
+
+    /**
+     * pin到达检测
+     * @param latLng 检测的定位地址
+     */
+    public void pinArrivalCheck(LatLng latLng) {
+        //  检测附近50m是否已有Pin
+        //  构建LatLngBounds
+        LatLng northeast = new LatLng(latLng.latitude + 0.00001141 * 50, latLng.longitude + 0.00000899 * 50);
+        LatLng southwest = new LatLng(latLng.latitude - 0.00001141 * 50, latLng.longitude - 0.00000899 * 50);
+        LatLngBounds latLngBounds = new LatLngBounds.Builder().include(northeast).include(southwest).build();
+        for (Pin pin : DataManager.getPlanMapDiagramHashMap().get(DataManager.getCurrentPlan()).getPinMarkerMap().keySet()) {
+            LatLng temp = new LatLng(pin.getPinLatitude(), pin.getPinLongitude());
+            if (latLngBounds.contains(temp)) {
+                //  将pin的状态该为BEEN
+                pin.setPinStatus(PinStatus.BEEN);
+                break;
+            }
         }
     }
 }
